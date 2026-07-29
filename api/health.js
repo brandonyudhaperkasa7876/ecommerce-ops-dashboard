@@ -3,7 +3,7 @@
 //  Liveness + DIAGNOSTIK konfigurasi (aman: hanya boolean/status,
 //  tidak pernah menampilkan nilai token/password).
 // ============================================================
-import { readJSON, ENV } from './_lib.js';
+import { readJSON, ENV, TOKEN_INFO } from './_lib.js';
 
 export default async function handler(req, res){
   const diag = {
@@ -18,7 +18,8 @@ export default async function handler(req, res){
       SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL ? 'set' : 'MISSING',
       SEED_ADMIN_PASSWORD: process.env.SEED_ADMIN_PASSWORD ? 'set' : 'MISSING',
       SEED_ADMIN_PIN: process.env.SEED_ADMIN_PIN ? 'set' : 'MISSING'
-    }
+    },
+    tokenInfo: TOKEN_INFO
   };
   // Uji koneksi GitHub + status akun
   try {
