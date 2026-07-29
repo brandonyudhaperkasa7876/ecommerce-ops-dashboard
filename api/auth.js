@@ -6,6 +6,28 @@ import { readJSON, writeJSON, hashSecret, verifySecret, readBody, ok, fail, ENV 
 
 const USERS = 'data/users.json';
 
+// Auto-seed Super Admin dari Environment Variables (aman: kredensial tidak
+// disimpan di repo). Butuh: SUPER_ADMIN_EMAIL + SEED_ADMIN_PASSWORD
+// (opsional: SEED_ADMIN_PIN, SEED_ADMIN_NAME).
+async function ensureSeed(users){
+  const email = ENV.SUPER_ADMIN_EMAIL;
+  const pass  = process.env.SEED_ADMIN_PASSWORD || '';
+  const pin   = process.env.SEED_ADMIN_PIN || '';
+  if(!email || !pass) return false;
+  if(users.find(u => u.email === email)) return false;
+  users.push({
+    email,
+    name: process.env.SEED_ADMIN_NAME || 'Super Admin',
+    role: 'admin',
+    pass: hashSecret(pass),
+    pin:  hashSecret(pin || ENV.ADMIN_PIN),
+    createdAt: new Date().toISOString(),
+    seeded: true
+  });
+  await writeJSON(USERS, users, 'seed super admin ' + email);
+  return true;
+}
+
 export default async function handler(req, res){
   if(req.method !== 'POST') return fail(res, 'Gunakan POST.', 405);
   let body;
@@ -14,6 +36,7 @@ export default async function handler(req, res){
   try{
     const { data: usersRaw } = await readJSON(USERS, []);
     const users = Array.isArray(usersRaw) ? usersRaw : [];
+    await ensureSeed(users);
 
     if(action === 'register'){
       const email = String(body.email||'').toLowerCase().trim();
