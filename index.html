@@ -383,12 +383,13 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 <div id="appView" class="app hidden">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <img class="brand-logo-img" src="League.png" alt="LEAGUE">
+      <img class="brand-logo-img" src="League-mark.png" alt="LEAGUE">
       <div class="bt"><b>LEAGUE</b><span>Berca Sportindo</span></div>
     </div>
     <div class="navsec">Ringkasan</div>
     <nav class="nav">
       <a data-nav="overview" class="on" onclick="App.go('overview')"><span class="ic">◆</span> Overview</a>
+      <a data-nav="datastatus" onclick="App.go('datastatus')"><span class="ic">🗓</span> Update Data Status</a>
     </nav>
     <div class="navsec">Modul Operasi</div>
     <nav class="nav">
@@ -398,6 +399,7 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
     </nav>
     <div class="navsec">Sistem</div>
     <nav class="nav">
+      <a data-nav="howto" class="admin-only hidden" onclick="App.go('howto')"><span class="ic">📘</span> How To (Super Admin)</a>
       <a data-nav="settings" onclick="App.go('settings')"><span class="ic">⚙</span> Pengaturan &amp; Cloud</a>
     </nav>
     <div class="sidefoot">
@@ -421,19 +423,6 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 
     <!-- ============ OVERVIEW ============ -->
     <section data-view="overview">
-      <div class="hero glass">
-        <img class="hero-logo" src="League.png" alt="LEAGUE">
-        <div class="hero-mid">
-          <div class="hero-brand">LEAGUE<span class="tw">LEAD THE WAY</span></div>
-          <div class="hero-co"><b>PT. Berca Sportindo</b> · E-Commerce Operation</div>
-          <div class="hero-sub" id="heroGreet">Selamat datang di ECommerce Operation Monitoring &amp; Controlling</div>
-        </div>
-        <div class="hero-clock">
-          <div class="hc-day" id="clkDay">—</div>
-          <div class="hc-time" id="clkTime">--:--<small>--</small></div>
-          <div class="hc-date" id="clkDate">—</div>
-        </div>
-      </div>
       <div class="panel glass cloudbar" style="display:flex">
         <span class="dot" id="ovDot"></span>
         <b style="letter-spacing:.3px">Status Cloud</b>
@@ -664,6 +653,101 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
       </div>
     </section>
 
+    <!-- ============ UPDATE DATA STATUS ============ -->
+    <section data-view="datastatus" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="dsDot"></span>
+        <b>Status Kesegaran Data</b>
+        <span class="pill" id="dsPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="DataStatus.load()">↻ Muat ulang</button>
+      </div>
+      <div class="panel glass">
+        <div class="eyebrow">Ringkasan</div>
+        <h3>Tanggal Data Terbaru per Sumber</h3>
+        <p class="sub">Menampilkan file Excel pendukung tiap modul beserta <b>tanggal transaksi terbaru</b> yang ada di dalam data, serta kapan terakhir data di-publish ke Cloud oleh Super Admin.</p>
+        <div class="scroll" style="max-height:none">
+          <table class="grid" id="dsTable">
+            <thead><tr><th>Modul</th><th>File / Sumber Excel</th><th>Jumlah Baris</th><th>Tanggal Data Terbaru</th><th>Rentang Tanggal</th><th>Terakhir Publish</th><th>Status</th></tr></thead>
+            <tbody id="dsBody"><tr><td colspan="7" style="padding:16px;color:var(--muted)">Memuat…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="note glass">Keterangan status: <span class="tag len">Terkini</span> data dipublish ≤ 7 hari lalu · <span class="tag no">Perlu Update</span> lebih dari 7 hari · <span class="tag dup">Kosong</span> belum ada data. Untuk memperbarui, Super Admin membuka modul terkait lalu <b>Proses &amp; Publish ke Cloud</b>.</div>
+    </section>
+
+    <!-- ============ HOW TO (Super Admin) ============ -->
+    <section data-view="howto" class="hidden">
+      <div class="panel glass">
+        <div class="eyebrow">Panduan Super Admin</div>
+        <h3>Cara Update Database &amp; Sinkronisasi ke Semua User</h3>
+        <p class="sub">Halaman ini khusus Super Admin. Ikuti langkah berikut agar pembaruan data otomatis tampil sama di semua pengguna &amp; semua perangkat.</p>
+      </div>
+
+      <div class="cards c3">
+        <div class="card glass"><div class="lab">Prinsip 1</div><div class="val" style="font-size:15px;font-weight:700;color:var(--gold2)">1 Sumber Data</div><p class="sub" style="margin-top:8px">Semua data tersimpan di GitHub (Cloud). Tidak ada data yang “nyangkut” di satu komputer.</p></div>
+        <div class="card glass"><div class="lab">Prinsip 2</div><div class="val" style="font-size:15px;font-weight:700;color:var(--gold2)">Publish = Commit</div><p class="sub" style="margin-top:8px">Sekali Anda Publish, file di GitHub ter-update dan semua user membaca versi itu.</p></div>
+        <div class="card glass"><div class="lab">Prinsip 3</div><div class="val" style="font-size:15px;font-weight:700;color:var(--gold2)">Auto-Sync</div><p class="sub" style="margin-top:8px">User lain cukup buka / klik “Muat ulang”. Tidak perlu instal apa pun.</p></div>
+      </div>
+
+      <div class="panel glass">
+        <div class="eyebrow">Langkah Update — Monitoring JUBELIO</div>
+        <h3>A. Update data Monitoring</h3>
+        <ol style="line-height:1.9;color:var(--text2);font-size:13.5px;padding-left:20px">
+          <li>Buka menu <b>Monitoring JUBELIO</b>.</li>
+          <li>Pada panel <b>Update Database</b>, unggah file Excel dari folder Infinity:
+            <br>• <code>JUBELIO - Sales.xlsx</code> (wajib) &nbsp;• <code>AdminLPH.xlsx</code> &nbsp;• <code>TransferInDetail_MM_HO.xlsx</code> &nbsp;• <code>SAP - Sales.xlsx</code></li>
+          <li>Klik <b>Proses &amp; Publish ke Cloud</b>.</li>
+          <li>Masukkan <b>PIN Publish</b> (default <code>10111976</code>).</li>
+          <li>Tunggu proses selesai — muncul “✓ dipublish ke Cloud”. Data langsung tersimpan di GitHub.</li>
+        </ol>
+      </div>
+
+      <div class="panel glass">
+        <div class="eyebrow">Langkah Update — Sales Database</div>
+        <h3>B. Update data Sales</h3>
+        <ol style="line-height:1.9;color:var(--text2);font-size:13.5px;padding-left:20px">
+          <li>Buka menu <b>Sales Database</b>.</li>
+          <li>Unggah <code>Data Utama (daftar penjualan barang).xlsx</code> (wajib) dan file tujuan bila ada: <code>YTD</code>, <code>Template</code>, <code>MTD</code>.</li>
+          <li>Klik <b>Proses &amp; Publish ke Cloud</b> → masukkan <b>PIN Publish</b>.</li>
+          <li>Hasil (dengan pivot yang dipertahankan &amp; auto-refresh) tersimpan di Cloud dan bisa diunduh semua user.</li>
+        </ol>
+      </div>
+
+      <div class="panel glass">
+        <div class="eyebrow">Agar Semua User Melihat Data yang Sama</div>
+        <h3>C. Sinkronisasi lintas perangkat</h3>
+        <ol style="line-height:1.9;color:var(--text2);font-size:13.5px;padding-left:20px">
+          <li>Setiap kali Anda <b>Publish</b>, data ter-commit ke repo GitHub — inilah “sumber kebenaran” tunggal.</li>
+          <li>User lain <b>tidak perlu</b> upload apa pun. Mereka cukup membuka alamat dashboard yang sama.</li>
+          <li>Saat halaman dibuka, aplikasi otomatis menarik data terbaru dari Cloud. Untuk memaksa refresh, klik <b>↻ Muat ulang</b> (atau <b>Muat ulang semua</b> di Overview).</li>
+          <li>Semua perangkat (PC, HP, tablet) yang membuka URL yang sama akan melihat data &amp; tampilan identik dengan yang Anda publish.</li>
+          <li>Cek menu <b>Update Data Status</b> untuk memastikan tanggal data sudah yang terbaru.</li>
+        </ol>
+      </div>
+
+      <div class="panel glass">
+        <div class="eyebrow">Peran &amp; Keamanan</div>
+        <h3>D. Siapa bisa apa</h3>
+        <p class="sub" style="line-height:1.8">
+          <b>Super Admin</b> (Anda): upload, proses, publish, kelola Berita Acara.<br>
+          <b>Viewer</b> (user lain yang Daftar): hanya melihat data &amp; unduh — upload/edit terkunci.<br>
+          <b>PIN Publish</b> (<code>ADMIN_PIN</code>) diperlukan tiap kali publish data. <b>PIN akun</b> Anda diperlukan untuk edit Berita Acara.<br>
+          Token GitHub tersimpan aman di Vercel — tidak pernah tampil di browser atau di repo.
+        </p>
+      </div>
+
+      <div class="panel glass">
+        <div class="eyebrow">Bila Ada Masalah</div>
+        <h3>E. Troubleshooting cepat</h3>
+        <ol style="line-height:1.9;color:var(--text2);font-size:13.5px;padding-left:20px">
+          <li>Muncul peringatan “mode lokal” / data tidak tersimpan → buka <code>/api/health</code>, pastikan <code>github</code> = OK.</li>
+          <li>Publish gagal → biasanya <b>PIN Publish</b> salah, atau token GitHub perlu izin <b>Contents: Read and write</b>.</li>
+          <li>Data user belum berubah → minta mereka klik <b>↻ Muat ulang</b> atau refresh halaman.</li>
+        </ol>
+      </div>
+    </section>
+
     <!-- ============ SETTINGS ============ -->
     <section data-view="settings" class="hidden">
       <div class="panel glass">
@@ -875,9 +959,11 @@ if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudf
 const SESSION_KEY='ecomops_session_v1';
 const VIEWS={
   overview:{title:'Overview',crumb:'ECommerce Operation Monitoring & Controlling'},
+  datastatus:{title:'Update Data Status',crumb:'Kesegaran data & tanggal terbaru per sumber'},
   monitoring:{title:'Monitoring JUBELIO',crumb:'JUBELIO × Infinity (LPH/Transfer) × SAP · 2026+'},
   sales:{title:'Sales Database',crumb:'YTD · Template · Month-to-Date — pivot dipertahankan'},
   berita:{title:'Berita Acara',crumb:'Dokumen resmi internal — arsip cloud'},
+  howto:{title:'How To (Super Admin)',crumb:'Panduan update database & sinkronisasi'},
   settings:{title:'Pengaturan & Cloud',crumb:'Konektivitas GitHub + Vercel'}
 };
 
@@ -945,6 +1031,7 @@ const App={
   },
   go(v){
     if(!VIEWS[v])v='overview';
+    if(v==='howto'&&!this.isAdmin())v='overview';
     this.view=v;
     document.querySelectorAll('section[data-view]').forEach(s=>s.classList.toggle('hidden',s.getAttribute('data-view')!==v));
     document.querySelectorAll('.nav a[data-nav]').forEach(a=>a.classList.toggle('on',a.getAttribute('data-nav')===v));
@@ -952,6 +1039,7 @@ const App={
     $('pageCrumb').innerHTML=VIEWS[v].crumb;
     $('sidebar').classList.remove('open');
     if(v==='overview')this.updateOverview();
+    if(v==='datastatus')DataStatus.load();
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();
@@ -1515,6 +1603,72 @@ const Berita={
     const no=(this.current?this.current.nomor:this.makeNomor((this.archiveCache.reduce((m,d)=>Math.max(m,d.seq||0),0))+1,$('bm_tanggal').value)).replace(/[\/]/g,'-');const fn='Berita_Acara_'+no+'.pdf';
     if(window.html2pdf){toast('Menyiapkan PDF (utama + lampiran)...','ok');html2pdf().set({margin:[10,10,10,10],filename:fn,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],before:'.lampiran-page'}}).from($('baPaper')).save();}else window.print();}
 };
+</script>
+<script>
+/* ============================================================
+ *  MODULE: UPDATE DATA STATUS
+ * ============================================================ */
+const DataStatus=(function(){
+  const FILES={
+    monitoring:[
+      {file:'JUBELIO - Sales.xlsx', primary:true},
+      {file:'AdminLPH.xlsx'},
+      {file:'TransferInDetail_MM_HO.xlsx'},
+      {file:'SAP - Sales.xlsx'}
+    ],
+    sales:[
+      {file:'daftar penjualan barang.xlsx (Data Utama)', primary:true},
+      {file:'JUBELIO - YTD Sales Performances.xlsx'},
+      {file:'template_laporan_penjualan_jubelio.xlsx'},
+      {file:'JUBELIO_Report_MONTH_TO_DATE.xlsx'}
+    ]
+  };
+  const MOD={monitoring:'Monitoring JUBELIO',sales:'Sales Database'};
+  function fmtDT(iso){if(!iso)return '—';try{return new Date(iso).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return '—';}}
+  function fmtD(d){if(!d)return '—';try{return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
+  function minMax(arr,key){let mn=null,mx=null;arr.forEach(r=>{const v=r[key];if(!v)return;if(mn==null||v<mn)mn=v;if(mx==null||v>mx)mx=v;});return {mn,mx};}
+  function statusTag(updatedAt,count){
+    if(!count||!updatedAt)return '<span class="tag dup">Kosong</span>';
+    const days=(Date.now()-new Date(updatedAt).getTime())/86400000;
+    return days<=7?'<span class="tag len">Terkini</span>':'<span class="tag no">Perlu Update</span>';
+  }
+  const S={};
+  S.load=async function(){
+    App.cloudPill&&App.cloudPill();
+    const d=$('dsDot'),p=$('dsPill');
+    if(d)d.className='dot'+(Cloud.mode==='cloud'?' live':'');
+    if(p){p.textContent=Cloud.mode==='cloud'?'GitHub + Vercel':'Mode Lokal';p.className='pill '+(Cloud.mode==='cloud'?'ok':'no');}
+    $('dsBody').innerHTML='<tr><td colspan="7" style="padding:16px;color:var(--muted)">Memuat…</td></tr>';
+    let mon=null,sal=null;
+    try{mon=await Cloud.getData('monitoring');}catch(e){}
+    try{sal=await Cloud.getData('sales');}catch(e){}
+    const monRows=(mon&&mon.payload&&mon.payload.rows)?mon.payload.rows.map(r=>{if(Array.isArray(r)){const cols=(mon.payload.cols||[]);const o={};cols.forEach((k,i)=>o[k]=r[i]);return o;}return r;}):[];
+    const salRows=(sal&&sal.payload&&sal.payload.mainRows)?sal.payload.mainRows:[];
+    const monMM=minMax(monRows,'TanggalStr'), salMM=minMax(salRows,'Tgl');
+    const data={
+      monitoring:{rows:monRows.length,latest:monMM.mx,range:monMM.mn?fmtD(monMM.mn)+' – '+fmtD(monMM.mx):'—',updatedAt:mon?mon.updatedAt:null},
+      sales:{rows:salRows.length,latest:salMM.mx,range:salMM.mn?fmtD(salMM.mn)+' – '+fmtD(salMM.mx):'—',updatedAt:sal?sal.updatedAt:null}
+    };
+    let html='';
+    ['monitoring','sales'].forEach(mod=>{
+      const info=data[mod];
+      FILES[mod].forEach((f,idx)=>{
+        const isP=f.primary;
+        html+='<tr>'+
+          '<td>'+(idx===0?('<b>'+esc(MOD[mod])+'</b>'):'<span class="empty-cell">↳</span>')+'</td>'+
+          '<td>'+esc(f.file)+(isP?' <span class="clip">(sumber tanggal)</span>':'')+'</td>'+
+          '<td>'+(isP?info.rows.toLocaleString('id-ID'):'<span class="clip">tergabung</span>')+'</td>'+
+          '<td>'+(isP?('<b style="color:var(--gold2)">'+fmtD(info.latest)+'</b>'):'<span class="empty-cell">—</span>')+'</td>'+
+          '<td>'+(isP?info.range:'<span class="empty-cell">—</span>')+'</td>'+
+          '<td>'+fmtDT(info.updatedAt)+'</td>'+
+          '<td>'+statusTag(info.updatedAt,info.rows)+'</td>'+
+        '</tr>';
+      });
+    });
+    $('dsBody').innerHTML=html;
+  };
+  return S;
+})();
 </script>
 </body>
 </html>
