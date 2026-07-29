@@ -67,6 +67,19 @@ a{color:var(--gold2);text-decoration:none}
 .topbar .spacer{flex:1}
 .hamb{display:none;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:16px}
 @media(max-width:960px){.hamb{display:inline-flex}.topbar h1{font-size:23px}}
+/* masthead (bar paling atas) */
+.masthead{display:flex;align-items:center;gap:18px;padding:14px 22px;margin-bottom:14px;border-radius:16px}
+.mast-logo{height:56px;width:auto;display:block;background:#fff;border-radius:13px;padding:7px 11px;box-shadow:0 10px 26px rgba(0,0,0,.38);flex:0 0 auto}
+.mast-brand{min-width:0;flex:1}
+.mast-title{font-family:var(--serif);font-size:26px;font-weight:700;letter-spacing:.4px;line-height:1.1;background:var(--grad-head);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mast-co{color:var(--text2);font-size:12.5px;margin-top:5px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mast-co b{color:var(--gold2);font-weight:700}
+.masthead .spacer{flex:1}
+.pagehead{margin:0 4px 18px}
+.pagehead h1{margin:0;font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.4px;color:#f6e6bf}
+.pagehead .crumb{color:var(--muted);font-size:12px;letter-spacing:.3px;margin-top:2px}
+@media(max-width:960px){.mast-title{font-size:19px;white-space:normal}.mast-co{white-space:normal}.mast-logo{height:46px}}
+@media(max-width:640px){.masthead{flex-wrap:wrap;gap:12px}.masthead .userchip,.masthead .rolechip{display:none}}
 .userchip{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--line);border-radius:22px;padding:6px 8px 6px 13px;font-size:12.5px;color:var(--muted)}
 .userchip b{color:#f6e6bf}
 .userchip .av{width:28px;height:28px;border-radius:50%;background:var(--grad-gold);color:#1a1206;display:grid;place-items:center;font-weight:800;font-size:12px}
@@ -333,7 +346,7 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 .topclock b{color:#f6e6bf;font-size:14.5px;letter-spacing:.8px;font-weight:800}
 .topclock span{color:var(--muted);font-size:10.5px;letter-spacing:.2px}
 @media(max-width:760px){.topclock{display:none}}
-@media print{.sidebar,.topbar,.ba-toolbar,.lockbanner,.noprint,#toast{display:none!important}.app{display:block}.main{padding:0}body{background:#fff}.paper{box-shadow:none;margin:0;max-width:none;border-radius:0}}
+@media print{.sidebar,.topbar,.masthead,.pagehead,.ba-toolbar,.lockbanner,.noprint,#toast{display:none!important}.app{display:block}.main{padding:0}body{background:#fff}.paper{box-shadow:none;margin:0;max-width:none;border-radius:0}}
 </style>
 </head>
 <body>
@@ -403,30 +416,26 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
   </aside>
 
   <main class="main">
-    <div class="topbar">
+    <header class="masthead glass">
       <button class="hamb" onclick="App.toggleSidebar()">☰</button>
-      <div>
-        <h1 id="pageTitle">Overview</h1>
-        <div class="crumb" id="pageCrumb">ECommerce Operation Monitoring &amp; Controlling</div>
+      <img class="mast-logo" src="League.png" alt="LEAGUE">
+      <div class="mast-brand">
+        <div class="mast-title">ECommerce Operation Monitoring &amp; Controlling</div>
+        <div class="mast-co"><b>PT. Berca Sportindo</b> &middot; Brand <b>LEAGUE</b> &middot; E-Commerce Operation</div>
       </div>
       <div class="spacer"></div>
       <div class="topclock" id="topClock"><b>--:--:--</b><span>—</span></div>
       <span class="rolechip view" id="roleChip">Viewer</span>
       <div class="userchip"><span class="av" id="userAv">?</span><b id="userName">User</b></div>
       <button class="btn ghost small" onclick="Auth.logout()">Keluar</button>
+    </header>
+    <div class="pagehead">
+      <h1 id="pageTitle">Overview</h1>
+      <div class="crumb" id="pageCrumb">ECommerce Operation Monitoring &amp; Controlling</div>
     </div>
 
     <!-- ============ OVERVIEW ============ -->
     <section data-view="overview">
-      <div class="hero glass">
-        <img class="hero-logo" src="League.png" alt="LEAGUE">
-        <div class="hero-sep"></div>
-        <div class="hero-mid">
-          <div class="hero-title">ECommerce Operation Monitoring &amp; Controlling</div>
-          <div class="hero-co"><b>PT. Berca Sportindo</b> &middot; Brand <b>LEAGUE</b> &middot; E-Commerce Operation</div>
-          <div class="hero-sub" id="heroGreet">Selamat datang.</div>
-        </div>
-      </div>
       <div class="panel glass cloudbar" style="display:flex">
         <span class="dot" id="ovDot"></span>
         <b style="letter-spacing:.3px">Status Cloud</b>
