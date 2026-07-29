@@ -6,10 +6,20 @@
 // ============================================================
 import crypto from 'node:crypto';
 
-const OWNER  = process.env.GITHUB_OWNER;
-const REPO   = process.env.GITHUB_REPO;
-const BRANCH = process.env.GITHUB_BRANCH || 'main';
-const TOKEN  = process.env.GITHUB_TOKEN;
+const clean = v => (v == null ? '' : String(v)).trim();
+const OWNER  = clean(process.env.GITHUB_OWNER);
+const REPO   = clean(process.env.GITHUB_REPO);
+const BRANCH = clean(process.env.GITHUB_BRANCH) || 'main';
+const TOKEN  = clean(process.env.GITHUB_TOKEN);
+
+// Info aman untuk diagnostik (tidak membocorkan token)
+export const TOKEN_INFO = {
+  length: TOKEN.length,
+  prefix: TOKEN.slice(0, 8),
+  looksFineGrained: TOKEN.startsWith('github_pat_'),
+  looksClassic: TOKEN.startsWith('ghp_'),
+  hadWhitespace: clean(process.env.GITHUB_TOKEN).length !== String(process.env.GITHUB_TOKEN || '').length
+};
 
 export const ENV = {
   ADMIN_PIN: process.env.ADMIN_PIN || '10111976',
