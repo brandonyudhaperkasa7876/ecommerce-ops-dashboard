@@ -44,7 +44,14 @@ a{color:var(--gold2);text-decoration:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(87,211,138,.45)}70%{box-shadow:0 0 0 8px rgba(87,211,138,0)}100%{box-shadow:0 0 0 0 rgba(87,211,138,0)}}
 @keyframes shine{0%,60%{transform:translateX(-120%)}80%,100%{transform:translateX(120%)}}
 .app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
-.sidebar{position:sticky;top:86px;height:calc(100vh - 86px);overflow:auto;padding:20px 16px;background:linear-gradient(180deg,rgba(10,14,22,.92),rgba(8,11,18,.92));border-right:1px solid var(--line);backdrop-filter:blur(10px)}
+.sidebar{position:sticky;top:0;height:100vh;overflow:auto;padding:0 16px 20px;background:linear-gradient(180deg,rgba(10,14,22,.94),rgba(8,11,18,.94));border-right:1px solid var(--line);backdrop-filter:blur(10px)}
+/* brand di atas sidebar (sticky, elegan) */
+.sbrand{position:sticky;top:0;z-index:3;margin:0 -16px 12px;padding:20px 16px 16px;text-align:center;background:linear-gradient(180deg,#0b1017,rgba(11,16,23,.96));border-bottom:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.sbrand-logo{height:66px;width:auto;display:block;margin:0 auto 12px;background:#fff;border-radius:15px;padding:9px 13px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.sbrand-title{font-family:var(--serif);font-size:17.5px;font-weight:700;line-height:1.22;letter-spacing:.2px;background:var(--grad-head);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sbrand-co{color:var(--text2);font-size:11px;margin-top:9px;letter-spacing:.2px}
+.sbrand-co b{color:var(--gold2);font-weight:700}
+.sbrand-co2{color:var(--muted);font-size:11px;margin-top:3px;letter-spacing:1.2px;text-transform:uppercase}
 .main{min-width:0;padding:24px 30px 70px}
 @media(max-width:960px){.app{grid-template-columns:1fr}.sidebar{position:fixed;z-index:100;top:0;height:100vh;width:var(--sidebar-w);transform:translateX(-102%);transition:transform .25s ease}.sidebar.open{transform:none}.main{padding:18px 16px 60px}}
 .brand{display:flex;align-items:center;gap:13px;margin-bottom:24px;padding:0 6px}
@@ -389,21 +396,14 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 
 <!-- =========================== APP =========================== -->
 <div id="appView" class="hidden">
-  <header class="masthead glass" id="masthead">
-    <button class="hamb" onclick="App.toggleSidebar()">☰</button>
-    <img class="mast-logo" src="League.png" alt="LEAGUE">
-    <div class="mast-brand">
-      <div class="mast-title">ECommerce Operation Monitoring &amp; Controlling</div>
-      <div class="mast-co"><b>PT. Berca Sportindo</b> &middot; Brand <b>LEAGUE</b> &middot; E-Commerce Operation</div>
-    </div>
-    <div class="spacer"></div>
-    <div class="topclock" id="topClock"><b>--:--:--</b><span>—</span></div>
-    <span class="rolechip view" id="roleChip">Viewer</span>
-    <div class="userchip"><span class="av" id="userAv">?</span><b id="userName">User</b></div>
-    <button class="btn ghost small" onclick="Auth.logout()">Keluar</button>
-  </header>
   <div class="app">
   <aside class="sidebar" id="sidebar">
+    <div class="sbrand">
+      <img class="sbrand-logo" src="League.png" alt="LEAGUE">
+      <div class="sbrand-title">ECommerce Operation Monitoring &amp; Controlling</div>
+      <div class="sbrand-co"><b>PT. Berca Sportindo</b> &middot; Brand <b>LEAGUE</b></div>
+      <div class="sbrand-co2">E-Commerce Operation</div>
+    </div>
     <div class="navsec">Ringkasan</div>
     <nav class="nav">
       <a data-nav="overview" class="on" onclick="App.go('overview')"><span class="ic">◆</span> Overview</a>
@@ -426,6 +426,14 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
   </aside>
 
   <main class="main">
+    <div class="topbar">
+      <button class="hamb" onclick="App.toggleSidebar()">☰</button>
+      <div class="spacer"></div>
+      <div class="topclock" id="topClock"><b>--:--:--</b><span>—</span></div>
+      <span class="rolechip view" id="roleChip">Viewer</span>
+      <div class="userchip"><span class="av" id="userAv">?</span><b id="userName">User</b></div>
+      <button class="btn ghost small" onclick="Auth.logout()">Keluar</button>
+    </div>
     <div class="pagehead">
       <h1 id="pageTitle">Overview</h1>
       <div class="crumb" id="pageCrumb">ECommerce Operation Monitoring &amp; Controlling</div>
