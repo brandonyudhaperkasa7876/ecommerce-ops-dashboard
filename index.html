@@ -318,21 +318,16 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 .auth-logo-img{height:56px;width:auto;display:block;margin:0 auto 12px;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .kop-logo{height:74px;width:auto;display:block}
 /* ---- hero (halaman utama) ---- */
-.hero{display:flex;align-items:center;gap:24px;padding:22px 26px;margin-bottom:18px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;right:-50px;top:-70px;width:280px;height:280px;background:radial-gradient(circle,rgba(217,181,106,.15),transparent 70%);pointer-events:none}
-.hero-logo{height:70px;width:auto;display:block;background:#fff;border-radius:15px;padding:9px 14px;box-shadow:0 12px 34px rgba(0,0,0,.4);flex:0 0 auto}
+.hero{display:flex;align-items:center;gap:28px;padding:30px 34px;margin-bottom:18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(217,181,106,.14),transparent 70%);pointer-events:none}
+.hero-logo{height:104px;width:auto;display:block;background:#fff;border-radius:18px;padding:12px 16px;box-shadow:0 14px 40px rgba(0,0,0,.42);flex:0 0 auto}
+.hero-sep{width:1px;align-self:stretch;margin:6px 0;background:linear-gradient(180deg,transparent,var(--line),transparent);flex:0 0 auto}
 .hero-mid{flex:1;min-width:0}
-.hero-brand{font-family:var(--serif);font-size:32px;font-weight:700;letter-spacing:1px;line-height:1;background:var(--grad-head);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
-.hero-brand .tw{font-family:var(--font);font-size:10.5px;letter-spacing:3px;color:var(--gold);font-weight:800;margin-left:10px;vertical-align:super}
-.hero-co{color:var(--text2);font-size:13px;margin-top:7px;letter-spacing:.4px}
-.hero-co b{color:var(--gold2)}
-.hero-sub{color:var(--muted);font-size:11.5px;margin-top:2px;letter-spacing:.3px}
-.hero-clock{text-align:right;min-width:170px;padding-left:20px;border-left:1px solid var(--line2)}
-.hero-clock .hc-time{font-variant-numeric:tabular-nums;font-size:32px;font-weight:800;letter-spacing:1.5px;color:#f6e6bf;line-height:1}
-.hero-clock .hc-time small{font-size:15px;color:var(--gold3);margin-left:3px;font-weight:700}
-.hero-clock .hc-date{color:var(--muted);font-size:12.5px;margin-top:7px}
-.hero-clock .hc-day{color:var(--teal);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-@media(max-width:760px){.hero{flex-wrap:wrap;gap:16px}.hero-clock{text-align:left;min-width:0;padding-left:0;border-left:0}.hero-brand{font-size:26px}}
+.hero-title{font-family:var(--serif);font-size:30px;font-weight:700;letter-spacing:.5px;line-height:1.1;background:var(--grad-head);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-co{color:var(--text2);font-size:14px;margin-top:10px;letter-spacing:.3px}
+.hero-co b{color:var(--gold2);font-weight:700}
+.hero-sub{color:var(--teal);font-size:12.5px;margin-top:8px;letter-spacing:.3px;font-weight:600}
+@media(max-width:760px){.hero{flex-wrap:wrap;gap:18px;padding:22px}.hero-sep{display:none}.hero-logo{height:80px}.hero-title{font-size:23px}}
 /* ---- topbar live clock ---- */
 .topclock{display:flex;flex-direction:column;align-items:flex-end;font-variant-numeric:tabular-nums;line-height:1.15;padding:0 4px}
 .topclock b{color:#f6e6bf;font-size:14.5px;letter-spacing:.8px;font-weight:800}
@@ -423,6 +418,15 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 
     <!-- ============ OVERVIEW ============ -->
     <section data-view="overview">
+      <div class="hero glass">
+        <img class="hero-logo" src="League.png" alt="LEAGUE">
+        <div class="hero-sep"></div>
+        <div class="hero-mid">
+          <div class="hero-title">ECommerce Operation Monitoring &amp; Controlling</div>
+          <div class="hero-co"><b>PT. Berca Sportindo</b> &middot; Brand <b>LEAGUE</b> &middot; E-Commerce Operation</div>
+          <div class="hero-sub" id="heroGreet">Selamat datang.</div>
+        </div>
+      </div>
       <div class="panel glass cloudbar" style="display:flex">
         <span class="dot" id="ovDot"></span>
         <b style="letter-spacing:.3px">Status Cloud</b>
