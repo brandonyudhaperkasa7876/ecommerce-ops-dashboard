@@ -1,0 +1,12 @@
+{
+  "name": "ecommerce-ops-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ECommerce Operation Monitoring & Controlling — unified dashboard (Monitoring JUBELIO, Sales Database, Berita Acara) with GitHub + Vercel shared storage.",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  }
+}
