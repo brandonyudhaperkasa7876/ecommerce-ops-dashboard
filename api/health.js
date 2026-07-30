@@ -3,7 +3,7 @@
 //  Liveness + DIAGNOSTIK konfigurasi (aman: hanya boolean/status,
 //  tidak pernah menampilkan nilai token/password).
 // ============================================================
-import { readJSON, writeJSON, ENV, TOKEN_INFO, ghRepoInfo } from './_lib.js';
+import { readJSON, writeJSON, ENV, TOKEN_INFO, ghRepoInfo, ghWhoAmI, CFG_VALUES } from './_lib.js';
 
 export default async function handler(req, res){
   const diag = {
@@ -19,8 +19,11 @@ export default async function handler(req, res){
       SEED_ADMIN_PASSWORD: process.env.SEED_ADMIN_PASSWORD ? 'set' : 'MISSING',
       SEED_ADMIN_PIN: process.env.SEED_ADMIN_PIN ? 'set' : 'MISSING'
     },
-    tokenInfo: TOKEN_INFO
+    tokenInfo: TOKEN_INFO,
+    config: CFG_VALUES
   };
+  // Identitas token (akun pemilik) — untuk memastikan token dari akun yang benar
+  try { diag.whoami = await ghWhoAmI(); } catch (e) { diag.whoami = 'ERROR: ' + e.message; }
   // Uji koneksi GitHub + status akun
   try {
     const { data } = await readJSON('data/users.json', []);

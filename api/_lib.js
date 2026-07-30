@@ -52,6 +52,16 @@ export async function ghGetFile(path){
   return { sha: j.sha, contentB64: (j.content || '').replace(/\n/g,'') };
 }
 
+// ---- nilai konfigurasi (bukan rahasia) untuk cek salah-ketik ----
+export const CFG_VALUES = { owner: OWNER, repo: REPO, branch: BRANCH, expectedPath: `${OWNER}/${REPO}` };
+
+// ---- identitas token: akun pemilik token ----
+export async function ghWhoAmI(){
+  const r = await fetch(`${GH}/user`, { headers: ghHeaders() });
+  let j = {}; try{ j = await r.json(); }catch(e){}
+  return { status: r.status, login: j.login || null };
+}
+
 // ---- diagnostik: info repo + izin token (permissions.push = akses tulis) ----
 export async function ghRepoInfo(){
   const url = `${GH}/repos/${OWNER}/${REPO}`;
