@@ -5,6 +5,7 @@
 //  Data disimpan di data/<set>.json pada repo GitHub.
 // ============================================================
 import { readJSON, writeJSON, readBody, ok, fail, ENV } from './_lib.js';
+import zlib from 'node:zlib';
 
 const ALLOWED = ['monitoring', 'sales'];
 const pathFor = set => 'data/' + set + '.json';
@@ -24,7 +25,19 @@ export default async function handler(req, res){
       const set = String(body.set||'').trim();
       if(!ALLOWED.includes(set)) return fail(res, 'Dataset tidak dikenal.');
       if(String(body.pin||'') !== ENV.ADMIN_PIN) return fail(res, 'PIN publish salah (khusus Super Admin).', 401);
-      const rec = { payload: body.payload ?? null, updatedAt: new Date().toISOString() };
+      let rec;
+      if(body.gz){
+        // payload dikompres gzip (base64) oleh klien — dekompres di sini
+        try{
+          const buf = Buffer.from(String(body.gz), 'base64');
+          const json = zlib.gunzipSync(buf).toString('utf8');
+          rec = JSON.parse(json);
+        }catch(e){ return fail(res, 'Gagal dekompres payload: ' + e.message); }
+      } else {
+        rec = { payload: body.payload ?? null };
+      }
+      if(!rec || typeof rec !== 'object') rec = { payload: null };
+      rec.updatedAt = new Date().toISOString();
       await writeJSON(pathFor(set), rec, 'publish dataset ' + set);
       return ok(res, { set, updatedAt: rec.updatedAt });
     }
