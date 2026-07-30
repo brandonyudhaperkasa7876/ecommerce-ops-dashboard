@@ -52,6 +52,21 @@ export async function ghGetFile(path){
   return { sha: j.sha, contentB64: (j.content || '').replace(/\n/g,'') };
 }
 
+// ---- diagnostik: info repo + izin token (permissions.push = akses tulis) ----
+export async function ghRepoInfo(){
+  const url = `${GH}/repos/${OWNER}/${REPO}`;
+  const r = await fetch(url, { headers: ghHeaders() });
+  let j = {}; try{ j = await r.json(); }catch(e){}
+  return {
+    status: r.status,
+    full_name: j.full_name || null,
+    default_branch: j.default_branch || null,
+    private: j.private,
+    permissions: j.permissions || null,
+    owner_type: j.owner ? j.owner.type : null
+  };
+}
+
 // ---- low-level file put (create or update) ----
 export async function ghPutFile(path, contentB64, message, sha){
   assertConfig();

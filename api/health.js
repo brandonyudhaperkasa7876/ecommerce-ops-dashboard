@@ -3,7 +3,7 @@
 //  Liveness + DIAGNOSTIK konfigurasi (aman: hanya boolean/status,
 //  tidak pernah menampilkan nilai token/password).
 // ============================================================
-import { readJSON, writeJSON, ENV, TOKEN_INFO } from './_lib.js';
+import { readJSON, writeJSON, ENV, TOKEN_INFO, ghRepoInfo } from './_lib.js';
 
 export default async function handler(req, res){
   const diag = {
@@ -33,6 +33,16 @@ export default async function handler(req, res){
     diag.github = 'ERROR: ' + e.message;
     diag.hint = 'Cek GITHUB_TOKEN (izin Contents: Read and write), GITHUB_OWNER, GITHUB_REPO, dan pastikan file data/users.json ada di repo.';
   }
+  // Info repo + izin token (permissions.push harus true untuk bisa menulis)
+  try {
+    diag.repoInfo = await ghRepoInfo();
+    if (diag.repoInfo && diag.repoInfo.permissions) {
+      diag.canPush = diag.repoInfo.permissions.push === true;
+      diag.pushHint = diag.canPush
+        ? 'Token punya akses tulis (push=true).'
+        : 'Token TIDAK punya akses tulis (push=false) → inilah penyebab 404. Perbaiki izin/token di Vercel.';
+    }
+  } catch (e) { diag.repoInfo = 'ERROR: ' + e.message; }
   // Uji tulis: buka /api/health?writetest=1
   if (req.query && (req.query.writetest === '1' || req.query.writetest === 'true')) {
     try {
