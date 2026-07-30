@@ -9,6 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -853,7 +854,10 @@ const Cloud = (function(){
   async function _fetch(path, opts){
     const res = await fetch(base()+path, opts);
     const txt = await res.text(); let j;
-    try{ j=JSON.parse(txt); }catch(e){ throw new Error('Respons server tidak valid (pastikan API Vercel aktif).'); }
+    try{ j=JSON.parse(txt); }catch(e){
+      if(res.status===413) throw new Error('Data terlalu besar untuk di-publish (HTTP 413, batas Vercel ±4.5 MB). Coba publish dengan data lebih ringkas.');
+      throw new Error('Respons server tidak valid (HTTP '+res.status+'). '+(txt?txt.slice(0,140):'pastikan API Vercel aktif.'));
+    }
     if(!j.ok) throw new Error(j.error||'Permintaan gagal.'); return j;
   }
   const post = (path,body)=>_fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
@@ -917,11 +921,26 @@ const Cloud = (function(){
       return mode;
     },
     async getData(set){
-      if(mode==='cloud'){ try{ return await get('/api/data?set='+encodeURIComponent(set)); }catch(e){ mode='local'; } }
+      if(mode==='cloud'){
+        // Baca file statis langsung (tanpa batas 4.5 MB fungsi serverless)
+        try{
+          const res=await fetch(base()+'/data/'+encodeURIComponent(set)+'.json?t='+Date.now(),{cache:'no-store'});
+          if(res.ok){ const d=await res.json()||{}; return {ok:true,set,payload:(d.payload!==undefined?d.payload:null),updatedAt:(d.updatedAt!==undefined?d.updatedAt:null)}; }
+        }catch(e){}
+        try{ return await get('/api/data?set='+encodeURIComponent(set)); }catch(e){ mode='local'; }
+      }
       return LS.getData(set);
     },
     async putData(set,payload,pin){
-      if(mode==='cloud') return await post('/api/data',{set,payload,pin});
+      if(mode==='cloud'){
+        const json=JSON.stringify({payload,updatedAt:new Date().toISOString()});
+        if(window.pako){
+          const gz=window.pako.gzip(json);
+          let s='';const CH=0x8000;for(let i=0;i<gz.length;i+=CH)s+=String.fromCharCode.apply(null,gz.subarray(i,i+CH));
+          return await post('/api/data',{set,pin,gz:btoa(s)});
+        }
+        return await post('/api/data',{set,pin,payload});
+      }
       return LS.putData(set,payload);
     },
     async auth(action,p){
@@ -1258,7 +1277,7 @@ const Monitoring=(function(){
       base.forEach(b=>{delete b._name;delete b._sku;});
       rows=base;M.loaded=true;
       setOv('Mem-publish ke Cloud (GitHub)…');await wait(20);
-      const rec=await Cloud.putData('monitoring',{cols:COLS.map(c=>c.k),rows},pin);
+      const rec=await Cloud.putData('monitoring',{cols:COLS.map(c=>c.k),rows:rows.map(r=>COLS.map(c=>r[c.k]))},pin);
       buildFilters();applyFilters();el('mdash').classList.remove('hidden');el('mempty').classList.add('hidden');
       el('mstatus').innerHTML='✓ Selesai: <b>'+rows.length+'</b> baris digabung · TI/TO fuzzy: <b>'+fuzzyCount+'</b> · dipublish ke Cloud.';
       toast('Data Monitoring dipublish ✓','ok');
