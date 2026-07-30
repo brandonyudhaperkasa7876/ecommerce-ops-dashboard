@@ -3,7 +3,7 @@
 //  Liveness + DIAGNOSTIK konfigurasi (aman: hanya boolean/status,
 //  tidak pernah menampilkan nilai token/password).
 // ============================================================
-import { readJSON, ENV, TOKEN_INFO } from './_lib.js';
+import { readJSON, writeJSON, ENV, TOKEN_INFO } from './_lib.js';
 
 export default async function handler(req, res){
   const diag = {
@@ -32,6 +32,16 @@ export default async function handler(req, res){
   } catch (e) {
     diag.github = 'ERROR: ' + e.message;
     diag.hint = 'Cek GITHUB_TOKEN (izin Contents: Read and write), GITHUB_OWNER, GITHUB_REPO, dan pastikan file data/users.json ada di repo.';
+  }
+  // Uji tulis: buka /api/health?writetest=1
+  if (req.query && (req.query.writetest === '1' || req.query.writetest === 'true')) {
+    try {
+      await writeJSON('data/_writetest.json', { ok: true, ts: Date.now() }, 'write test');
+      diag.writeTest = 'OK — token runtime BISA menulis ke repo.';
+    } catch (e) {
+      diag.writeTest = 'GAGAL — ' + e.message;
+      diag.writeHint = 'Token yang dipakai Vercel tidak punya izin tulis. Pastikan GITHUB_TOKEN di Vercel = token dengan Contents: Read and write, lalu Redeploy.';
+    }
   }
   res.setHeader('Content-Type', 'application/json');
   res.status(200).end(JSON.stringify(diag, null, 2));
