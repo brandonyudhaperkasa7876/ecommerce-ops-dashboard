@@ -7,5 +7,13 @@
     "pin": "scrypt$b78a00504a8f271387a2850a35bb2b70$756330b61908e82ffaab20430fb2785f222a0abea80f0e8d706860ef58c14edb",
     "createdAt": "2026-07-31T08:23:53.775Z",
     "seeded": true
+  },
+  {
+    "email": "fatonythoni@gmail.com",
+    "name": "Fatoni",
+    "role": "viewer",
+    "pass": "scrypt$c89a91857340c4db14fa77c21e0d10ba$cdf432c7f48a45f3da772fca2bf8ef7db2fbd322de9a2c8175b13db34fe3238f",
+    "pin": "scrypt$309647daa0de8fb6af1dafaed216d7f1$cd504cb7b6db83e73635afa7318beaf87acc2651a2e518331e0abfe40efe7e14",
+    "createdAt": "2026-07-31T08:23:54.633Z"
   }
 ]
