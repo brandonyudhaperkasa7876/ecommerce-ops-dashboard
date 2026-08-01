@@ -31,5 +31,13 @@
     "pass": "scrypt$6bda9fbb666676917bde74514472a2f6$109c32878e6f666aa7be2c1a60869787d42650f39afe6598d6f127df0dbb69cf",
     "pin": "scrypt$f65a17fb83e8709635c644511e55b9dc$54567121f7193f5058440a7ae7f54f609e7825965670b40adba7751a5708505e",
     "createdAt": "2026-08-01T10:17:45.083Z"
+  },
+  {
+    "email": "mrifkisaputra892004@gmail.com",
+    "name": "MUHAMMAD RIFKY SAPUTRA",
+    "role": "viewer",
+    "pass": "scrypt$6a9580f344fda6a4f7c66ae7f040df39$f408a7b94c5ab36c808a8d83afc4a1ed03cc1db665419082c19d36319562ee08",
+    "pin": "scrypt$7b1630e731da2e3df25d8995f33a56d5$e3426e9ad37b4f3040952cb364214f66d7e08832fbc90b22f43ac67d2ed23be4",
+    "createdAt": "2026-08-01T10:35:31.839Z"
   }
 ]
