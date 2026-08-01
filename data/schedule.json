@@ -32,14 +32,7 @@
     },
     "tasks": {
       "brandonyudhaperkasa7876@gmail.com": {},
-      "mrifkisaputra892004@gmail.com": {
-        "2026-08-03": {
-          "0": {
-            "task": "p",
-            "status": ""
-          }
-        }
-      }
+      "mrifkisaputra892004@gmail.com": {}
     },
     "locks": {
       "brandonyudhaperkasa7876@gmail.com": {
@@ -47,5 +40,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-01T10:46:38.574Z"
+  "updatedAt": "2026-08-01T10:46:39.651Z"
 }
