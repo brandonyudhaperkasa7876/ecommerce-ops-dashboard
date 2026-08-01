@@ -71,7 +71,7 @@ export default async function handler(req, res){
       if(!/^\d{4,8}$/.test(pin)) return fail(res, 'PIN harus 4–8 digit.');
       if(users.find(u => u.email === email)) return fail(res, 'Email sudah terdaftar.');
       const isFirst = users.length === 0;
-      const role = (ENV.SUPER_ADMIN_EMAIL && email === ENV.SUPER_ADMIN_EMAIL) || isFirst ? 'admin' : 'viewer';
+      const role = ((ENV.SUPER_ADMIN_EMAIL && email === ENV.SUPER_ADMIN_EMAIL) || isFirst) ? 'owner' : 'viewer';
       const user = { email, name, role, pass: hashSecret(password), pin: hashSecret(pin), createdAt: new Date().toISOString() };
       users.push(user);
       await writeJSON(USERS, users, 'register ' + email);
