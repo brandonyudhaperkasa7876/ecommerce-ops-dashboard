@@ -2,7 +2,7 @@
   {
     "email": "brandonyudhaperkasa@bercaretail.com",
     "name": "Brandon Yudha Perkasa",
-    "role": "owner",
+    "role": "c",
     "pass": "scrypt$340fadd573152a4f1296eb0ebc067fe8$859552f94e8521de0bb4c6a6d362ab4c23436eafe6f1fd1231444a4b3a6ae3ef",
     "pin": "scrypt$b78a00504a8f271387a2850a35bb2b70$756330b61908e82ffaab20430fb2785f222a0abea80f0e8d706860ef58c14edb",
     "createdAt": "2026-07-31T08:23:53.775Z",
@@ -19,7 +19,7 @@
   {
     "email": "brandonyudhaperkasa7876@gmail.com",
     "name": "Brandon Yudha Perkasa",
-    "role": "admin",
+    "role": "owner",
     "pass": "scrypt$7c7eb7831eae1de227af070d59e92554$b8772ecafc5307890a0ddd8f7584a0711f0bf141128ba8feb4afaecc74c98deb",
     "pin": "scrypt$a52814dd9cdcc032b01878d675062605$f098fe3d936e1cf6ef315cdfb792607818852f9e29a5c3e5db8a902580e3532d",
     "createdAt": "2026-08-01T04:22:58.592Z"
