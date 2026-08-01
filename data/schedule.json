@@ -61,7 +61,7 @@
           },
           "16": {
             "task": "upload produck bundle ke shopify",
-            "status": ""
+            "status": "berlangsung"
           },
           "17": {
             "task": "upload produck bundle ke shopify",
@@ -76,5 +76,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-01T10:50:33.587Z"
+  "updatedAt": "2026-08-01T10:50:36.058Z"
 }
