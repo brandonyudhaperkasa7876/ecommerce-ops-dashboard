@@ -35,11 +35,13 @@ ecommerce-ops-dashboard/
 │   ├── health.js
 │   ├── auth.js
 │   ├── data.js
-│   └── berita.js
+│   ├── berita.js
+│   └── schedule.js
 └── data/
     ├── users.json
     ├── monitoring.json
     ├── sales.json
+    ├── schedule.json
     └── berita.json
 ```
 
@@ -57,9 +59,11 @@ ecommerce-ops-dashboard/
 | `auth.js`                | `api/auth.js`           |
 | `data.js`                | `api/data.js`           |
 | `berita.js`              | `api/berita.js`         |
+| `schedule.js`            | `api/schedule.js`       |
 | `data.users.json`        | `data/users.json`       |
 | `data.monitoring.json`   | `data/monitoring.json`  |
 | `data.sales.json`        | `data/sales.json`       |
+| `data.schedule.json`     | `data/schedule.json`    |
 | `data.berita.json`       | `data/berita.json`      |
 | `env.example.txt`        | *(referensi saja — jangan di‑push)* |
 

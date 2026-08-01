@@ -364,6 +364,112 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
 .topclock b{color:#f6e6bf;font-size:14.5px;letter-spacing:.8px;font-weight:800}
 .topclock span{color:var(--muted);font-size:10.5px;letter-spacing:.2px}
 @media(max-width:760px){.topclock{display:none}}
+/* ---- Penjadwalan Tim Kerja ---- */
+.weeknav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.weeknav .wlabel{font-weight:800;color:#f6e6bf;font-size:14px;min-width:190px;text-align:center;letter-spacing:.3px}
+.sched-legend{display:flex;gap:9px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--muted)}
+.shift{display:inline-flex;align-items:center;justify-content:center;min-width:46px;padding:5px 9px;border-radius:9px;font-size:11px;font-weight:800;letter-spacing:.3px;border:1px solid;cursor:default}
+.shift.sh-p{color:#8fe6b4;border-color:rgba(87,211,138,.45);background:rgba(87,211,138,.1)}
+.shift.sh-s{color:#f4d99a;border-color:rgba(217,181,106,.5);background:rgba(217,181,106,.12)}
+.shift.sh-m{color:#bca6f7;border-color:rgba(150,120,240,.5);background:rgba(150,120,240,.14)}
+.shift.sh-l{color:#9aa6b6;border-color:var(--line2);background:rgba(255,255,255,.03)}
+.shift.sh-c{color:#f0c375;border-color:rgba(233,178,75,.5);background:rgba(233,178,75,.1)}
+.shift.sh-x{color:#48586c;border:1px dashed var(--line);background:transparent}
+table.sched{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.sched th,table.sched td{padding:9px 10px;white-space:nowrap;text-align:center}
+table.sched thead th{position:sticky;top:0;background:#0e1620;color:#e7dcc2;z-index:3;border-bottom:1px solid var(--line)}
+table.sched th.mcol,table.sched td.mcol{position:sticky;left:0;z-index:2;text-align:left;background:#0f1622;border-right:1px solid var(--line2);min-width:190px}
+table.sched thead th.mcol{z-index:4;background:#0e1620}
+table.sched td.today,table.sched th.today{background:rgba(217,181,106,.08)}
+table.sched .mname{font-weight:700;color:#f2ede1}
+table.sched .mrole{font-size:10.5px;color:var(--muted)}
+table.sched tbody tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+table.sched tbody tr:hover td{background:rgba(217,181,106,.05)}
+table.sched tbody tr:hover td.mcol{background:#12202f}
+table.sched td.cell.editable .shift{cursor:pointer;transition:.12s}
+table.sched td.cell.editable .shift:hover{transform:translateY(-1px);filter:brightness(1.18)}
+table.sched td.hrs{font-variant-numeric:tabular-nums;color:var(--gold2);font-weight:800}
+table.sched tfoot td{position:sticky;bottom:0;background:linear-gradient(0deg,#12202f,#0e1620);color:#cfe3ff;font-weight:700;border-top:2px solid var(--gold);font-size:11px;z-index:2}
+table.sched tfoot td.mcol{background:#12202f;color:#f6e6bf}
+.cov{display:inline-flex;gap:5px;flex-wrap:wrap;justify-content:center;align-items:center}
+.rowdel{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:7px;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1;flex:0 0 auto}
+.rowdel:hover{border-color:var(--err);color:#f9a9a4}
+.dayhead .dnum{font-size:15px;font-weight:800;color:#f6e6bf;line-height:1}
+.dayhead .dname{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.dayhead.weekend .dname{color:#f0a4a0}
+.mcol .mwrap{display:flex;align-items:center;gap:9px}
+.mcol .mwrap .av{width:30px;height:30px;border-radius:9px;background:var(--grad-gold);color:#1a1206;display:grid;place-items:center;font-weight:800;font-size:12px;flex:0 0 auto;overflow:hidden}
+.mcol .mwrap .av img{width:100%;height:100%;object-fit:cover}
+.schbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.segbtns{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px}
+.segbtns button{border:0;background:transparent;color:var(--muted);font-weight:700;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+.segbtns button.on{background:var(--grad-gold);color:#1a1206}
+.stat{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.2px}
+.st-belum{color:#9aa6b6;border-color:var(--line2);background:rgba(255,255,255,.03)}
+.st-berlangsung{color:#7fb8ff;border-color:rgba(90,162,255,.45);background:rgba(90,162,255,.12)}
+.st-tertunda{color:#f0c375;border-color:rgba(233,178,75,.45);background:rgba(233,178,75,.1)}
+.st-berkendala{color:#f9a9a4;border-color:rgba(240,113,107,.45);background:rgba(240,113,107,.1)}
+.st-selesai{color:#8fe6b4;border-color:rgba(87,211,138,.45);background:rgba(87,211,138,.1)}
+.cal-month{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:8px}
+.cal-dow{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);text-align:center;padding:2px 0;font-weight:700}
+.cal-cell{min-height:78px;border:1px solid var(--line2);border-radius:11px;padding:8px;cursor:pointer;transition:.14s;background:rgba(255,255,255,.012);position:relative}
+.cal-cell:hover{border-color:var(--gold);transform:translateY(-2px)}
+.cal-cell.out{opacity:.32}
+.cal-cell.today{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(217,181,106,.3)}
+.cal-cell .cd{font-weight:800;font-size:13px;color:#e7dcc2}
+.cal-cell .cbadge{position:absolute;top:8px;right:8px}
+.cal-cell .ctasks{margin-top:8px;font-size:10.5px;color:var(--muted)}
+.cal-cell .cdots{display:flex;gap:3px;margin-top:7px;flex-wrap:wrap}
+.cal-cell .cdot{width:7px;height:7px;border-radius:50%}
+.cal-year{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:8px}
+@media(max-width:1000px){.cal-year{grid-template-columns:repeat(2,1fr)}}
+.ym{border:1px solid var(--line2);border-radius:12px;padding:12px;background:rgba(255,255,255,.012)}
+.ym h5{margin:0 0 9px;font-size:12.5px;color:#f6e6bf;letter-spacing:.4px}
+.ym-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.ym-d{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.05);cursor:pointer;transition:.1s;font-size:0}
+.ym-d:hover{outline:1px solid var(--gold)}
+.profphoto{display:flex;gap:14px;align-items:center;margin:0 0 14px}
+.photobox{width:92px;height:92px;border-radius:14px;border:1px dashed var(--line);background:rgba(9,13,20,.6);display:grid;place-items:center;color:var(--faint);font-size:12px;overflow:hidden;flex:0 0 auto}
+.photobox img{width:100%;height:100%;object-fit:cover}
+.genmembers{max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px;background:rgba(9,13,20,.5)}
+.genmembers label{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px;font-size:12.5px;color:#dbe2ec;cursor:pointer}
+.genmembers label:hover{background:rgba(217,181,106,.08)}
+.genmembers input{accent-color:var(--gold)}
+.modal.daysheet{max-width:860px;width:96vw;text-align:left;padding:20px 22px}
+.ds-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:4px}
+.ds-title{font-family:var(--serif);font-size:20px;font-weight:700;color:#f6e6bf}
+.ds-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.ds-shift{display:flex;align-items:center;gap:7px}
+.ds-shift label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.ds-shift select{background:rgba(9,13,20,.7);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:8px 10px;font-family:inherit}
+.ds-note{font-size:11.5px;color:var(--muted);padding:8px 0 4px}
+.ds-scroll{max-height:56vh;border:1px solid var(--line);border-radius:10px}
+table.dstable{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.dstable th{position:sticky;top:0;background:#0e1620;color:#e7dcc2;padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);z-index:1}
+table.dstable td{padding:6px 8px;border-bottom:1px solid var(--line2);vertical-align:middle}
+table.dstable td.hh{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--gold2);font-weight:700;width:100px}
+table.dstable tr.now td{background:rgba(217,181,106,.07)}
+table.dstable input.tskin{width:100%;background:rgba(9,13,20,.5);border:1px solid transparent;border-radius:7px;padding:7px 9px;color:var(--text);font:inherit}
+table.dstable input.tskin:focus{outline:none;border-color:var(--gold);background:rgba(9,13,20,.85)}
+table.dstable select.stsel{background:rgba(9,13,20,.6);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:11.5px;min-width:140px}
+table.dstable input:disabled,table.dstable select:disabled{opacity:.55;cursor:not-allowed}
+.ds-foot{display:flex;align-items:center;gap:10px;margin-top:12px}
+#dsSaveState.saving{color:var(--warn)}#dsSaveState.saved{color:var(--ok)}
+.memrow{display:flex;align-items:center;gap:10px}
+.memrow .pav{width:34px;height:34px;border-radius:10px;object-fit:cover;background:var(--panel2);border:1px solid var(--line);flex:0 0 auto}
+.memrow .pav.ph{display:grid;place-items:center;color:#1a1206;background:var(--grad-gold);font-weight:800;font-size:13px}
+.rolechipx{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;border:1px solid var(--line);color:var(--gold2);background:rgba(217,181,106,.1);letter-spacing:.3px;white-space:nowrap}
+.rolechipx.none{color:var(--faint);background:transparent}
+.rolesel{background:rgba(9,13,20,.6);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 9px;font-family:inherit;font-size:12px}
+@keyframes glowpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,217,154,0)}50%{box-shadow:0 0 12px 1px rgba(244,217,154,.55)}}
+@keyframes glowtext{0%,100%{text-shadow:0 0 3px rgba(244,217,154,.25)}50%{text-shadow:0 0 12px rgba(244,217,154,.95)}}
+.mine-name{color:#ffe9b0!important;animation:glowtext 1.5s ease-in-out infinite;font-weight:800}
+td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-index:1}
+.cal-cell.mine{animation:glowpulse 2s ease-in-out infinite;border-color:var(--gold)!important}
+.hwarn{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:rgba(240,113,107,.18);color:#f9a9a4;border:1px solid rgba(240,113,107,.55);font-weight:900;font-size:11px;cursor:pointer;animation:glowpulse 1.3s ease-in-out infinite;vertical-align:middle}
+.hok{color:#8fe6b4;font-weight:800;font-size:11px}
+.rolechip.reg{background:rgba(183,140,240,.16);color:#c9aef7;border:1px solid rgba(183,140,240,.4)}
+.rolechip.owner{background:linear-gradient(135deg,rgba(244,217,154,.25),rgba(217,181,106,.15));color:#ffe9b0;border:1px solid var(--gold)}
 @media print{.sidebar,.topbar,.masthead,.pagehead,.ba-toolbar,.lockbanner,.noprint,#toast{display:none!important}.app{display:block}.main{padding:0}body{background:#fff}.paper{box-shadow:none;margin:0;max-width:none;border-radius:0}}
 </style>
 </head>
@@ -439,10 +545,11 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
       <a data-nav="monitoring" onclick="App.go('monitoring')"><span class="ic">◈</span> Monitoring JUBELIO</a>
       <a data-nav="sales" onclick="App.go('sales')"><span class="ic">▤</span> Sales Database</a>
       <a data-nav="berita" onclick="App.go('berita')"><span class="ic">▦</span> Berita Acara</a>
+      <a data-nav="schedule" onclick="App.go('schedule')"><span class="ic">🗂</span> Penjadwalan Tim</a>
     </nav>
     <div class="navsec">Sistem</div>
     <nav class="nav">
-      <a data-nav="users" class="admin-only hidden" onclick="App.go('users')"><span class="ic">👥</span> Kelola User</a>
+      <a data-nav="users" class="super-only hidden" onclick="App.go('users')"><span class="ic">👥</span> Kelola User</a>
       <a data-nav="howto" class="admin-only hidden" onclick="App.go('howto')"><span class="ic">📘</span> How To (Super Admin)</a>
       <a data-nav="settings" onclick="App.go('settings')"><span class="ic">⚙</span> Pengaturan &amp; Cloud</a>
     </nav>
@@ -489,6 +596,20 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
           <div id="ovQuick" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
       </div>
+      <div class="panel glass">
+        <div class="eyebrow">Analisa Penjadwalan Tim</div>
+        <h3>Ringkasan Aktivitas Tim — Hari Ini &amp; Minggu Ini</h3>
+        <div class="cards c4" style="margin:8px 0 4px">
+          <div class="card glass"><div class="lab">Coverage Hari Ini</div><div class="val t" id="ovCov">—</div></div>
+          <div class="card glass"><div class="lab">Tugas Selesai (mgg)</div><div class="val g" id="ovTaskDone">0</div></div>
+          <div class="card glass"><div class="lab">Berlangsung</div><div class="val b" id="ovTaskRun">0</div></div>
+          <div class="card glass"><div class="lab">Berkendala</div><div class="val" id="ovTaskBlock" style="color:var(--err)">0</div></div>
+        </div>
+        <div class="charts" style="grid-template-columns:1.1fr 1fr;margin-top:4px">
+          <div class="chartbox glass"><h4><span class="dotc"></span>Distribusi Hasil Tugas (minggu ini)</h4><div class="chartcanvas"><canvas id="ovTaskChart"></canvas></div></div>
+          <div class="panel glass" style="margin:0"><div class="eyebrow">Shift Hari Ini</div><div id="ovShiftToday" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:210px;overflow:auto"></div></div>
+        </div>
+      </div>
       <div class="note glass">Dashboard ini menggabungkan tiga sistem operasi e-commerce menjadi satu kontrol terpadu. Data upload/download diproses melalui <b>GitHub + Vercel</b> sehingga setiap perangkat &amp; pengguna otomatis melihat versi terbaru yang sama dengan <b>Super Admin</b>.</div>
     </section>
 
@@ -502,7 +623,7 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
         <button class="btn ghost small" onclick="Monitoring.load()">↻ Muat dari Cloud</button>
       </div>
 
-      <div class="panel glass admin-only hidden" id="monUpload">
+      <div class="panel glass super-only hidden" id="monUpload">
         <div class="eyebrow">Update Database (Super Admin)</div>
         <h3>Unggah &amp; Gabungkan Sumber Data</h3>
         <p class="sub">File dari folder Infinity. <b>JUBELIO wajib</b>; lainnya opsional. Diproses lokal di browser, hasil di-<b>publish ke GitHub</b> agar semua pengguna melihat data yang sama. SAP besar — harap tunggu.</p>
@@ -574,7 +695,7 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
         <button class="btn ghost small" onclick="Sales.load()">↻ Muat dari Cloud</button>
       </div>
 
-      <div class="panel glass admin-only hidden" id="salUpload">
+      <div class="panel glass super-only hidden" id="salUpload">
         <div class="eyebrow">Update Database (Super Admin)</div>
         <h3>Gabungkan &amp; Publish</h3>
         <p class="sub"><b>Data Utama wajib</b> (daftar penjualan barang). File tujuan (YTD/Template/MTD) opsional — <b>pivot dipertahankan &amp; auto-refresh</b> saat dibuka di Excel, hasil diurutkan per tanggal lalu di-publish ke GitHub.</p>
@@ -694,6 +815,58 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
           <div class="searchbar"><input id="baArchSearch" placeholder="🔍 Cari nomor, perihal, tujuan..." oninput="Berita.renderArchive()"><button class="btn ghost small" onclick="Berita.loadArchive()">🔄 Muat ulang</button></div>
           <div id="baArchList"><div class="empty">Memuat…</div></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ PENJADWALAN TIM KERJA ============ -->
+    <section data-view="schedule" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="schDot"></span>
+        <b>Penjadwalan &amp; Aktivitas Tim</b>
+        <span class="pill" id="schPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="Schedule.profileMe()">🪪 Profil Saya</button>
+        <button class="btn ghost small" onclick="Schedule.exportAnalysis()">📊 Download Analisa</button>
+        <button class="btn gold small super-only hidden" onclick="Schedule.openGenerate()">✨ Generate Otomatis</button>
+        <button class="btn ghost small" onclick="Schedule.load()">↻ Muat</button>
+      </div>
+
+      <div class="panel glass">
+        <div class="schbar">
+          <div class="segbtns" id="schViews">
+            <button data-sv="harian" onclick="Schedule.setView('harian')">Harian</button>
+            <button data-sv="mingguan" class="on" onclick="Schedule.setView('mingguan')">Mingguan</button>
+            <button data-sv="bulanan" onclick="Schedule.setView('bulanan')">Bulanan</button>
+            <button data-sv="tahunan" onclick="Schedule.setView('tahunan')">Tahunan</button>
+          </div>
+          <div class="weeknav">
+            <button class="btn ghost small" onclick="Schedule.nav(-1)">‹</button>
+            <span class="wlabel" id="schPeriod">—</span>
+            <button class="btn ghost small" onclick="Schedule.nav(1)">›</button>
+            <button class="btn ghost small" onclick="Schedule.today()">Hari ini</button>
+          </div>
+          <span class="spacer" style="flex:1"></span>
+          <div class="fg" id="schMemberWrap" style="display:none"><label>Anggota</label><select id="schMemberSel" onchange="Schedule.onMemberSel()"></select></div>
+        </div>
+        <div class="sched-legend" id="schLegend" style="margin-top:13px"></div>
+      </div>
+
+      <div class="cards c5">
+        <div class="card glass"><div class="lab">Anggota Tim</div><div class="val b" id="schMembers">0</div></div>
+        <div class="card glass"><div class="lab">Shift (periode)</div><div class="val t" id="schFilled">0</div></div>
+        <div class="card glass"><div class="lab">Total Jam Kerja</div><div class="val d" id="schHours">0</div></div>
+        <div class="card glass"><div class="lab">Tugas Selesai</div><div class="val g" id="schDone">0</div></div>
+        <div class="card glass"><div class="lab">Berkendala</div><div class="val" id="schBlocked" style="color:var(--err)">0</div></div>
+      </div>
+
+      <div class="tablewrap glass" id="schWrap"><div id="schScroll" class="scroll" style="max-height:66vh"></div></div>
+      <div class="note glass" id="schEmpty" style="display:none">Belum ada anggota terjadwal. <span class="admin-only hidden">Tetapkan fungsi user pada tabel <b>Manajemen Anggota</b> di bawah, atau minta tiap user melengkapi <b>Profil Saya</b>.</span><span class="view-only">Lengkapi <b>Profil Saya</b> lalu Super Admin menetapkan fungsi Anda.</span></div>
+
+      <div class="panel glass super-only hidden" id="schRolePanel">
+        <div class="eyebrow">Manajemen Anggota</div>
+        <h3>Fungsi &amp; Tugas Utama Pekerjaan</h3>
+        <p class="sub">Tetapkan fungsi tiap pengguna: <b>Admin</b>, <b>Pick Pack</b>, <b>Data Support</b>, atau <b>Supervisor</b>. Setiap anggota melengkapi data dirinya sendiri melalui <b>Profil Saya</b> (foto, NIK, tanggal lahir, jenis kelamin).</p>
+        <div class="scroll" style="max-height:none"><table class="grid" id="schRoleTable"><thead><tr><th>Foto</th><th>Nama</th><th>NIK</th><th>Email</th><th>Fungsi / Tugas</th><th style="text-align:right">Aksi</th></tr></thead><tbody id="schRoleBody"><tr><td colspan="6" style="padding:14px;color:var(--muted)">Memuat…</td></tr></tbody></table></div>
       </div>
     </section>
 
@@ -858,6 +1031,52 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
   <input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••"><div class="err" id="pinErr"></div>
   <div class="row"><button class="btn ghost" onclick="Berita.closePin()">Batal</button><button class="btn gold" id="pinOkBtn" onclick="Berita.submitPin()">Verifikasi</button></div></div></div>
 
+<!-- Lembar kerja harian (24 jam) -->
+<div class="modal-wrap" id="daySheet"><div class="modal daysheet glass">
+  <div class="ds-head">
+    <div style="min-width:0"><div class="ds-title" id="dsTitle">Lembar Kerja Harian</div><div class="ds-sub" id="dsSub">—</div></div>
+    <div class="ds-shift"><label>Shift</label><select id="dsShift" onchange="Schedule.dsShiftChange()"></select></div>
+    <button class="btn ghost small" onclick="Schedule.closeDay()">✕ Tutup</button>
+  </div>
+  <div class="ds-note" id="dsNote"></div>
+  <div class="scroll ds-scroll"><table class="dstable"><thead><tr><th>Jam</th><th>Daftar Pekerjaan / Tugas</th><th>Hasil</th></tr></thead><tbody id="dsSheetBody"></tbody></table></div>
+  <div class="ds-foot"><span id="dsSaveState" class="clip">● Tersimpan otomatis (online)</span><span id="dsLockInfo" class="clip"></span><span class="spacer" style="flex:1"></span><button id="dsLockBtn" class="btn ghost small super-only hidden" onclick="Schedule.toggleLock()">🔒 Approve &amp; Kunci</button><button id="dsSaveBtn" class="btn success small" onclick="Schedule.saveDayNow()">💾 Simpan Sekarang</button></div>
+</div></div>
+
+<!-- Profil karyawan -->
+<div class="modal-wrap" id="profModal"><div class="modal glass" style="max-width:470px;text-align:left">
+  <div style="text-align:center"><div class="ic">🪪</div><h3 id="profTitle" style="margin:8px 0 2px">Profil Karyawan</h3><p style="margin:0 0 14px">Lengkapi data diri untuk penjadwalan &amp; identitas tim.</p></div>
+  <div class="profphoto">
+    <div class="photobox" id="profPhotoBox"><span>Foto</span></div>
+    <div><button class="btn ghost small" type="button" onclick="document.getElementById('profPhotoInput').click()">📷 Unggah Foto Wajah</button><input type="file" id="profPhotoInput" accept="image/*" hidden><div class="clip" style="margin-top:7px;line-height:1.5">Close-up wajah, jelas &amp; terbaik.<br>Otomatis diperkecil &amp; dioptimalkan.</div></div>
+  </div>
+  <div class="field"><label>Nama Lengkap</label><input id="prof_name" placeholder="Nama sesuai identitas"></div>
+  <div class="half"><div class="field"><label>Nomor Induk Karyawan</label><input id="prof_nik" placeholder="NIK"></div><div class="field"><label>Tanggal Lahir</label><input id="prof_dob" type="date"></div></div>
+  <div class="half">
+    <div class="field"><label>Jenis Kelamin</label><select id="prof_gender"><option value="">—</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+    <div class="field super-only hidden"><label>Fungsi (Super Admin)</label><select id="prof_role"><option value="">Belum ditentukan</option><option>Admin</option><option>Pick Pack</option><option>Data Support</option><option>Supervisor</option></select></div>
+  </div>
+  <div class="err" id="profErr"></div>
+  <div class="row"><button class="btn ghost" onclick="Schedule.closeProfile()">Batal</button><button class="btn gold" id="profSaveBtn" onclick="Schedule.saveProfile()">Simpan Profil</button></div>
+</div></div>
+
+<!-- Generate otomatis -->
+<div class="modal-wrap" id="genModal"><div class="modal glass" style="max-width:480px;text-align:left">
+  <div style="text-align:center"><div class="ic">✨</div><h3 style="margin:8px 0 2px">Generate Jadwal Otomatis</h3><p style="margin:0 0 14px">Sistem menyusun shift otomatis; tetap bisa Anda edit manual sesudahnya (gabungan).</p></div>
+  <div class="field"><label>Pola Penjadwalan</label><select id="gen_pattern">
+    <option value="rotasi">Rotasi P → S → M (mingguan · akhir pekan libur)</option>
+    <option value="pagi">Pagi saja (Sen–Jum, akhir pekan libur)</option>
+    <option value="siang">Siang saja (Sen–Jum)</option>
+    <option value="malam">Malam saja (Sen–Jum)</option>
+    <option value="5-2">5 hari kerja - 2 hari libur</option>
+  </select></div>
+  <div class="half"><div class="field"><label>Mulai Tanggal</label><input id="gen_start" type="date"></div><div class="field"><label>Jumlah Hari</label><input id="gen_days" type="number" value="7" min="1" max="366"></div></div>
+  <label class="chk" style="margin-bottom:12px"><input type="checkbox" id="gen_overwrite"> Timpa jadwal yang sudah ada</label>
+  <div class="field"><label>Pilih Anggota (kosong = semua yang berfungsi)</label><div id="gen_members" class="genmembers"></div></div>
+  <div class="err" id="genErr"></div>
+  <div class="row"><button class="btn ghost" onclick="Schedule.closeGenerate()">Batal</button><button class="btn gold" id="genBtn" onclick="Schedule.runGenerate()">✨ Generate</button></div>
+</div></div>
+
 <script>
 /* ============================================================
  *  CONFIG — sesuaikan bila frontend dan API terpisah domain.
@@ -916,7 +1135,7 @@ const Cloud = (function(){
     if(action==='register'){
       if(users.find(u=>u.email===p.email)) throw new Error('Email sudah terdaftar.');
       const isFirst=users.length===0;
-      const role=(window.CONFIG.SUPER_ADMIN_EMAIL && p.email===window.CONFIG.SUPER_ADMIN_EMAIL)||isFirst?'admin':'viewer';
+      const role=(window.CONFIG.SUPER_ADMIN_EMAIL && p.email===window.CONFIG.SUPER_ADMIN_EMAIL)||isFirst?'owner':'viewer';
       const u={email:p.email,name:p.name,password:p.password,pin:p.pin,role};
       users.push(u);LS.saveUsers(users);
       return {ok:true,user:{email:u.email,name:u.name,role:u.role}};
@@ -935,7 +1154,7 @@ const Cloud = (function(){
       const u=users.find(x=>x.email===p.email);
       return {ok:true,exists:!!u,role:u?u.role:null,name:u?u.name:null};
     }
-    const adminOK=pin=>pin===window.CONFIG.ADMIN_PIN||users.some(u=>u.role==='admin'&&u.pin===pin);
+    const adminOK=pin=>pin===window.CONFIG.ADMIN_PIN||users.some(u=>(u.role==='admin'||u.role==='owner')&&u.pin===pin);
     if(action==='resetPassword'){
       const u=users.find(x=>x.email===p.email);
       if(!u) throw new Error('Email tidak terdaftar.');
@@ -950,8 +1169,8 @@ const Cloud = (function(){
     if(action==='setRole'){
       if(!adminOK(p.pin)) throw new Error('PIN admin salah.');
       const u=users.find(x=>x.email===p.email);if(!u) throw new Error('User tidak ditemukan.');
-      const role=p.role==='admin'?'admin':'viewer';
-      if(u.role==='admin'&&role!=='admin'&&users.filter(x=>x.role==='admin').length<=1) throw new Error('Tidak bisa menurunkan Super Admin terakhir.');
+      const role=['owner','admin','regular','viewer'].includes(p.role)?p.role:'viewer';
+      if(u.role==='owner'&&role!=='owner'&&users.filter(x=>x.role==='owner').length<=1) throw new Error('Owner terakhir tidak bisa diturunkan.');
       u.role=role;LS.saveUsers(users);return {ok:true,email:u.email,role};
     }
     if(action==='deleteUser'){
@@ -979,6 +1198,20 @@ const Cloud = (function(){
     if(action==='delete'){ docs=docs.filter(x=>x.id!==p.id); LS.saveBerita(docs); return {ok:true}; }
     if(action==='getAttachment') throw new Error('Lampiran tersimpan inline pada mode lokal.');
     throw new Error('Aksi tidak dikenal.');
+  }
+  function localSched(b){
+    const rec=LS.getData('schedule');const p=(rec&&rec.payload)||{};
+    const s={members:p.members||{},assignments:p.assignments||{},tasks:p.tasks||{},locks:p.locks||{}};
+    const lc2=x=>String(x||'').toLowerCase().trim();const target=lc2(b.target||b.email);
+    if(b.action==='get')return {ok:true,payload:(rec&&rec.payload)||null};
+    if(b.action==='saveProfile'){const pr=b.profile||{};const m=s.members[target]||{email:target,role:''};['name','nik','dob','gender','photo'].forEach(k=>{if(pr[k]!==undefined)m[k]=pr[k];});if(pr.role!==undefined)m.role=pr.role;m.updatedAt=new Date().toISOString();s.members[target]=m;}
+    else if(b.action==='setRole'){const t=lc2(b.target);const m=s.members[t]||{email:t};m.role=b.role||'';m.updatedAt=new Date().toISOString();s.members[t]=m;}
+    else if(b.action==='saveDay'){if(b.shift!==undefined){s.assignments[target]=s.assignments[target]||{};if(!b.shift)delete s.assignments[target][b.date];else s.assignments[target][b.date]=b.shift;}if(b.dayTasks!==undefined){s.tasks[target]=s.tasks[target]||{};const clean={};Object.keys(b.dayTasks||{}).forEach(h=>{const t=b.dayTasks[h]||{};if(t.task||t.status)clean[h]={task:t.task||'',status:t.status||''};});if(Object.keys(clean).length)s.tasks[target][b.date]=clean;else if(s.tasks[target])delete s.tasks[target][b.date];}}
+    else if(b.action==='deleteMember'){const t=lc2(b.target);delete s.members[t];delete s.assignments[t];delete s.tasks[t];}
+    else if(b.action==='setLock'){s.locks[target]=s.locks[target]||{};if(b.locked)s.locks[target][b.date]=true;else delete s.locks[target][b.date];}
+    else if(b.action==='autoGenerate'){const emails=(b.emails||[]).map(lc2);const base=new Date(b.start+'T00:00:00');emails.forEach((em,ei)=>{s.assignments[em]=s.assignments[em]||{};for(let d=0;d<(b.days||7);d++){const dt=new Date(base);dt.setDate(dt.getDate()+d);const iso=dt.toISOString().slice(0,10);const dow=(dt.getDay()+6)%7;if(!b.overwrite&&s.assignments[em][iso])continue;const wk=Math.floor(d/7),cyc=(wk+ei)%3;s.assignments[em][iso]=dow>=5?'L':(b.pattern==='pagi'?'P':b.pattern==='siang'?'S':b.pattern==='malam'?'M':(cyc===0?'P':cyc===1?'S':'M'));}});}
+    LS.putData('schedule',{members:s.members,assignments:s.assignments,tasks:s.tasks,locks:s.locks});
+    return {ok:true,updatedAt:new Date().toISOString()};
   }
   return {
     get mode(){return mode;},
@@ -1018,6 +1251,16 @@ const Cloud = (function(){
     async berita(action,p){
       if(mode==='cloud'){ try{ return await post('/api/berita',Object.assign({action},p)); }catch(e){ if(/tidak ditemukan|dikenal|PIN/i.test(e.message)) throw e; mode='local'; } }
       return localBerita(action,p);
+    },
+    async sched(b){
+      if(mode==='cloud'){
+        try{
+          const json=JSON.stringify(b);
+          if(window.pako && json.length>3000){const gz=window.pako.gzip(json);let str='';const CH=0x8000;for(let i=0;i<gz.length;i+=CH)str+=String.fromCharCode.apply(null,gz.subarray(i,i+CH));return await post('/api/schedule',{gz:btoa(str)});}
+          return await post('/api/schedule',b);
+        }catch(e){ if(/diizinkan|Hanya|admin|dikenal|valid|konflik|dekompres/i.test(e.message)) throw e; mode='local'; }
+      }
+      return localSched(b);
     }
   };
 })();
@@ -1083,6 +1326,7 @@ const VIEWS={
   monitoring:{title:'Monitoring JUBELIO',crumb:'JUBELIO × Infinity (LPH/Transfer) × SAP · 2026+'},
   sales:{title:'Sales Database',crumb:'YTD · Template · Month-to-Date — pivot dipertahankan'},
   berita:{title:'Berita Acara',crumb:'Dokumen resmi internal — arsip cloud'},
+  schedule:{title:'Penjadwalan Tim Kerja',crumb:'Roster shift mingguan — tersinkron cloud'},
   users:{title:'Kelola User',crumb:'Daftar user terdaftar & aktivasi peran'},
   howto:{title:'How To (Super Admin)',crumb:'Panduan update database & sinkronisasi'},
   settings:{title:'Pengaturan & Cloud',crumb:'Konektivitas GitHub + Vercel'}
@@ -1152,25 +1396,38 @@ const Auth={
 
 const App={
   view:'overview', ovChart:null,
-  isAdmin(){return Auth.session&&Auth.session.role==='admin';},
+  role(){return Auth.session?Auth.session.role:'viewer';},
+  isOwner(){return this.role()==='owner';},
+  isSuper(){const r=this.role();return r==='owner'||r==='admin';},
+  isAdmin(){const r=this.role();return r==='owner'||r==='admin'||r==='regular';},
   toggleSidebar(){$('sidebar').classList.toggle('open');},
   applyRole(){
-    const admin=this.isAdmin();
+    const admin=this.isAdmin(),sup=this.isSuper(),owner=this.isOwner();
     document.querySelectorAll('.admin-only').forEach(e=>e.classList.toggle('hidden',!admin));
+    document.querySelectorAll('.super-only').forEach(e=>e.classList.toggle('hidden',!sup));
+    document.querySelectorAll('.owner-only').forEach(e=>e.classList.toggle('hidden',!owner));
     document.querySelectorAll('.view-only').forEach(e=>e.classList.toggle('hidden',admin));
-    $('roleChip').textContent=admin?'Super Admin':'Viewer';
-    $('roleChip').className='rolechip '+(admin?'admin':'view');
+    const r=this.role();
+    const LBL={owner:'Owner',admin:'Super Admin',regular:'Admin',viewer:'Viewer'};
+    const CLS={owner:'owner',admin:'admin',regular:'reg',viewer:'view'};
+    const DESC={
+      owner:'Owner — kontrol tertinggi. Kelola pengguna &amp; peran (termasuk Super Admin), publikasi data, dan seluruh modul.',
+      admin:'Super Admin — kelola pengguna, tetapkan fungsi tim, publikasi data Monitoring/Sales, dan seluruh modul operasi.',
+      regular:'Admin — dapat mengelola konten operasional (Berita Acara, jadwal &amp; tugas), namun tidak mengelola pengguna atau publikasi dataset.',
+      viewer:'Viewer — akses melihat data bersama. Pengisian jadwal &amp; tugas hanya untuk data milik Anda sendiri.'
+    };
+    $('roleChip').textContent=LBL[r]||'Viewer';
+    $('roleChip').className='rolechip '+(CLS[r]||'view');
     const u=Auth.session||{name:'User',email:''};
     $('userName').textContent=u.name;
     $('userAv').textContent=(u.name||'?').trim().charAt(0).toUpperCase();
-    $('ovRoleTitle').textContent=admin?'Super Admin — Kontrol Penuh':'Mode Tampilan (Viewer)';
-    $('ovRoleDesc').innerHTML=admin
-      ?'Anda dapat mengunggah, memproses, dan mem-<b>publish</b> data. Semua pengguna akan otomatis melihat versi terbaru Anda.'
-      :'Anda melihat data bersama yang sama dengan Super Admin. Upload &amp; edit dikunci untuk peran ini.';
+    $('ovRoleTitle').textContent=(LBL[r]||'Viewer')+((r==='owner'||r==='admin')?' — Kontrol Penuh':'');
+    $('ovRoleDesc').innerHTML=DESC[r]||DESC.viewer;
   },
   go(v){
     if(!VIEWS[v])v='overview';
-    if((v==='howto'||v==='users')&&!this.isAdmin())v='overview';
+    if(v==='users'&&!this.isSuper())v='overview';
+    if(v==='howto'&&!this.isAdmin())v='overview';
     this.view=v;
     document.querySelectorAll('section[data-view]').forEach(s=>s.classList.toggle('hidden',s.getAttribute('data-view')!==v));
     document.querySelectorAll('.nav a[data-nav]').forEach(a=>a.classList.toggle('on',a.getAttribute('data-nav')===v));
@@ -1180,6 +1437,7 @@ const App={
     if(v==='overview')this.updateOverview();
     if(v==='datastatus')DataStatus.load();
     if(v==='users')UserAdmin.open();
+    if(v==='schedule')Schedule.load();
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();
@@ -1259,6 +1517,31 @@ const App={
       borderColor:['#f4d99a','#5aa2ff','#38d0c4'],borderWidth:1,borderRadius:8,maxBarThickness:60}]};
     if(this.ovChart){this.ovChart.data=data;this.ovChart.update();}
     else this.ovChart=new Chart($('ovChart'),{type:'bar',data,options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{precision:0}}},maintainAspectRatio:false}});
+    this.updateScheduleAnalytics();
+  },
+  _taskChart:null,
+  async updateScheduleAnalytics(){
+    let rec=null;try{rec=await Cloud.getData('schedule');}catch(e){}
+    const p=(rec&&rec.payload)||{};const members=p.members||{},assignments=p.assignments||{},tasks=p.tasks||{};
+    const emails=Object.keys(members);const pad=n=>(''+n).padStart(2,'0');const now=new Date();
+    const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());const todayIso=iso(now);
+    const mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+    const week=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);week.push(iso(d));}
+    const WORK={P:1,S:1,M:1};
+    let cov=0;emails.forEach(e=>{const k=assignments[e]&&assignments[e][todayIso];if(WORK[k])cov++;});
+    if($('ovCov'))$('ovCov').textContent=cov+' / '+emails.length;
+    const cnt={belum:0,berlangsung:0,tertunda:0,berkendala:0,selesai:0};
+    emails.forEach(e=>{week.forEach(d=>{const dt=(tasks[e]&&tasks[e][d])||{};Object.keys(dt).forEach(h=>{if(cnt[dt[h].status]!=null)cnt[dt[h].status]++;});});});
+    if($('ovTaskDone'))$('ovTaskDone').textContent=cnt.selesai;
+    if($('ovTaskRun'))$('ovTaskRun').textContent=cnt.berlangsung;
+    if($('ovTaskBlock'))$('ovTaskBlock').textContent=cnt.berkendala;
+    const SL={P:'Pagi',S:'Siang',M:'Malam',L:'Libur',C:'Cuti'},SC={P:'sh-p',S:'sh-s',M:'sh-m',L:'sh-l',C:'sh-c'};
+    const box=$('ovShiftToday');
+    if(box){const rows=emails.map(e=>({name:(members[e]&&members[e].name)||e,k:assignments[e]&&assignments[e][todayIso]})).filter(r=>r.k);
+      box.innerHTML=rows.length?rows.slice(0,10).map(r=>'<div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="shift '+(SC[r.k]||'sh-x')+'">'+r.k+'</span> '+esc(r.name)+' <span class="clip">· '+(SL[r.k]||'')+'</span></div>').join(''):'<span class="clip">Belum ada shift terjadwal hari ini.</span>';}
+    const cd={labels:['Selesai','Berlangsung','Tertunda','Berkendala','Belum'],datasets:[{data:[cnt.selesai,cnt.berlangsung,cnt.tertunda,cnt.berkendala,cnt.belum],backgroundColor:['#57d38a','#5aa2ff','#e9b24b','#f0716b','#5c6a7d'],borderColor:'rgba(0,0,0,.25)',borderWidth:2,hoverOffset:6}]};
+    if(this._taskChart){this._taskChart.data=cd;this._taskChart.update();}
+    else if($('ovTaskChart'))this._taskChart=new Chart($('ovTaskChart'),{type:'doughnut',data:cd,options:{cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:10}}},maintainAspectRatio:false}});
   },
   async refreshAll(){
     showOverlay('Menyinkronkan dari Cloud…');
@@ -1842,21 +2125,23 @@ const UserAdmin=(function(){
     try{ const r=await Cloud.auth('listUsers',{pin}); users=r.users||[]; render(); }
     catch(e){ pin=null; $('usrBody').innerHTML='<tr><td colspan="5" style="padding:16px;color:var(--err)">'+esc(e.message)+'</td></tr>'; toast(e.message,'err'); }
   };
+  const RLBL={owner:'Owner',admin:'Super Admin',regular:'Admin',viewer:'Viewer'};
+  const RBADGE={owner:'dup',admin:'dup',regular:'fz',viewer:'dr'};
   function render(){
-    const admins=users.filter(u=>u.role==='admin').length;
-    $('usrTotal').textContent=users.length;$('usrAdmins').textContent=admins;$('usrViewers').textContent=users.length-admins;
+    const supers=users.filter(u=>u.role==='owner'||u.role==='admin').length;
+    $('usrTotal').textContent=users.length;$('usrAdmins').textContent=supers;$('usrViewers').textContent=users.length-supers;
     if(!users.length){$('usrBody').innerHTML='<tr><td colspan="5" style="padding:16px;color:var(--muted)">Belum ada user.</td></tr>';return;}
+    const owner=App.isOwner();
     $('usrBody').innerHTML=users.map(function(u){
-      const isAdmin=u.role==='admin';
-      const badge=isAdmin?'<span class="tag dup">Super Admin</span>':'<span class="tag dr">Reguler</span>';
+      const badge='<span class="tag '+(RBADGE[u.role]||'dr')+'">'+(RLBL[u.role]||'Viewer')+'</span>';
       const when=u.createdAt?new Date(u.createdAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'—';
-      const toRole=isAdmin?'viewer':'admin';
-      const label=isAdmin?'⇩ Jadikan Reguler':'⇧ Jadikan Super Admin';
       const me=(Auth.session&&Auth.session.email===u.email)?' <span class="clip">(Anda)</span>':'';
-      return '<tr><td><b>'+esc(u.name||'—')+'</b>'+me+'</td><td>'+esc(u.email)+'</td><td>'+badge+'</td><td>'+when+'</td>'+
-        '<td style="text-align:right;white-space:nowrap">'+
-        '<button class="mini" onclick="UserAdmin.setRole(\''+esc(u.email)+'\',\''+toRole+'\')">'+label+'</button>'+
-        '<button class="mini del" onclick="UserAdmin.del(\''+esc(u.email)+'\')">Hapus</button></td></tr>';
+      // Owner bisa set semua peran; Super Admin hanya Admin/Viewer & tak bisa mengubah Owner/Super Admin.
+      const opts=['owner','admin','regular','viewer'].map(r=>{const dis=(!owner&&(r==='owner'||r==='admin'))?' disabled':'';return '<option value="'+r+'"'+(u.role===r?' selected':'')+dis+'>'+RLBL[r]+'</option>';}).join('');
+      const lockRow=(!owner&&(u.role==='owner'||u.role==='admin'));
+      const sel=lockRow?'<span class="clip">terkunci</span>':'<select class="rolesel" onchange="UserAdmin.setRole(\''+esc(u.email)+'\',this.value)">'+opts+'</select>';
+      return '<tr><td><b>'+esc(u.name||'—')+'</b>'+me+' '+badge+'</td><td>'+esc(u.email)+'</td><td>'+sel+'</td><td>'+when+'</td>'+
+        '<td style="text-align:right;white-space:nowrap">'+(lockRow?'':'<button class="mini del" onclick="UserAdmin.del(\''+esc(u.email)+'\')">Hapus</button>')+'</td></tr>';
     }).join('');
   }
   U.setRole=async function(email,role){
@@ -1870,6 +2155,236 @@ const UserAdmin=(function(){
     try{ await Cloud.auth('deleteUser',{pin,email}); toast('User dihapus','err'); await U.reload(); }catch(e){ toast(e.message,'err'); }
   };
   return U;
+})();
+</script>
+<script>
+/* ============================================================
+ *  MODULE: PENJADWALAN TIM KERJA (roster shift mingguan)
+ * ============================================================ */
+const Schedule=(function(){
+  const SHIFTS=[{k:'P',label:'Pagi',time:'08:00–16:00',cls:'sh-p',hrs:8},{k:'S',label:'Siang',time:'14:00–22:00',cls:'sh-s',hrs:8},{k:'M',label:'Malam',time:'22:00–06:00',cls:'sh-m',hrs:8},{k:'L',label:'Libur',time:'Off',cls:'sh-l',hrs:0},{k:'C',label:'Cuti',time:'Leave',cls:'sh-c',hrs:0}];
+  const SMAP={};SHIFTS.forEach(s=>SMAP[s.k]=s);
+  const WORK={P:1,S:1,M:1};
+  const STATUS=[{k:'belum',label:'Belum Dimulai',cls:'st-belum'},{k:'berlangsung',label:'Berlangsung',cls:'st-berlangsung'},{k:'tertunda',label:'Tertunda',cls:'st-tertunda'},{k:'berkendala',label:'Berkendala',cls:'st-berkendala'},{k:'selesai',label:'Selesai',cls:'st-selesai'}];
+  const ROLES=['Admin','Pick Pack','Data Support','Supervisor'];
+  const DNAME=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+  const MNAME=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const pad=n=>(''+n).padStart(2,'0');
+  const isoOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const parseIso=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);return m?new Date(+m[1],+m[2]-1,+m[3]):new Date();};
+  const mondayOf=d=>{const x=new Date(d);const day=(x.getDay()+6)%7;x.setHours(0,0,0,0);x.setDate(x.getDate()-day);return x;};
+  const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+  const monShort=d=>d.toLocaleDateString('id-ID',{month:'short'});
+
+  let data={members:{},assignments:{},tasks:{},locks:{}};
+  let view='mingguan', cursor=new Date(), selMember=null, regUsers=[], cachedPin=null;
+  const S={loaded:false};
+
+  const myEmail=()=>Auth.session?Auth.session.email:'';
+  const isAdmin=()=>App.isAdmin();
+  const canEditEmail=email=>isAdmin()||(myEmail()&&email===myEmail());
+  const memberList=()=>Object.keys(data.members).map(e=>data.members[e]).sort((a,b)=>(a.name||a.email||'').localeCompare(b.name||b.email||''));
+  const getAsg=(email,date)=>(data.assignments[email]&&data.assignments[email][date])||'';
+  const getDayTasks=(email,date)=>(data.tasks[email]&&data.tasks[email][date])||{};
+  const isLocked=(email,date)=>!!(data.locks&&data.locks[email]&&data.locks[email][date]);
+  const lockIcon=(email,date)=>isLocked(email,date)?'<span title="Terkunci — sudah di-approve" style="color:#8fe6b4">🔒</span>':'';
+  const memberName=email=>{const m=data.members[email];return(m&&m.name)||email;};
+  const initials=name=>(name||'?').trim().charAt(0).toUpperCase();
+  const avInner=m=>m&&m.photo?'<img src="'+m.photo+'">':esc(initials(m?m.name:'?'));
+  const avatarTag=m=>m&&m.photo?'<img class="pav" src="'+m.photo+'">':'<span class="pav ph">'+esc(initials(m?m.name:'?'))+'</span>';
+  const roleChip=r=>r?'<span class="rolechipx">'+esc(r)+'</span>':'<span class="rolechipx none">—</span>';
+  const shiftChip=k=>{const s=SMAP[k];return s?'<span class="shift '+s.cls+'" title="'+esc(s.label)+' '+esc(s.time)+'">'+k+'</span>':'<span class="shift sh-x">—</span>';};
+  const dotColor=k=>({belum:'#5c6a7d',berlangsung:'#5aa2ff',tertunda:'#e9b24b',berkendala:'#f0716b',selesai:'#57d38a'}[k]||'#5c6a7d');
+  const shiftBg=k=>({P:'rgba(87,211,138,.55)',S:'rgba(217,181,106,.6)',M:'rgba(150,120,240,.6)',L:'rgba(255,255,255,.08)',C:'rgba(233,178,75,.4)'}[k]||'rgba(255,255,255,.05)');
+  function setAsgLocal(email,date,v){data.assignments[email]=data.assignments[email]||{};if(!v)delete data.assignments[email][date];else data.assignments[email][date]=v;}
+  async function ensurePin(){if(cachedPin)return cachedPin;const p=await Berita.askPin('Masukkan PIN Anda untuk menyimpan (jadwal, tugas & profil)');if(p==null)return null;cachedPin=p;return p;}
+  const filledHours=(email,date)=>{const dt=getDayTasks(email,date);return Object.keys(dt).filter(h=>dt[h].task&&String(dt[h].task).trim()).length;};
+  function hourFlag(email,date){const fh=filledHours(email,date);const k=getAsg(email,date);const hasShift=!!SMAP[k]&&WORK[k];if(!hasShift&&fh===0)return '';if(fh===8)return '<span class="hok" title="Jam kerja pas 8 jam">✓</span>';const msg=fh<8?'Jam kerja kurang dari 8 jam ('+fh+' jam terisi)':'Jam kerja lebih dari 8 jam ('+fh+' jam terisi)';return '<span class="hwarn" title="'+esc(msg)+'" onclick="event.stopPropagation();Schedule.hourWarn('+fh+')">!</span>';}
+  S.hourWarn=function(fh){const msg=fh<8?('⚠ Pengaturan jam kerja KURANG dari 8 jam.\n\nSaat ini terisi '+fh+' jam. Standar jam kerja adalah 8 jam.'):('⚠ Pengaturan jam kerja LEBIH dari 8 jam.\n\nSaat ini terisi '+fh+' jam. Standar jam kerja adalah 8 jam.');alert(msg);};
+  function updateDsHours(){const el=$('dsHours');if(!el)return;let fh=0;($('dsSheetBody')?$('dsSheetBody').querySelectorAll('.tskin'):[]).forEach(i=>{if(i.value.trim())fh++;});
+    if(fh===8)el.innerHTML='<span class="hok">✓ 8 jam (pas)</span>';
+    else el.innerHTML='<span class="hwarn" onclick="Schedule.hourWarn('+fh+')">!</span> <span style="color:'+(fh<8?'#f0c375':'#f9a9a4')+';font-weight:700">'+fh+' jam '+(fh<8?'· kurang dari 8':'· lebih dari 8')+'</span>';}
+
+  function cloudPill(){const d=$('schDot'),p=$('schPill');const cloud=Cloud.mode==='cloud';if(d)d.className='dot'+(cloud?' live':'');if(p){p.textContent=(cloud?'GitHub + Vercel':'Mode Lokal')+' · '+memberList().length+' anggota';p.className='pill '+(cloud?'ok':'no');}}
+  function renderLegend(){const sh=SHIFTS.map(s=>'<span class="shift '+s.cls+'">'+s.k+'</span> '+esc(s.label)).join(' &nbsp; ');const st=STATUS.map(s=>'<span class="stat '+s.cls+'">'+esc(s.label)+'</span>').join(' ');$('schLegend').innerHTML='<b style="color:var(--muted)">Shift:</b> '+sh+' &nbsp;·&nbsp; <b style="color:var(--muted)">Hasil:</b> '+st;}
+
+  function periodLabel(){
+    if(view==='harian')return cursor.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    if(view==='mingguan'){const a=mondayOf(cursor),b=addDays(a,6);return a.getDate()+' '+monShort(a)+' – '+b.getDate()+' '+monShort(b)+' '+b.getFullYear();}
+    if(view==='bulanan')return MNAME[cursor.getMonth()]+' '+cursor.getFullYear();
+    return 'Tahun '+cursor.getFullYear();
+  }
+  function periodDates(){
+    if(view==='harian')return [isoOf(cursor)];
+    if(view==='mingguan'){const a=mondayOf(cursor);return [0,1,2,3,4,5,6].map(i=>isoOf(addDays(a,i)));}
+    if(view==='bulanan'){const y=cursor.getFullYear(),mo=cursor.getMonth(),n=new Date(y,mo+1,0).getDate(),arr=[];for(let d=1;d<=n;d++)arr.push(isoOf(new Date(y,mo,d)));return arr;}
+    const y=cursor.getFullYear(),arr=[];for(let mo=0;mo<12;mo++){const n=new Date(y,mo+1,0).getDate();for(let d=1;d<=n;d++)arr.push(isoOf(new Date(y,mo,d)));}return arr;
+  }
+  S.nav=function(dir){if(view==='harian')cursor=addDays(cursor,dir);else if(view==='mingguan')cursor=addDays(cursor,dir*7);else if(view==='bulanan')cursor=new Date(cursor.getFullYear(),cursor.getMonth()+dir,1);else cursor=new Date(cursor.getFullYear()+dir,cursor.getMonth(),1);render();};
+  S.today=function(){cursor=new Date();render();};
+  S.setView=function(v){view=v;document.querySelectorAll('#schViews button').forEach(b=>b.classList.toggle('on',b.getAttribute('data-sv')===v));$('schMemberWrap').style.display=(v==='bulanan'||v==='tahunan')?'':'none';render();};
+  S.onMemberSel=function(){selMember=$('schMemberSel').value||null;render();};
+  function fillMemberSel(){const sel=$('schMemberSel');if(!sel)return;const cur=selMember||myEmail();const list=memberList();sel.innerHTML=list.map(m=>'<option value="'+esc(m.email)+'">'+esc(m.name||m.email)+(m.role?' · '+esc(m.role):'')+'</option>').join('');if(list.find(m=>m.email===cur))sel.value=cur;else if(list.length)sel.value=list[0].email;selMember=sel.value||null;}
+
+  function computeCards(){let filled=0,hours=0,done=0,blocked=0;const range=periodDates();memberList().forEach(m=>{range.forEach(iso=>{const k=getAsg(m.email,iso);if(SMAP[k]){hours+=SMAP[k].hrs;if(WORK[k])filled++;}const dt=getDayTasks(m.email,iso);Object.keys(dt).forEach(h=>{if(dt[h].status==='selesai')done++;if(dt[h].status==='berkendala')blocked++;});});});
+    $('schMembers').textContent=memberList().length;$('schFilled').textContent=filled;$('schHours').textContent=hours;$('schDone').textContent=done;$('schBlocked').textContent=blocked;}
+
+  function render(){
+    cloudPill();renderLegend();$('schPeriod').textContent=periodLabel();
+    $('schEmpty').style.display=memberList().length?'none':'';
+    fillMemberSel();
+    if(view==='harian')renderDaily();else if(view==='mingguan')renderWeekly();else if(view==='bulanan')renderMonthly();else renderYearly();
+    computeCards();renderRoleTable();
+  }
+  function renderWeekly(){
+    const a=mondayOf(cursor);const dates=[0,1,2,3,4,5,6].map(i=>addDays(a,i));const todayIso=isoOf(new Date());
+    let h='<table class="sched"><thead><tr><th class="mcol">Anggota Tim</th>';
+    dates.forEach(d=>{const we=(d.getDay()===0||d.getDay()===6);h+='<th class="dayhead'+(we?' weekend':'')+(isoOf(d)===todayIso?' today':'')+'"><div class="dnum">'+d.getDate()+'</div><div class="dname">'+DNAME[(d.getDay()+6)%7]+'</div></th>';});
+    h+='<th>Jam</th></tr></thead><tbody>';
+    memberList().forEach(m=>{const mine=m.email===myEmail();let mh=0,cells='';dates.forEach(d=>{const iso=isoOf(d),k=getAsg(m.email,iso),s=SMAP[k];if(s)mh+=s.hrs;const glow=(mine&&s)?' mine-cell':'';cells+='<td class="cell'+(isoOf(d)===todayIso?' today':'')+glow+'" style="cursor:pointer" onclick="Schedule.openDay(\''+esc(m.email)+'\',\''+iso+'\')">'+shiftChip(k)+hourFlag(m.email,iso)+lockIcon(m.email,iso)+'</td>';});
+      h+='<tr><td class="mcol"><div class="mwrap"><span class="av">'+avInner(m)+'</span><div><div class="mname'+(mine?' mine-name':'')+'">'+esc(m.name||m.email)+(mine?' ★':'')+'</div><div class="mrole">'+esc(m.role||'—')+'</div></div></div></td>'+cells+'<td class="hrs">'+mh+'</td></tr>';});
+    h+='</tbody><tfoot><tr><td class="mcol">Coverage (P/S/M)</td>';
+    dates.forEach(d=>{const iso=isoOf(d);let cP=0,cS=0,cM=0;memberList().forEach(m=>{const k=getAsg(m.email,iso);if(k==='P')cP++;else if(k==='S')cS++;else if(k==='M')cM++;});h+='<td><div class="cov"><span class="shift sh-p">'+cP+'</span><span class="shift sh-s">'+cS+'</span><span class="shift sh-m">'+cM+'</span></div></td>';});
+    h+='<td></td></tr></tfoot></table>';$('schScroll').innerHTML=memberList().length?h:'';
+  }
+  function renderDaily(){
+    const iso=isoOf(cursor);let h='<table class="grid"><thead><tr><th>Anggota</th><th>Fungsi</th><th>Shift</th><th>Tugas</th><th>Ringkasan Hasil</th><th style="text-align:right">Aksi</th></tr></thead><tbody>';
+    const list=memberList();if(!list.length)h+='<tr><td colspan="6" style="padding:14px;color:var(--muted)">Belum ada anggota.</td></tr>';
+    list.forEach(m=>{const k=getAsg(m.email,iso),dt=getDayTasks(m.email,iso),nT=Object.keys(dt).length;const cnt={};STATUS.forEach(s=>cnt[s.k]=0);Object.keys(dt).forEach(hh=>{if(cnt[dt[hh].status]!=null)cnt[dt[hh].status]++;});
+      const summary=STATUS.filter(s=>cnt[s.k]).map(s=>'<span class="stat '+s.cls+'">'+cnt[s.k]+'</span>').join(' ')||'<span class="clip">—</span>';
+      const mine=m.email===myEmail();
+      h+='<tr><td><div class="memrow">'+avatarTag(m)+'<b'+(mine?' class="mine-name"':'')+'>'+esc(m.name||m.email)+(mine?' ★':'')+'</b></div></td><td>'+roleChip(m.role)+'</td><td>'+shiftChip(k)+' '+lockIcon(m.email,iso)+'</td><td>'+nT+' jam '+hourFlag(m.email,iso)+'</td><td>'+summary+'</td><td style="text-align:right"><button class="mini" onclick="Schedule.openDay(\''+esc(m.email)+'\',\''+iso+'\')">Buka Lembar</button></td></tr>';});
+    h+='</tbody></table>';$('schScroll').innerHTML=h;
+  }
+  function renderMonthly(){
+    const email=selMember||myEmail();const y=cursor.getFullYear(),mo=cursor.getMonth();const first=new Date(y,mo,1);const startPad=(first.getDay()+6)%7;const n=new Date(y,mo+1,0).getDate();const todayIso=isoOf(new Date());
+    let h='<div class="cal-month">';DNAME.forEach(d=>h+='<div class="cal-dow">'+d+'</div>');for(let i=0;i<startPad;i++)h+='<div class="cal-cell out"></div>';
+    for(let d=1;d<=n;d++){const iso=isoOf(new Date(y,mo,d));const k=getAsg(email,iso);const tasks=getDayTasks(email,iso);const nT=Object.keys(tasks).length;
+      const dots=STATUS.map(s=>{const c=Object.keys(tasks).filter(hh=>tasks[hh].status===s.k).length;return c?'<span class="cdot" style="background:'+dotColor(s.k)+'" title="'+esc(s.label)+': '+c+'"></span>':'';}).join('');
+      const mine=email===myEmail();
+      h+='<div class="cal-cell'+(iso===todayIso?' today':'')+(mine&&SMAP[k]?' mine':'')+'" onclick="Schedule.openDay(\''+esc(email)+'\',\''+iso+'\')"><div class="cd">'+d+' '+hourFlag(email,iso)+'</div><div class="cbadge">'+shiftChip(k)+lockIcon(email,iso)+'</div>'+(nT?'<div class="ctasks">'+nT+' tugas</div>':'')+'<div class="cdots">'+dots+'</div></div>';}
+    h+='</div>';$('schScroll').innerHTML=h;
+  }
+  function renderYearly(){
+    const email=selMember||myEmail();const y=cursor.getFullYear();let h='<div class="cal-year">';
+    for(let mo=0;mo<12;mo++){const first=new Date(y,mo,1);const startPad=(first.getDay()+6)%7;const n=new Date(y,mo+1,0).getDate();h+='<div class="ym"><h5>'+MNAME[mo]+'</h5><div class="ym-grid">';
+      for(let i=0;i<startPad;i++)h+='<div class="ym-d" style="visibility:hidden"></div>';
+      for(let d=1;d<=n;d++){const iso=isoOf(new Date(y,mo,d));const k=getAsg(email,iso);h+='<div class="ym-d" style="background:'+shiftBg(k)+'" title="'+d+' '+MNAME[mo]+(SMAP[k]?' · '+SMAP[k].label:'')+'" onclick="Schedule.openDay(\''+esc(email)+'\',\''+iso+'\')"></div>';}
+      h+='</div></div>';}
+    h+='</div>';$('schScroll').innerHTML=h;
+  }
+  function renderRoleTable(){
+    const body=$('schRoleBody');if(!body)return;
+    const src=(regUsers&&regUsers.length)?regUsers:memberList().map(m=>({email:m.email,name:m.name}));
+    body.innerHTML=src.map(u=>{const m=data.members[u.email]||{};const name=m.name||u.name||u.email;const opts='<option value="">Belum ditentukan</option>'+ROLES.map(r=>'<option value="'+r+'"'+(m.role===r?' selected':'')+'>'+r+'</option>').join('');
+      return '<tr><td>'+avatarTag(m)+'</td><td><b>'+esc(name)+'</b></td><td>'+esc(m.nik||'—')+'</td><td class="clip">'+esc(u.email)+'</td><td><select class="rolesel" onchange="Schedule.setRole(\''+esc(u.email)+'\',this.value)">'+opts+'</select></td><td style="text-align:right;white-space:nowrap"><button class="mini" onclick="Schedule.editProfile(\''+esc(u.email)+'\')">Edit Profil</button><button class="mini del" onclick="Schedule.removeMember(\''+esc(u.email)+'\')">Hapus</button></td></tr>';}).join('')||'<tr><td colspan="6" style="padding:14px;color:var(--muted)">Belum ada user.</td></tr>';
+  }
+
+  /* ---- DAY SHEET ---- */
+  let dsEmail=null,dsDate=null,dsTimer=null;
+  S.openDay=function(email,date){dsEmail=email;dsDate=date;const locked=isLocked(email,date);const editable=canEditEmail(email)&&!locked;const m=data.members[email];
+    $('dsTitle').textContent='Lembar Kerja — '+((m&&m.name)||email);
+    $('dsSub').textContent=parseIso(date).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+((m&&m.role)?' · '+m.role:'');
+    const cur=getAsg(email,date);$('dsShift').innerHTML='<option value="">— Tidak ada shift —</option>'+SHIFTS.map(s=>'<option value="'+s.k+'"'+(s.k===cur?' selected':'')+'>'+s.label+' ('+s.time+')</option>').join('');$('dsShift').disabled=!editable;
+    $('dsNote').innerHTML=(locked?'<span style="color:#8fe6b4">🔒 Tanggal ini telah <b>di-approve &amp; terkunci</b> — tidak dapat diedit sampai dibuka oleh Super Admin/Owner.</span>':(editable?'Isi daftar pekerjaan per jam (00:00–24:00) &amp; pilih hasilnya. Tersimpan otomatis (online).':'<span style="color:var(--warn)">Mode lihat — hanya pemilik jadwal atau Super Admin yang dapat mengisi.</span>'))+' &nbsp;·&nbsp; Jam kerja terisi: <span id="dsHours"></span>';
+    const tasks=getDayTasks(email,date);const nowH=(isoOf(new Date())===date)?new Date().getHours():-1;let body='';
+    for(let h=0;h<24;h++){const t=tasks[h]||{};const lab=pad(h)+':00 – '+pad(h+1)+':00';
+      body+='<tr'+(h===nowH?' class="now"':'')+'><td class="hh">'+lab+'</td><td><input class="tskin" data-h="'+h+'" '+(editable?'':'disabled')+' value="'+esc(t.task||'')+'" placeholder="Pekerjaan pada jam ini…"></td><td><select class="stsel" data-h="'+h+'" '+(editable?'':'disabled')+'><option value="">— Hasil —</option>'+STATUS.map(s=>'<option value="'+s.k+'"'+(t.status===s.k?' selected':'')+'>'+s.label+'</option>').join('')+'</select></td></tr>';}
+    $('dsSheetBody').innerHTML=body;
+    if(editable)$('dsSheetBody').querySelectorAll('.tskin,.stsel').forEach(el=>{el.oninput=el.onchange=dsScheduleSave;});
+    $('dsSaveState').textContent=locked?'':'● Tersimpan otomatis (online)';$('dsSaveState').className='clip';
+    $('dsSaveBtn').style.display=editable?'':'none';
+    const lb=$('dsLockBtn');if(lb){lb.innerHTML=locked?'🔓 Buka Kunci':'🔒 Approve &amp; Kunci';lb.className='btn '+(locked?'ghost':'gold')+' small super-only'+(App.isSuper()?'':' hidden');}
+    $('dsLockInfo').innerHTML=locked?'<span style="color:#8fe6b4">🔒 Terkunci</span>':'';
+    updateDsHours();
+    $('daySheet').classList.add('show');
+  };
+  function collectDay(){const out={};$('dsSheetBody').querySelectorAll('tr').forEach((tr,h)=>{const inp=tr.querySelector('.tskin'),sel=tr.querySelector('.stsel');if(!inp)return;const task=inp.value.trim(),status=sel.value;if(task||status)out[h]={task,status};});return out;}
+  function dsScheduleSave(){updateDsHours();$('dsSaveState').textContent='● Menyimpan…';$('dsSaveState').className='clip saving';clearTimeout(dsTimer);dsTimer=setTimeout(S.saveDayNow,900);}
+  S.dsShiftChange=function(){dsScheduleSave();};
+  S.saveDayNow=async function(){
+    if(!dsEmail)return;if(!canEditEmail(dsEmail)){toast('Tidak diizinkan.','err');return;}
+    if(isLocked(dsEmail,dsDate)&&!App.isSuper()){toast('Tanggal terkunci (sudah di-approve).','err');return;}
+    const pin=await ensurePin();if(pin==null)return;
+    const cd=collectDay();
+    try{await Cloud.sched({action:'saveDay',email:myEmail(),pin,target:dsEmail,date:dsDate,shift:$('dsShift').value,dayTasks:cd});
+      setAsgLocal(dsEmail,dsDate,$('dsShift').value);data.tasks[dsEmail]=data.tasks[dsEmail]||{};if(Object.keys(cd).length)data.tasks[dsEmail][dsDate]=cd;else if(data.tasks[dsEmail])delete data.tasks[dsEmail][dsDate];
+      $('dsSaveState').textContent='● Tersimpan ✓';$('dsSaveState').className='clip saved';computeCards();
+    }catch(e){$('dsSaveState').textContent='Gagal: '+e.message;$('dsSaveState').className='clip';cachedPin=null;toast(e.message,'err');}
+  };
+  S.closeDay=function(){$('daySheet').classList.remove('show');render();};
+  S.toggleLock=async function(){
+    if(!App.isSuper()){toast('Hanya Super Admin/Owner yang dapat approve/buka kunci.','err');return;}
+    if(!dsEmail)return;const nowLocked=!isLocked(dsEmail,dsDate);
+    const pin=await ensurePin();if(pin==null)return;
+    try{await Cloud.sched({action:'setLock',email:myEmail(),pin,target:dsEmail,date:dsDate,locked:nowLocked});
+      data.locks=data.locks||{};data.locks[dsEmail]=data.locks[dsEmail]||{};if(nowLocked)data.locks[dsEmail][dsDate]=true;else delete data.locks[dsEmail][dsDate];
+      toast(nowLocked?'Tanggal di-approve & dikunci ✓':'Kunci dibuka ✓','ok');S.openDay(dsEmail,dsDate);}
+    catch(e){toast(e.message,'err');cachedPin=null;}
+  };
+
+  /* ---- PROFILE ---- */
+  let profPhoto=null;
+  function setPhotoBox(url){$('profPhotoBox').innerHTML=url?'<img src="'+url+'">':'<span>Foto</span>';}
+  function downscale(file,max,q){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,max/Math.max(img.width,img.height));const w=Math.round(img.width*sc),h=Math.round(img.height*sc);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',q));};img.onerror=rej;img.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});}
+  $('profPhotoInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{profPhoto=await downscale(f,320,0.75);setPhotoBox(profPhoto);}catch(err){toast('Gagal memproses foto','err');}};
+  function openProfile(email){const m=data.members[email]||{};$('profTitle').textContent='Profil — '+((m.name)||email);$('prof_name').value=m.name||'';$('prof_nik').value=m.nik||'';$('prof_dob').value=m.dob||'';$('prof_gender').value=m.gender||'';if($('prof_role'))$('prof_role').value=m.role||'';profPhoto=m.photo||null;setPhotoBox(profPhoto);$('profErr').textContent='';$('profModal').dataset.email=email;$('profModal').classList.add('show');}
+  S.profileMe=function(){openProfile(myEmail());};
+  S.editProfile=function(email){openProfile(email);};
+  S.closeProfile=function(){$('profModal').classList.remove('show');};
+  S.saveProfile=async function(){
+    const email=$('profModal').dataset.email;if(!canEditEmail(email)){toast('Tidak diizinkan.','err');return;}
+    const name=$('prof_name').value.trim();if(!name){$('profErr').textContent='Nama lengkap wajib diisi.';return;}
+    const profile={name,nik:$('prof_nik').value.trim(),dob:$('prof_dob').value,gender:$('prof_gender').value,photo:profPhoto||''};
+    if(App.isSuper()&&$('prof_role'))profile.role=$('prof_role').value;
+    const pin=await ensurePin();if(pin==null)return;
+    const btn=$('profSaveBtn');btn.disabled=true;btn.textContent='Menyimpan…';
+    try{await Cloud.sched({action:'saveProfile',email:myEmail(),pin,target:email,profile});data.members[email]=Object.assign(data.members[email]||{email},profile);toast('Profil tersimpan ✓','ok');S.closeProfile();render();}
+    catch(e){$('profErr').textContent=e.message;cachedPin=null;}
+    finally{btn.disabled=false;btn.textContent='Simpan Profil';}
+  };
+  S.setRole=async function(email,role){const pin=await ensurePin();if(pin==null)return;try{await Cloud.sched({action:'setRole',email:myEmail(),pin,target:email,role});data.members[email]=Object.assign(data.members[email]||{email},{role});toast('Fungsi diperbarui ✓','ok');render();}catch(e){toast(e.message,'err');cachedPin=null;}};
+  S.removeMember=async function(email){if(!confirm('Hapus '+memberName(email)+' dari penjadwalan?'))return;const pin=await ensurePin();if(pin==null)return;try{await Cloud.sched({action:'deleteMember',email:myEmail(),pin,target:email});delete data.members[email];delete data.assignments[email];delete data.tasks[email];toast('Anggota dihapus','err');render();}catch(e){toast(e.message,'err');cachedPin=null;}};
+
+  /* ---- GENERATE ---- */
+  function applyGenerateLocal(emails,start,days,pattern,overwrite){const base=parseIso(start);emails.forEach((em,ei)=>{data.assignments[em]=data.assignments[em]||{};for(let d=0;d<days;d++){const dt=addDays(base,d);const iso=isoOf(dt);const dow=(dt.getDay()+6)%7;if(!overwrite&&data.assignments[em][iso])continue;let sh;if(pattern==='pagi')sh=dow>=5?'L':'P';else if(pattern==='siang')sh=dow>=5?'L':'S';else if(pattern==='malam')sh=dow>=5?'L':'M';else if(pattern==='5-2')sh=dow>=5?'L':'P';else{const wk=Math.floor(d/7),cyc=(wk+ei)%3;sh=dow>=5?'L':(cyc===0?'P':cyc===1?'S':'M');}data.assignments[em][iso]=sh;}});}
+  S.openGenerate=function(){if(!App.isSuper())return;$('gen_start').value=isoOf(mondayOf(cursor));const list=memberList();$('gen_members').innerHTML=list.length?list.map(m=>'<label><input type="checkbox" value="'+esc(m.email)+'"> '+esc(m.name||m.email)+(m.role?' · '+esc(m.role):'')+'</label>').join(''):'<span class="clip">Belum ada anggota. Tetapkan fungsi user dulu.</span>';$('genErr').textContent='';$('genModal').classList.add('show');};
+  S.closeGenerate=function(){$('genModal').classList.remove('show');};
+  S.runGenerate=async function(){
+    const pattern=$('gen_pattern').value,start=$('gen_start').value,days=Math.max(1,Math.min(366,parseInt($('gen_days').value||'7',10))),overwrite=$('gen_overwrite').checked;
+    if(!start){$('genErr').textContent='Tanggal mulai wajib.';return;}
+    let emails=[].slice.call($('gen_members').querySelectorAll('input:checked')).map(c=>c.value);
+    if(!emails.length)emails=memberList().filter(m=>m.role).map(m=>m.email);
+    if(!emails.length)emails=memberList().map(m=>m.email);
+    if(!emails.length){$('genErr').textContent='Tidak ada anggota untuk dijadwalkan.';return;}
+    const pin=await ensurePin();if(pin==null)return;
+    const btn=$('genBtn');btn.disabled=true;btn.textContent='Memproses…';
+    try{await Cloud.sched({action:'autoGenerate',email:myEmail(),pin,emails,start,days,pattern,overwrite});applyGenerateLocal(emails,start,days,pattern,overwrite);toast('Jadwal ter-generate ✓','ok');$('genModal').classList.remove('show');render();}
+    catch(e){$('genErr').textContent=e.message;cachedPin=null;}
+    finally{btn.disabled=false;btn.textContent='✨ Generate';}
+  };
+
+  S.load=async function(){
+    try{const rec=await Cloud.sched({action:'get'});const p=(rec&&rec.payload)||{};data={members:p.members||{},assignments:p.assignments||{},tasks:p.tasks||{},locks:p.locks||{}};}
+    catch(e){try{const rec=await Cloud.getData('schedule');const p=(rec&&rec.payload)||{};data={members:p.members||{},assignments:p.assignments||{},tasks:p.tasks||{},locks:p.locks||{}};}catch(e2){toast('Gagal memuat jadwal: '+e2.message,'err');}}
+    if(!selMember)selMember=myEmail();
+    if(App.isSuper()){try{const r=await Cloud.auth('listUsers',{pin:cachedPin||window.CONFIG.ADMIN_PIN});regUsers=r.users||[];}catch(e){regUsers=[];}}
+    render();S.loaded=true;
+  };
+  S.exportAnalysis=function(){
+    const range=periodDates();const list=memberList();
+    const sumHead=['Nama','Fungsi','NIK','Jenis Kelamin','Total Shift','Total Jam','Belum','Berlangsung','Tertunda','Berkendala','Selesai'];
+    const sumRows=[sumHead];const detHead=['Tanggal','Nama','Email','Fungsi','Shift','Jam','Pekerjaan','Hasil'];const detRows=[detHead];
+    list.forEach(m=>{let shifts=0,hours=0;const c={belum:0,berlangsung:0,tertunda:0,berkendala:0,selesai:0};
+      range.forEach(iso=>{const k=getAsg(m.email,iso);if(SMAP[k]){if(WORK[k])shifts++;hours+=SMAP[k].hrs;}const dt=getDayTasks(m.email,iso);
+        Object.keys(dt).sort((a,b)=>a-b).forEach(h=>{const t=dt[h];if(t.status&&c[t.status]!=null)c[t.status]++;detRows.push([iso,m.name||'',m.email,m.role||'',SMAP[k]?SMAP[k].label:'',pad(h)+':00–'+pad((+h)+1)+':00',t.task||'',t.status?({belum:'Belum Dimulai',berlangsung:'Berlangsung',tertunda:'Tertunda',berkendala:'Berkendala',selesai:'Selesai'}[t.status]):'']);});});
+      sumRows.push([m.name||'',m.role||'',m.nik||'',m.gender||'',shifts,hours,c.belum,c.berlangsung,c.tertunda,c.berkendala,c.selesai]);});
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumRows),'Ringkasan');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(detRows),'Detail');
+    XLSX.writeFile(wb,'Analisa Jadwal '+periodLabel().replace(/[\/:]/g,'-')+'.xlsx');
+  };
+  return S;
 })();
 </script>
 </body>
