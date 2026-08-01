@@ -23,5 +23,13 @@
     "pass": "scrypt$7c7eb7831eae1de227af070d59e92554$b8772ecafc5307890a0ddd8f7584a0711f0bf141128ba8feb4afaecc74c98deb",
     "pin": "scrypt$a52814dd9cdcc032b01878d675062605$f098fe3d936e1cf6ef315cdfb792607818852f9e29a5c3e5db8a902580e3532d",
     "createdAt": "2026-08-01T04:22:58.592Z"
+  },
+  {
+    "email": "harrisrahmadiansyah26@gmail.com",
+    "name": "Harris Rahmadiansyah",
+    "role": "viewer",
+    "pass": "scrypt$6bda9fbb666676917bde74514472a2f6$109c32878e6f666aa7be2c1a60869787d42650f39afe6598d6f127df0dbb69cf",
+    "pin": "scrypt$f65a17fb83e8709635c644511e55b9dc$54567121f7193f5058440a7ae7f54f609e7825965670b40adba7751a5708505e",
+    "createdAt": "2026-08-01T10:17:45.083Z"
   }
 ]
