@@ -15,21 +15,21 @@ async function ensureSeed(users){
   // Jika user sudah ada: pastikan perannya admin (naikkan bila masih viewer).
   const existing = users.find(u => u.email === email);
   if(existing){
-    if(existing.role !== 'admin'){
-      existing.role = 'admin';
-      await writeJSON(USERS, users, 'promote super admin ' + email);
+    if(existing.role !== 'owner'){
+      existing.role = 'owner';
+      await writeJSON(USERS, users, 'promote owner ' + email);
       return true;
     }
     return false;
   }
-  // Belum ada: buat akun Super Admin dari env.
+  // Belum ada: buat akun Owner (tingkat tertinggi) dari env.
   const pass = process.env.SEED_ADMIN_PASSWORD || '';
   const pin  = process.env.SEED_ADMIN_PIN || '';
   if(!pass) return false;
   users.push({
     email,
-    name: process.env.SEED_ADMIN_NAME || 'Super Admin',
-    role: 'admin',
+    name: process.env.SEED_ADMIN_NAME || 'Owner',
+    role: 'owner',
     pass: hashSecret(pass),
     pin:  hashSecret(pin || ENV.ADMIN_PIN),
     createdAt: new Date().toISOString(),
@@ -39,12 +39,17 @@ async function ensureSeed(users){
   return true;
 }
 
-function isAdminPin(users, pin){
+const lc = s => String(s || '').toLowerCase().trim();
+const ROLES = ['owner', 'admin', 'regular', 'viewer'];
+// tingkat aktor dari PIN: ADMIN_PIN = owner (master); atau peran user pemilik PIN
+function actorRole(users, pin){
   const p = String(pin || '');
-  if(!p) return false;
-  if(p === ENV.ADMIN_PIN) return true;
-  return users.some(u => u.role === 'admin' && verifySecret(p, u.pin));
+  if(!p) return null;
+  if(p === ENV.ADMIN_PIN) return 'owner';
+  const u = users.find(x => x.pin && verifySecret(p, x.pin));
+  return u ? u.role : null;
 }
+function isSuper(users, pin){ const r = actorRole(users, pin); return r === 'owner' || r === 'admin'; }
 
 export default async function handler(req, res){
   if(req.method !== 'POST') return fail(res, 'Gunakan POST.', 405);
@@ -111,27 +116,30 @@ export default async function handler(req, res){
 
     // ---- Kelola user (khusus admin): butuh PIN admin (ADMIN_PIN atau PIN akun admin) ----
     if(action === 'listUsers'){
-      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
+      if(!isSuper(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
       return ok(res, { users: users.map(u => ({ email:u.email, name:u.name, role:u.role, createdAt:u.createdAt||null, seeded:!!u.seeded })) });
     }
     if(action === 'setRole'){
-      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
-      const email = String(body.email||'').toLowerCase().trim();
-      const role = body.role === 'admin' ? 'admin' : 'viewer';
+      const lvl = actorRole(users, body.pin);
+      if(lvl !== 'owner' && lvl !== 'admin') return fail(res, 'Tidak diizinkan mengubah peran.', 403);
+      const email = lc(body.email);
+      const role = ROLES.includes(body.role) ? body.role : 'viewer';
       const u = users.find(x => x.email === email);
       if(!u) return fail(res, 'User tidak ditemukan.', 404);
-      if(u.role === 'admin' && role !== 'admin' && users.filter(x => x.role === 'admin').length <= 1)
-        return fail(res, 'Tidak bisa menurunkan Super Admin terakhir.');
+      if((role === 'owner' || role === 'admin') && lvl !== 'owner') return fail(res, 'Hanya Owner yang dapat menetapkan Owner / Super Admin.', 403);
+      if(u.role === 'owner' && lvl !== 'owner') return fail(res, 'Tidak dapat mengubah peran Owner.', 403);
+      if(u.role === 'owner' && role !== 'owner' && users.filter(x => x.role === 'owner').length <= 1) return fail(res, 'Owner terakhir tidak bisa diturunkan.');
       u.role = role;
       await writeJSON(USERS, users, 'set role ' + email + ' -> ' + role);
       return ok(res, { email, role });
     }
     if(action === 'deleteUser'){
-      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
-      const email = String(body.email||'').toLowerCase().trim();
+      const lvl = actorRole(users, body.pin);
+      if(lvl !== 'owner' && lvl !== 'admin') return fail(res, 'Tidak diizinkan menghapus user.', 403);
+      const email = lc(body.email);
       const target = users.find(x => x.email === email);
-      if(target && target.role === 'admin' && users.filter(x => x.role === 'admin').length <= 1)
-        return fail(res, 'Tidak bisa menghapus Super Admin terakhir.');
+      if(target && target.role === 'owner' && lvl !== 'owner') return fail(res, 'Tidak dapat menghapus Owner.', 403);
+      if(target && target.role === 'owner' && users.filter(x => x.role === 'owner').length <= 1) return fail(res, 'Owner terakhir tidak bisa dihapus.');
       const filtered = users.filter(x => x.email !== email);
       await writeJSON(USERS, filtered, 'delete user ' + email);
       return ok(res, {});

@@ -7,7 +7,7 @@
 import { readJSON, writeJSON, readBody, ok, fail, ENV } from './_lib.js';
 import zlib from 'node:zlib';
 
-const ALLOWED = ['monitoring', 'sales'];
+const ALLOWED = ['monitoring', 'sales', 'schedule'];
 const pathFor = set => 'data/' + set + '.json';
 
 export default async function handler(req, res){
