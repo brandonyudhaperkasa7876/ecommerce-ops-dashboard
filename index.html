@@ -931,6 +931,10 @@ const Cloud = (function(){
       const valid=(u&&u.pin===p.pin)||(p.pin===window.CONFIG.ADMIN_PIN);
       return {ok:true,valid};
     }
+    if(action==='getRole'){
+      const u=users.find(x=>x.email===p.email);
+      return {ok:true,exists:!!u,role:u?u.role:null,name:u?u.name:null};
+    }
     const adminOK=pin=>pin===window.CONFIG.ADMIN_PIN||users.some(u=>u.role==='admin'&&u.pin===pin);
     if(action==='resetPassword'){
       const u=users.find(x=>x.email===p.email);
@@ -1188,6 +1192,19 @@ const App={
     this.startClock();
     this.go('overview');
     Berita.enter();
+    this.syncRole();
+  },
+  async syncRole(){
+    if(!Auth.session)return;
+    try{
+      const r=await Cloud.auth('getRole',{email:Auth.session.email});
+      if(r&&r.role&&r.role!==Auth.session.role){
+        Auth.session.role=r.role;
+        localStorage.setItem(SESSION_KEY,JSON.stringify(Auth.session));
+        this.applyRole();
+        if(this.view==='overview')this.updateOverview();
+      }
+    }catch(e){}
   },
   _clock:null,
   startClock(){
