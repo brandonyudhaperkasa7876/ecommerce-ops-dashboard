@@ -12,9 +12,15 @@
         "updatedAt": "2026-08-01T10:04:22.779Z"
       }
     },
-    "assignments": {},
-    "tasks": {},
+    "assignments": {
+      "brandonyudhaperkasa7876@gmail.com": {
+        "2026-08-01": "L"
+      }
+    },
+    "tasks": {
+      "brandonyudhaperkasa7876@gmail.com": {}
+    },
     "locks": {}
   },
-  "updatedAt": "2026-08-01T10:04:22.779Z"
+  "updatedAt": "2026-08-01T10:05:05.467Z"
 }
