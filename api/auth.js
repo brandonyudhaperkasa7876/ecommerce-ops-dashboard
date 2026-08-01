@@ -88,6 +88,13 @@ export default async function handler(req, res){
       return ok(res, { valid: !!valid });
     }
 
+    // ---- Sinkron peran terkini dari server (untuk menyegarkan sesi lama) ----
+    if(action === 'getRole'){
+      const email = String(body.email||'').toLowerCase().trim();
+      const u = users.find(x => x.email === email);
+      return ok(res, { exists: !!u, role: u ? u.role : null, name: u ? u.name : null });
+    }
+
     // ---- Lupa password: reset mandiri memakai PIN sebagai kunci pemulihan ----
     if(action === 'resetPassword'){
       const email = String(body.email||'').toLowerCase().trim();
