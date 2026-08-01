@@ -28,6 +28,13 @@ async function ensureSeed(users){
   return true;
 }
 
+function isAdminPin(users, pin){
+  const p = String(pin || '');
+  if(!p) return false;
+  if(p === ENV.ADMIN_PIN) return true;
+  return users.some(u => u.role === 'admin' && verifySecret(p, u.pin));
+}
+
 export default async function handler(req, res){
   if(req.method !== 'POST') return fail(res, 'Gunakan POST.', 405);
   let body;
@@ -68,6 +75,48 @@ export default async function handler(req, res){
       const u = users.find(x => x.email === email);
       const valid = (u && verifySecret(pin, u.pin)) || (pin === ENV.ADMIN_PIN);
       return ok(res, { valid: !!valid });
+    }
+
+    // ---- Lupa password: reset mandiri memakai PIN sebagai kunci pemulihan ----
+    if(action === 'resetPassword'){
+      const email = String(body.email||'').toLowerCase().trim();
+      const pin = String(body.pin||'');
+      const np = String(body.newPassword||'');
+      const u = users.find(x => x.email === email);
+      if(!u) return fail(res, 'Email tidak terdaftar.', 404);
+      if(!verifySecret(pin, u.pin) && pin !== ENV.ADMIN_PIN) return fail(res, 'PIN tidak cocok.', 401);
+      if(np.length < 6) return fail(res, 'Password baru minimal 6 karakter.');
+      u.pass = hashSecret(np);
+      await writeJSON(USERS, users, 'reset password ' + email);
+      return ok(res, {});
+    }
+
+    // ---- Kelola user (khusus admin): butuh PIN admin (ADMIN_PIN atau PIN akun admin) ----
+    if(action === 'listUsers'){
+      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
+      return ok(res, { users: users.map(u => ({ email:u.email, name:u.name, role:u.role, createdAt:u.createdAt||null, seeded:!!u.seeded })) });
+    }
+    if(action === 'setRole'){
+      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
+      const email = String(body.email||'').toLowerCase().trim();
+      const role = body.role === 'admin' ? 'admin' : 'viewer';
+      const u = users.find(x => x.email === email);
+      if(!u) return fail(res, 'User tidak ditemukan.', 404);
+      if(u.role === 'admin' && role !== 'admin' && users.filter(x => x.role === 'admin').length <= 1)
+        return fail(res, 'Tidak bisa menurunkan Super Admin terakhir.');
+      u.role = role;
+      await writeJSON(USERS, users, 'set role ' + email + ' -> ' + role);
+      return ok(res, { email, role });
+    }
+    if(action === 'deleteUser'){
+      if(!isAdminPin(users, body.pin)) return fail(res, 'PIN admin salah.', 401);
+      const email = String(body.email||'').toLowerCase().trim();
+      const target = users.find(x => x.email === email);
+      if(target && target.role === 'admin' && users.filter(x => x.role === 'admin').length <= 1)
+        return fail(res, 'Tidak bisa menghapus Super Admin terakhir.');
+      const filtered = users.filter(x => x.email !== email);
+      await writeJSON(USERS, filtered, 'delete user ' + email);
+      return ok(res, {});
     }
 
     return fail(res, 'Aksi tidak dikenal.');
