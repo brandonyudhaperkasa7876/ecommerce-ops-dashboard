@@ -387,6 +387,16 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
       <div class="field"><label>Email</label><input id="li_email" type="email" autocomplete="username" required></div>
       <div class="field"><label>Password</label><input id="li_pass" type="password" autocomplete="current-password" required></div>
       <button class="btn gold block" id="liBtn" type="submit">Masuk</button>
+      <div style="text-align:center;margin-top:13px"><a href="#" onclick="Auth.showReset(event)" style="font-size:12.5px;color:var(--muted)">Lupa password?</a></div>
+    </form>
+    <form class="authform" id="formReset" style="display:none" onsubmit="return Auth.resetPassword(event)">
+      <div class="autherr" id="resetErr"></div>
+      <p style="color:var(--muted);font-size:12px;margin:0 0 14px;line-height:1.55">Reset password memakai <b style="color:var(--gold2)">PIN</b> Anda sebagai kunci pemulihan. Jika lupa PIN juga, hubungi Super Admin.</p>
+      <div class="field"><label>Email</label><input id="rs_email" type="email" autocomplete="username" required></div>
+      <div class="field"><label>PIN (4–8 digit)</label><input id="rs_pin" class="pinrow" type="password" inputmode="numeric" maxlength="8" required></div>
+      <div class="field"><label>Password Baru (min. 6)</label><input id="rs_pass" type="password" autocomplete="new-password" required></div>
+      <button class="btn gold block" id="rsBtn" type="submit">Reset Password</button>
+      <div style="text-align:center;margin-top:13px"><a href="#" onclick="Auth.tab('login')" style="font-size:12.5px;color:var(--muted)">&larr; Kembali ke Masuk</a></div>
     </form>
     <form class="authform" id="formReg" style="display:none" onsubmit="return Auth.register(event)">
       <div class="autherr" id="regErr"></div>
@@ -432,6 +442,7 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
     </nav>
     <div class="navsec">Sistem</div>
     <nav class="nav">
+      <a data-nav="users" class="admin-only hidden" onclick="App.go('users')"><span class="ic">👥</span> Kelola User</a>
       <a data-nav="howto" class="admin-only hidden" onclick="App.go('howto')"><span class="ic">📘</span> How To (Super Admin)</a>
       <a data-nav="settings" onclick="App.go('settings')"><span class="ic">⚙</span> Pengaturan &amp; Cloud</a>
     </nav>
@@ -709,6 +720,34 @@ table.arch tr:hover td{background:rgba(217,181,106,.06)}
       <div class="note glass">Keterangan status: <span class="tag len">Terkini</span> data dipublish ≤ 7 hari lalu · <span class="tag no">Perlu Update</span> lebih dari 7 hari · <span class="tag dup">Kosong</span> belum ada data. Untuk memperbarui, Super Admin membuka modul terkait lalu <b>Proses &amp; Publish ke Cloud</b>.</div>
     </section>
 
+    <!-- ============ KELOLA USER (Super Admin) ============ -->
+    <section data-view="users" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="usrDot"></span>
+        <b>Manajemen Pengguna</b>
+        <span class="pill" id="usrPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="UserAdmin.reload()">↻ Muat ulang</button>
+      </div>
+      <div class="cards c3">
+        <div class="card glass"><div class="lab">Total User</div><div class="val b" id="usrTotal">0</div></div>
+        <div class="card glass"><div class="lab">Super Admin</div><div class="val d" id="usrAdmins">0</div></div>
+        <div class="card glass"><div class="lab">Reguler (Viewer)</div><div class="val g" id="usrViewers">0</div></div>
+      </div>
+      <div class="panel glass">
+        <div class="eyebrow">Daftar User Terdaftar</div>
+        <h3>Aktivasi Tipe User</h3>
+        <p class="sub">Ubah peran tiap pengguna: <b>Reguler</b> (hanya melihat data) atau <b>Super Admin</b> (upload, proses, publish, kelola). Perubahan langsung tersimpan di Cloud.</p>
+        <div class="scroll" style="max-height:none">
+          <table class="grid" id="usrTable">
+            <thead><tr><th>Nama</th><th>Email</th><th>Tipe Saat Ini</th><th>Terdaftar</th><th style="text-align:right">Aksi</th></tr></thead>
+            <tbody id="usrBody"><tr><td colspan="5" style="padding:16px;color:var(--muted)">Memuat…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="note glass">Catatan keamanan: perubahan peran &amp; hapus user memerlukan <b>PIN admin</b>. Super Admin terakhir tidak bisa diturunkan/dihapus agar sistem tetap punya pengelola.</div>
+    </section>
+
     <!-- ============ HOW TO (Super Admin) ============ -->
     <section data-view="howto" class="hidden">
       <div class="panel glass">
@@ -892,6 +931,31 @@ const Cloud = (function(){
       const valid=(u&&u.pin===p.pin)||(p.pin===window.CONFIG.ADMIN_PIN);
       return {ok:true,valid};
     }
+    const adminOK=pin=>pin===window.CONFIG.ADMIN_PIN||users.some(u=>u.role==='admin'&&u.pin===pin);
+    if(action==='resetPassword'){
+      const u=users.find(x=>x.email===p.email);
+      if(!u) throw new Error('Email tidak terdaftar.');
+      if(u.pin!==p.pin&&p.pin!==window.CONFIG.ADMIN_PIN) throw new Error('PIN tidak cocok.');
+      if((p.newPassword||'').length<6) throw new Error('Password baru minimal 6 karakter.');
+      u.password=p.newPassword;LS.saveUsers(users);return {ok:true};
+    }
+    if(action==='listUsers'){
+      if(!adminOK(p.pin)) throw new Error('PIN admin salah.');
+      return {ok:true,users:users.map(u=>({email:u.email,name:u.name,role:u.role,createdAt:u.createdAt||null,seeded:!!u.seeded}))};
+    }
+    if(action==='setRole'){
+      if(!adminOK(p.pin)) throw new Error('PIN admin salah.');
+      const u=users.find(x=>x.email===p.email);if(!u) throw new Error('User tidak ditemukan.');
+      const role=p.role==='admin'?'admin':'viewer';
+      if(u.role==='admin'&&role!=='admin'&&users.filter(x=>x.role==='admin').length<=1) throw new Error('Tidak bisa menurunkan Super Admin terakhir.');
+      u.role=role;LS.saveUsers(users);return {ok:true,email:u.email,role};
+    }
+    if(action==='deleteUser'){
+      if(!adminOK(p.pin)) throw new Error('PIN admin salah.');
+      const t=users.find(x=>x.email===p.email);
+      if(t&&t.role==='admin'&&users.filter(x=>x.role==='admin').length<=1) throw new Error('Tidak bisa menghapus Super Admin terakhir.');
+      LS.saveUsers(users.filter(x=>x.email!==p.email));return {ok:true};
+    }
     throw new Error('Aksi tidak dikenal.');
   }
   function localBerita(action,p){
@@ -1015,6 +1079,7 @@ const VIEWS={
   monitoring:{title:'Monitoring JUBELIO',crumb:'JUBELIO × Infinity (LPH/Transfer) × SAP · 2026+'},
   sales:{title:'Sales Database',crumb:'YTD · Template · Month-to-Date — pivot dipertahankan'},
   berita:{title:'Berita Acara',crumb:'Dokumen resmi internal — arsip cloud'},
+  users:{title:'Kelola User',crumb:'Daftar user terdaftar & aktivasi peran'},
   howto:{title:'How To (Super Admin)',crumb:'Panduan update database & sinkronisasi'},
   settings:{title:'Pengaturan & Cloud',crumb:'Konektivitas GitHub + Vercel'}
 };
@@ -1022,11 +1087,29 @@ const VIEWS={
 const Auth={
   session:null,
   tab(w){
+    if(w&&w.preventDefault)w.preventDefault();
     $('tabLogin').classList.toggle('on',w==='login');
     $('tabReg').classList.toggle('on',w==='reg');
     $('formLogin').style.display=w==='login'?'':'none';
     $('formReg').style.display=w==='reg'?'':'none';
+    const fr=$('formReset');if(fr)fr.style.display='none';
     $('loginErr').classList.remove('show');$('regErr').classList.remove('show');
+    const re=$('resetErr');if(re)re.classList.remove('show');
+  },
+  showReset(ev){ if(ev&&ev.preventDefault)ev.preventDefault();
+    $('tabLogin').classList.remove('on');$('tabReg').classList.remove('on');
+    $('formLogin').style.display='none';$('formReg').style.display='none';$('formReset').style.display='';
+    $('resetErr').classList.remove('show');
+  },
+  async resetPassword(ev){ev.preventDefault();
+    const email=$('rs_email').value.trim(),pin=$('rs_pin').value,np=$('rs_pass').value;
+    if(!/^\d{4,8}$/.test(pin))return this.err('resetErr','PIN 4–8 digit.'),false;
+    if(np.length<6)return this.err('resetErr','Password baru minimal 6 karakter.'),false;
+    const b=$('rsBtn');b.disabled=true;b.innerHTML='<span class="spin sm"></span> Memproses...';
+    try{await Cloud.auth('resetPassword',{email,pin,newPassword:np});toast('Password berhasil direset ✓ Silakan masuk','ok');this.tab('login');$('li_email').value=email;}
+    catch(e){this.err('resetErr',e.message);}
+    finally{b.disabled=false;b.textContent='Reset Password';}
+    return false;
   },
   err(id,m){const e=$(id);e.textContent=m;e.classList.add('show');},
   async login(ev){ev.preventDefault();
@@ -1083,7 +1166,7 @@ const App={
   },
   go(v){
     if(!VIEWS[v])v='overview';
-    if(v==='howto'&&!this.isAdmin())v='overview';
+    if((v==='howto'||v==='users')&&!this.isAdmin())v='overview';
     this.view=v;
     document.querySelectorAll('section[data-view]').forEach(s=>s.classList.toggle('hidden',s.getAttribute('data-view')!==v));
     document.querySelectorAll('.nav a[data-nav]').forEach(a=>a.classList.toggle('on',a.getAttribute('data-nav')===v));
@@ -1092,6 +1175,7 @@ const App={
     $('sidebar').classList.remove('open');
     if(v==='overview')this.updateOverview();
     if(v==='datastatus')DataStatus.load();
+    if(v==='users')UserAdmin.open();
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();
@@ -1720,6 +1804,55 @@ const DataStatus=(function(){
     $('dsBody').innerHTML=html;
   };
   return S;
+})();
+</script>
+<script>
+/* ============================================================
+ *  MODULE: KELOLA USER (Super Admin)
+ * ============================================================ */
+const UserAdmin=(function(){
+  let pin=null, users=[];
+  const U={};
+  U.open=async function(){
+    const d=$('usrDot'),p=$('usrPill');
+    if(d)d.className='dot'+(Cloud.mode==='cloud'?' live':'');
+    if(p){p.textContent=Cloud.mode==='cloud'?'GitHub + Vercel':'Mode Lokal';p.className='pill '+(Cloud.mode==='cloud'?'ok':'no');}
+    if(!pin){ pin=await Berita.askPin('Masukkan PIN admin untuk membuka Kelola User'); if(pin==null){App.go('overview');return;} }
+    await U.reload();
+  };
+  U.reload=async function(){
+    $('usrBody').innerHTML='<tr><td colspan="5" style="padding:16px;color:var(--muted)">Memuat…</td></tr>';
+    try{ const r=await Cloud.auth('listUsers',{pin}); users=r.users||[]; render(); }
+    catch(e){ pin=null; $('usrBody').innerHTML='<tr><td colspan="5" style="padding:16px;color:var(--err)">'+esc(e.message)+'</td></tr>'; toast(e.message,'err'); }
+  };
+  function render(){
+    const admins=users.filter(u=>u.role==='admin').length;
+    $('usrTotal').textContent=users.length;$('usrAdmins').textContent=admins;$('usrViewers').textContent=users.length-admins;
+    if(!users.length){$('usrBody').innerHTML='<tr><td colspan="5" style="padding:16px;color:var(--muted)">Belum ada user.</td></tr>';return;}
+    $('usrBody').innerHTML=users.map(function(u){
+      const isAdmin=u.role==='admin';
+      const badge=isAdmin?'<span class="tag dup">Super Admin</span>':'<span class="tag dr">Reguler</span>';
+      const when=u.createdAt?new Date(u.createdAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'—';
+      const toRole=isAdmin?'viewer':'admin';
+      const label=isAdmin?'⇩ Jadikan Reguler':'⇧ Jadikan Super Admin';
+      const me=(Auth.session&&Auth.session.email===u.email)?' <span class="clip">(Anda)</span>':'';
+      return '<tr><td><b>'+esc(u.name||'—')+'</b>'+me+'</td><td>'+esc(u.email)+'</td><td>'+badge+'</td><td>'+when+'</td>'+
+        '<td style="text-align:right;white-space:nowrap">'+
+        '<button class="mini" onclick="UserAdmin.setRole(\''+esc(u.email)+'\',\''+toRole+'\')">'+label+'</button>'+
+        '<button class="mini del" onclick="UserAdmin.del(\''+esc(u.email)+'\')">Hapus</button></td></tr>';
+    }).join('');
+  }
+  U.setRole=async function(email,role){
+    try{ await Cloud.auth('setRole',{pin,email,role}); toast('Peran diperbarui ✓','ok');
+      if(Auth.session&&Auth.session.email===email){Auth.session.role=role;localStorage.setItem(SESSION_KEY,JSON.stringify(Auth.session));App.applyRole();}
+      await U.reload();
+    }catch(e){ toast(e.message,'err'); }
+  };
+  U.del=async function(email){
+    if(!confirm('Hapus user '+email+' dari sistem?'))return;
+    try{ await Cloud.auth('deleteUser',{pin,email}); toast('User dihapus','err'); await U.reload(); }catch(e){ toast(e.message,'err'); }
+  };
+  return U;
 })();
 </script>
 </body>
