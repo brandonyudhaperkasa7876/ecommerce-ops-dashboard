@@ -20,7 +20,11 @@
     "tasks": {
       "brandonyudhaperkasa7876@gmail.com": {}
     },
-    "locks": {}
+    "locks": {
+      "brandonyudhaperkasa7876@gmail.com": {
+        "2026-08-01": true
+      }
+    }
   },
-  "updatedAt": "2026-08-01T10:05:05.467Z"
+  "updatedAt": "2026-08-01T10:05:28.242Z"
 }
