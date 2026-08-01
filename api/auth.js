@@ -11,10 +11,21 @@ const USERS = 'data/users.json';
 // (opsional: SEED_ADMIN_PIN, SEED_ADMIN_NAME).
 async function ensureSeed(users){
   const email = ENV.SUPER_ADMIN_EMAIL;
-  const pass  = process.env.SEED_ADMIN_PASSWORD || '';
-  const pin   = process.env.SEED_ADMIN_PIN || '';
-  if(!email || !pass) return false;
-  if(users.find(u => u.email === email)) return false;
+  if(!email) return false;
+  // Jika user sudah ada: pastikan perannya admin (naikkan bila masih viewer).
+  const existing = users.find(u => u.email === email);
+  if(existing){
+    if(existing.role !== 'admin'){
+      existing.role = 'admin';
+      await writeJSON(USERS, users, 'promote super admin ' + email);
+      return true;
+    }
+    return false;
+  }
+  // Belum ada: buat akun Super Admin dari env.
+  const pass = process.env.SEED_ADMIN_PASSWORD || '';
+  const pin  = process.env.SEED_ADMIN_PIN || '';
+  if(!pass) return false;
   users.push({
     email,
     name: process.env.SEED_ADMIN_NAME || 'Super Admin',
