@@ -15,5 +15,13 @@
     "pass": "scrypt$c89a91857340c4db14fa77c21e0d10ba$cdf432c7f48a45f3da772fca2bf8ef7db2fbd322de9a2c8175b13db34fe3238f",
     "pin": "scrypt$309647daa0de8fb6af1dafaed216d7f1$cd504cb7b6db83e73635afa7318beaf87acc2651a2e518331e0abfe40efe7e14",
     "createdAt": "2026-07-31T08:23:54.633Z"
+  },
+  {
+    "email": "brandonyudhaperkasa7876@gmail.com",
+    "name": "Brandon Yudha Perkasa",
+    "role": "viewer",
+    "pass": "scrypt$7c7eb7831eae1de227af070d59e92554$b8772ecafc5307890a0ddd8f7584a0711f0bf141128ba8feb4afaecc74c98deb",
+    "pin": "scrypt$a52814dd9cdcc032b01878d675062605$f098fe3d936e1cf6ef315cdfb792607818852f9e29a5c3e5db8a902580e3532d",
+    "createdAt": "2026-08-01T04:22:58.592Z"
   }
 ]
