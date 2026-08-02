@@ -189,16 +189,6 @@
     ],
     "tasks": [
       {
-        "id": 1001,
-        "memberId": 1,
-        "name": "Stock opname berkas fisik gudang",
-        "day": 0,
-        "startHour": 9,
-        "endHour": 11,
-        "color": "cyan",
-        "status": "selesai"
-      },
-      {
         "id": 1002,
         "memberId": 2,
         "name": "Rekonsiliasi logistik & serah terima",
@@ -240,5 +230,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T08:46:12.527Z"
+  "updatedAt": "2026-08-02T08:46:28.852Z"
 }
