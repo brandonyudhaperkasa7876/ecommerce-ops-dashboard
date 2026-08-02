@@ -1,1 +1,113 @@
-{ "payload": null, "updatedAt": null }
+{
+  "payload": {
+    "team": [
+      {
+        "id": 1,
+        "name": "Geri",
+        "role": "Admin Logistik",
+        "email": "",
+        "avatar": "https://ui-avatars.com/api/?name=Geri&background=0e7490&color=cffafe&bold=true",
+        "schedule": [
+          "Shift 2",
+          "Shift 1",
+          "Shift 2",
+          "Shift 1",
+          "Shift 2",
+          "Off",
+          "Off"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Toni",
+        "role": "Admin Keuangan",
+        "email": "",
+        "avatar": "https://ui-avatars.com/api/?name=Toni&background=0e7490&color=cffafe&bold=true",
+        "schedule": [
+          "Shift 2",
+          "Shift 1",
+          "Shift 1",
+          "Shift 2",
+          "Shift 1",
+          "Off",
+          "Off"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Rifky",
+        "role": "Pick Pack Lead",
+        "email": "",
+        "avatar": "https://ui-avatars.com/api/?name=Rifky&background=0e7490&color=cffafe&bold=true",
+        "schedule": [
+          "Shift 1",
+          "Shift 2",
+          "Shift 2",
+          "Shift 1",
+          "Shift 1",
+          "Off",
+          "Off"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Haris",
+        "role": "Pick Pack Officer",
+        "email": "",
+        "avatar": "https://ui-avatars.com/api/?name=Haris&background=0e7490&color=cffafe&bold=true",
+        "schedule": [
+          "Shift 2",
+          "Shift 2",
+          "Shift 1",
+          "Shift 2",
+          "Shift 2",
+          "Off",
+          "Off"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "id": 1001,
+        "memberId": 1,
+        "name": "Stock opname berkas fisik gudang",
+        "day": 0,
+        "startHour": 9,
+        "endHour": 11,
+        "color": "cyan",
+        "status": "selesai"
+      },
+      {
+        "id": 1002,
+        "memberId": 2,
+        "name": "Rekonsiliasi logistik & serah terima",
+        "day": 0,
+        "startHour": 13,
+        "endHour": 15,
+        "color": "purple",
+        "status": "berlangsung"
+      },
+      {
+        "id": 1003,
+        "memberId": 3,
+        "name": "Pengecekan stok masuk batch pagi",
+        "day": 0,
+        "startHour": 10,
+        "endHour": 13,
+        "color": "amber",
+        "status": "belum"
+      },
+      {
+        "id": 1004,
+        "memberId": 4,
+        "name": "Pengepakan prioritas ekspedisi malam",
+        "day": 0,
+        "startHour": 14,
+        "endHour": 18,
+        "color": "rose",
+        "status": "belum"
+      }
+    ]
+  },
+  "updatedAt": "2026-08-02T04:54:41.558Z"
+}
