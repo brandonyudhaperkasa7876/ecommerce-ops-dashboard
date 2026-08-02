@@ -54,7 +54,7 @@
             "location": "GPN"
           },
           {
-            "type": "Shift 1",
+            "type": "Backup",
             "location": "GPN"
           },
           {
@@ -70,8 +70,8 @@
             "location": "GPN"
           },
           {
-            "type": "Off",
-            "location": "-"
+            "type": "Shift 1",
+            "location": "GPN"
           }
         ]
       },
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:42:00.779Z"
+  "updatedAt": "2026-08-02T06:42:11.765Z"
 }
