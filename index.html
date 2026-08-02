@@ -1177,27 +1177,35 @@ const Cloud = (function(){
       return mode;
     },
     async getData(set){
+      const CK='ecomops_cache_'+set;
       if(mode==='cloud'){
-        // Prioritas: baca fresh via API (langsung tampil setelah publish, tanpa tunggu redeploy);
-        // fallback ke file statis untuk data sangat besar yang melampaui batas respons fungsi.
-        try{ const r=await get('/api/data?set='+encodeURIComponent(set)); if(r) return r; }catch(e){}
+        let out=null;
+        // 1) File statis (mendukung data besar > 1 MB; batas API GitHub tidak berlaku).
         try{
           const res=await fetch(base()+'/data/'+encodeURIComponent(set)+'.json?t='+Date.now(),{cache:'no-store'});
-          if(res.ok){ const d=await res.json()||{}; return {ok:true,set,payload:(d.payload!==undefined?d.payload:null),updatedAt:(d.updatedAt!==undefined?d.updatedAt:null)}; }
+          if(res.ok){ const d=await res.json()||{}; out={ok:true,set,payload:(d.payload!==undefined?d.payload:null),updatedAt:(d.updatedAt!==undefined?d.updatedAt:null)}; }
         }catch(e){}
-        mode='local';
+        // 2) Bila statis kosong (mis. belum redeploy), coba API GET (data kecil).
+        if(!(out&&out.payload!=null)){ try{ const r=await get('/api/data?set='+encodeURIComponent(set)); if(r&&r.payload!=null) out=r; }catch(e){} }
+        if(out&&out.payload!=null){ try{localStorage.setItem(CK,JSON.stringify(out));}catch(e){} return out; }
+        // 3) Cloud masih kosong → tampilkan cache lokal terakhir agar tak hilang saat refresh.
+        try{ const c=localStorage.getItem(CK); if(c){ const cj=JSON.parse(c); if(cj&&cj.payload!=null) return cj; } }catch(e){}
+        return out||{ok:true,set,payload:null,updatedAt:null};
       }
       return LS.getData(set);
     },
     async putData(set,payload,pin){
       if(mode==='cloud'){
-        const json=JSON.stringify({payload,updatedAt:new Date().toISOString()});
+        const rec={ok:true,set,payload,updatedAt:new Date().toISOString()};
+        const json=JSON.stringify({payload,updatedAt:rec.updatedAt});
+        let res;
         if(window.pako){
           const gz=window.pako.gzip(json);
           let s='';const CH=0x8000;for(let i=0;i<gz.length;i+=CH)s+=String.fromCharCode.apply(null,gz.subarray(i,i+CH));
-          return await post('/api/data',{set,pin,gz:btoa(s)});
-        }
-        return await post('/api/data',{set,pin,payload});
+          res=await post('/api/data',{set,pin,gz:btoa(s)});
+        } else { res=await post('/api/data',{set,pin,payload}); }
+        try{localStorage.setItem('ecomops_cache_'+set,JSON.stringify(rec));}catch(e){}
+        return res;
       }
       return LS.putData(set,payload);
     },
