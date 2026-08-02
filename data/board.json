@@ -83,8 +83,8 @@
         "avatar": "https://ui-avatars.com/api/?name=Rifky&background=0e7490&color=cffafe&bold=true",
         "schedule": [
           {
-            "type": "Shift 2",
-            "location": "GPN"
+            "type": "Off",
+            "location": "-"
           },
           {
             "type": "Shift 2",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:42:20.381Z"
+  "updatedAt": "2026-08-02T06:42:23.506Z"
 }
