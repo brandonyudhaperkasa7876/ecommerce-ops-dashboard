@@ -9,7 +9,7 @@
         "avatar": "https://ui-avatars.com/api/?name=Geri&background=0e7490&color=cffafe&bold=true",
         "schedule": [
           {
-            "type": "Shift 2",
+            "type": "Shift 1",
             "location": "GPN"
           },
           {
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T05:57:40.145Z"
+  "updatedAt": "2026-08-02T06:41:00.569Z"
 }
