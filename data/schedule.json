@@ -25,6 +25,11 @@
         "email": "harrisrahmadiansyah26@gmail.com",
         "role": "Pick Pack",
         "updatedAt": "2026-08-02T03:20:09.626Z"
+      },
+      "fatonythoni@gmail.com": {
+        "email": "fatonythoni@gmail.com",
+        "role": "Pick Pack",
+        "updatedAt": "2026-08-02T03:20:15.484Z"
       }
     },
     "assignments": {
@@ -81,5 +86,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-02T03:20:09.626Z"
+  "updatedAt": "2026-08-02T03:20:15.484Z"
 }
