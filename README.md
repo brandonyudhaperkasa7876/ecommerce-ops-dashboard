@@ -26,6 +26,7 @@ Karena file di paket ini bernama datar (flat), susun ulang menjadi struktur beri
 ```
 ecommerce-ops-dashboard/
 ├── index.html                ← dashboard (buka file ini)
+├── jadwal.html               ← halaman Jadwal Shift & Koordinasi Tugas (login sendiri)
 ├── League.png                ← logo brand (auth & kop Berita Acara)
 ├── League-mark.png           ← logo trapesium "L" untuk menu bar / sidebar
 ├── package.json
@@ -42,6 +43,7 @@ ecommerce-ops-dashboard/
     ├── monitoring.json
     ├── sales.json
     ├── schedule.json
+    ├── board.json
     └── berita.json
 ```
 
@@ -50,6 +52,7 @@ ecommerce-ops-dashboard/
 | File di paket ini        | Letakkan menjadi        |
 |--------------------------|-------------------------|
 | `index.html`             | `index.html`            |
+| `jadwal.html`            | `jadwal.html` (root)    |
 | `League.png`             | `League.png` (root, sebelah index.html) |
 | `League-mark.png`        | `League-mark.png` (root — logo menu bar) |
 | `package.json`           | `package.json`          |
@@ -64,6 +67,7 @@ ecommerce-ops-dashboard/
 | `data.monitoring.json`   | `data/monitoring.json`  |
 | `data.sales.json`        | `data/sales.json`       |
 | `data.schedule.json`     | `data/schedule.json`    |
+| `data.board.json`        | `data/board.json`       |
 | `data.berita.json`       | `data/berita.json`      |
 | `env.example.txt`        | *(referensi saja — jangan di‑push)* |
 

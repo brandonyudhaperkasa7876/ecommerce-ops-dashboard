@@ -820,53 +820,8 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
 
     <!-- ============ PENJADWALAN TIM KERJA ============ -->
     <section data-view="schedule" class="hidden">
-      <div class="panel glass cloudbar" style="display:flex">
-        <span class="dot" id="schDot"></span>
-        <b>Penjadwalan &amp; Aktivitas Tim</b>
-        <span class="pill" id="schPill">—</span>
-        <span class="spacer" style="flex:1"></span>
-        <button class="btn ghost small" onclick="Schedule.profileMe()">🪪 Profil Saya</button>
-        <button class="btn ghost small" onclick="Schedule.exportAnalysis()">📊 Download Analisa</button>
-        <button class="btn gold small super-only hidden" onclick="Schedule.openGenerate()">✨ Generate Otomatis</button>
-        <button class="btn ghost small" onclick="Schedule.load()">↻ Muat</button>
-      </div>
-
-      <div class="panel glass">
-        <div class="schbar">
-          <div class="segbtns" id="schViews">
-            <button data-sv="harian" onclick="Schedule.setView('harian')">Harian</button>
-            <button data-sv="mingguan" class="on" onclick="Schedule.setView('mingguan')">Mingguan</button>
-            <button data-sv="bulanan" onclick="Schedule.setView('bulanan')">Bulanan</button>
-            <button data-sv="tahunan" onclick="Schedule.setView('tahunan')">Tahunan</button>
-          </div>
-          <div class="weeknav">
-            <button class="btn ghost small" onclick="Schedule.nav(-1)">‹</button>
-            <span class="wlabel" id="schPeriod">—</span>
-            <button class="btn ghost small" onclick="Schedule.nav(1)">›</button>
-            <button class="btn ghost small" onclick="Schedule.today()">Hari ini</button>
-          </div>
-          <span class="spacer" style="flex:1"></span>
-          <div class="fg" id="schMemberWrap" style="display:none"><label>Anggota</label><select id="schMemberSel" onchange="Schedule.onMemberSel()"></select></div>
-        </div>
-        <div class="sched-legend" id="schLegend" style="margin-top:13px"></div>
-      </div>
-
-      <div class="cards c5">
-        <div class="card glass"><div class="lab">Anggota Tim</div><div class="val b" id="schMembers">0</div></div>
-        <div class="card glass"><div class="lab">Shift (periode)</div><div class="val t" id="schFilled">0</div></div>
-        <div class="card glass"><div class="lab">Total Jam Kerja</div><div class="val d" id="schHours">0</div></div>
-        <div class="card glass"><div class="lab">Tugas Selesai</div><div class="val g" id="schDone">0</div></div>
-        <div class="card glass"><div class="lab">Berkendala</div><div class="val" id="schBlocked" style="color:var(--err)">0</div></div>
-      </div>
-
-      <div class="tablewrap glass" id="schWrap"><div id="schScroll" class="scroll" style="max-height:66vh"></div></div>
-      <div class="note glass" id="schEmpty" style="display:none">Belum ada anggota terjadwal. <span class="admin-only hidden">Tetapkan fungsi user pada tabel <b>Manajemen Anggota</b> di bawah, atau minta tiap user melengkapi <b>Profil Saya</b>.</span><span class="view-only">Lengkapi <b>Profil Saya</b> lalu Super Admin menetapkan fungsi Anda.</span></div>
-
-      <div class="panel glass super-only hidden" id="schRolePanel">
-        <div class="eyebrow">Manajemen Anggota</div>
-        <h3>Fungsi &amp; Tugas Utama Pekerjaan</h3>
-        <p class="sub">Tetapkan fungsi tiap pengguna: <b>Admin</b>, <b>Pick Pack</b>, <b>Data Support</b>, atau <b>Supervisor</b>. Setiap anggota melengkapi data dirinya sendiri melalui <b>Profil Saya</b> (foto, NIK, tanggal lahir, jenis kelamin).</p>
-        <div class="scroll" style="max-height:none"><table class="grid" id="schRoleTable"><thead><tr><th>Foto</th><th>Nama</th><th>NIK</th><th>Email</th><th>Fungsi / Tugas</th><th style="text-align:right">Aksi</th></tr></thead><tbody id="schRoleBody"><tr><td colspan="6" style="padding:14px;color:var(--muted)">Memuat…</td></tr></tbody></table></div>
+      <div class="panel glass" style="padding:0;overflow:hidden;margin-bottom:0">
+        <iframe id="schedFrame" title="Penjadwalan Tim" style="width:100%;height:calc(100vh - 150px);min-height:560px;border:0;display:block;background:#0b0f19;border-radius:16px"></iframe>
       </div>
     </section>
 
@@ -1437,7 +1392,7 @@ const App={
     if(v==='overview')this.updateOverview();
     if(v==='datastatus')DataStatus.load();
     if(v==='users')UserAdmin.open();
-    if(v==='schedule')Schedule.load();
+    if(v==='schedule'){var _f=document.getElementById('schedFrame');if(_f&&!_f.getAttribute('src'))_f.setAttribute('src','jadwal.html?embed=1');}
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();

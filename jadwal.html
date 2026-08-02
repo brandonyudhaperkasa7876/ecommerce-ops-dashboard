@@ -27,6 +27,9 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-seri
   @keyframes mineglow{0%,100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}50%{box-shadow:0 0 14px 1px rgba(34,211,238,.55)}}
   .mine-glow{animation:mineglow 1.6s ease-in-out infinite}
   input[disabled],select[disabled],button[disabled]{opacity:.55;cursor:not-allowed}
+  body.embed{padding-bottom:0}
+  body.embed #appView{padding-top:12px}
+  body.embed .embed-hide{display:none!important}
 </style>
 </head>
 <body class="min-h-screen pb-16 overflow-x-hidden">
@@ -105,7 +108,7 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-seri
       <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><span id="userAv" class="w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center">?</span><span id="userName" class="text-xs font-bold text-slate-200">User</span></div>
       <button onclick="App.openEdit()" data-edit class="bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold flex items-center justify-center gap-2 border border-slate-700 btn-press"><i class="fas fa-users-gear"></i> Edit Tim</button>
       <button onclick="App.openShare()" class="bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold border border-slate-800 btn-press" title="Ekspor/Impor"><i class="fas fa-file-export"></i></button>
-      <button onclick="Auth.logout()" class="bg-slate-900/80 hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 rounded-xl px-3 py-2.5 text-xs font-bold border border-slate-800 btn-press" title="Keluar"><i class="fas fa-right-from-bracket"></i></button>
+      <button onclick="Auth.logout()" class="embed-hide bg-slate-900/80 hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 rounded-xl px-3 py-2.5 text-xs font-bold border border-slate-800 btn-press" title="Keluar"><i class="fas fa-right-from-bracket"></i></button>
     </div>
   </header>
 
@@ -448,11 +451,14 @@ window.App=App;
 
 /* boot */
 (async function(){
+  const EMBED=new URLSearchParams(location.search).get('embed')==='1';
+  if(EMBED)document.body.classList.add('embed');
   await Cloud.ping();
   if(Cloud.mode!=='cloud'&&!window.CONFIG.API_BASE)$('cfgWarn').classList.remove('hidden');
   $('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')PinModal.ok();});
-  const raw=localStorage.getItem(SESSION_KEY);
-  if(raw){try{Auth.session=JSON.parse(raw);App.enter();}catch(e){localStorage.removeItem(SESSION_KEY);}}
+  // pakai sesi halaman ini, atau warisi sesi dashboard (ecomops) bila dibuka embedded / domain sama
+  let raw=localStorage.getItem(SESSION_KEY)||localStorage.getItem('ecomops_session_v1');
+  if(raw){try{Auth.session=JSON.parse(raw);App.enter();}catch(e){}}
 })();
 </script>
 </body>
