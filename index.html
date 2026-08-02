@@ -1178,12 +1178,14 @@ const Cloud = (function(){
     },
     async getData(set){
       if(mode==='cloud'){
-        // Baca file statis langsung (tanpa batas 4.5 MB fungsi serverless)
+        // Prioritas: baca fresh via API (langsung tampil setelah publish, tanpa tunggu redeploy);
+        // fallback ke file statis untuk data sangat besar yang melampaui batas respons fungsi.
+        try{ const r=await get('/api/data?set='+encodeURIComponent(set)); if(r) return r; }catch(e){}
         try{
           const res=await fetch(base()+'/data/'+encodeURIComponent(set)+'.json?t='+Date.now(),{cache:'no-store'});
           if(res.ok){ const d=await res.json()||{}; return {ok:true,set,payload:(d.payload!==undefined?d.payload:null),updatedAt:(d.updatedAt!==undefined?d.updatedAt:null)}; }
         }catch(e){}
-        try{ return await get('/api/data?set='+encodeURIComponent(set)); }catch(e){ mode='local'; }
+        mode='local';
       }
       return LS.getData(set);
     },
@@ -1759,7 +1761,8 @@ const Sales=(function(){
         await wait(10);}
       renderDash(mainInfo);
       el('ovText').textContent='Mem-publish ke Cloud (GitHub)…';await wait(20);
-      await Cloud.putData('sales',{mainRows,sumRows,sumSrc,reports:reports.map(r=>({name:r.name,rep:r.rep})),outputs,updatedAt:new Date().toISOString()},pin);
+      const SUMK=['Lokasi','Division','Unit','Value','Status','Y','M','D'];
+      await Cloud.putData('sales',{cols:COLS.map(c=>c.k),mainRows:mainRows.map(r=>COLS.map(c=>r[c.k])),sumRows:sumRows.map(r=>SUMK.map(k=>r[k])),sumSrc,reports:reports.map(r=>({name:r.name,rep:r.rep})),outputs:outputs.map(o=>({name:o.name,size:o.size})),updatedAt:new Date().toISOString()},pin);
       log('Selesai & dipublish ke Cloud.','ok');el('sstatus').innerHTML='✓ Selesai: '+targets.length+' file diproses & dipublish ke Cloud.';toast('Data Sales dipublish ✓','ok');
     }catch(err){console.error(err);log('ERROR: '+(err&&err.message||err),'err');el('sstatus').innerHTML='<span style="color:var(--err)">Error: '+esc(err&&err.message||err)+'</span>';toast('Gagal proses Sales','err');}
     finally{hideOverlay();}
@@ -1798,7 +1801,9 @@ const Sales=(function(){
   }
   function renderDownloads(){el('sdlList').innerHTML='';outputs.forEach(function(o){var row=document.createElement('div');row.className='dlrow';
     row.innerHTML='<div><div class="n">'+esc(o.name)+'</div><div class="m">'+((o.size||0)/1048576).toFixed(2)+' MB'+(o.note?' · '+esc(o.note):'')+'</div></div>';
-    var b=document.createElement('button');b.className='btn success small';b.innerHTML='📥 Download';b.onclick=function(){saveBlob(new Blob([b64ToUint8(o.b64)],{type:XLMIME}),o.name);};row.appendChild(b);el('sdlList').appendChild(row);});}
+    if(o.b64){var b=document.createElement('button');b.className='btn success small';b.innerHTML='📥 Download';b.onclick=function(){saveBlob(new Blob([b64ToUint8(o.b64)],{type:XLMIME}),o.name);};row.appendChild(b);}
+    else{var s=document.createElement('span');s.className='pill no';s.textContent='Proses ulang untuk unduh';row.appendChild(s);}
+    el('sdlList').appendChild(row);});}
 
   function uniqSorted(a){return Array.from(new Set(a)).filter(function(v){return v!==''&&v!=null;}).sort(function(x,y){return (typeof x==='number'&&typeof y==='number')?x-y:(''+x).localeCompare(''+y);});}
   function fillSel(sel,vals,all){sel.innerHTML='';var o=document.createElement('option');o.value='';o.textContent=all;sel.appendChild(o);vals.forEach(function(v){var op=document.createElement('option');op.value=v;op.textContent=v;sel.appendChild(op);});}
@@ -1841,8 +1846,10 @@ const Sales=(function(){
     try{
       const rec=await Cloud.getData('sales');
       if(rec&&rec.payload&&rec.payload.mainRows){
-        mainRows=rec.payload.mainRows||[];sumRows=rec.payload.sumRows||[];sumSrc=rec.payload.sumSrc||'';
-        reports=(rec.payload.reports||[]);outputs=rec.payload.outputs||[];
+        const p=rec.payload;const cols=p.cols||COLS.map(c=>c.k);const SUMK=['Lokasi','Division','Unit','Value','Status','Y','M','D'];
+        mainRows=(p.mainRows||[]).map(r=>{if(Array.isArray(r)){const o={};cols.forEach((k,i)=>o[k]=r[i]);return o;}return r;});
+        sumRows=(p.sumRows||[]).map(r=>{if(Array.isArray(r)){const o={};SUMK.forEach((k,i)=>o[k]=r[i]);return o;}return r;});
+        sumSrc=p.sumSrc||'';reports=(p.reports||[]);outputs=p.outputs||[];
         renderDash(reports.length?{rowCount:mainRows.length}:null,!reports.length);
         el('salPill').textContent=(Cloud.mode==='cloud'?'GitHub + Vercel':'Mode Lokal')+' · '+mainRows.length+' baris';
       }else{el('sdash').classList.add('hidden');el('sempty').classList.remove('hidden');}
