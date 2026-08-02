@@ -1476,24 +1476,24 @@ const App={
   },
   _taskChart:null,
   async updateScheduleAnalytics(){
-    let rec=null;try{rec=await Cloud.getData('schedule');}catch(e){}
-    const p=(rec&&rec.payload)||{};const members=p.members||{},assignments=p.assignments||{},tasks=p.tasks||{};
-    const emails=Object.keys(members);const pad=n=>(''+n).padStart(2,'0');const now=new Date();
-    const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());const todayIso=iso(now);
-    const mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
-    const week=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);week.push(iso(d));}
-    const WORK={P:1,S:1,M:1};
-    let cov=0;emails.forEach(e=>{const k=assignments[e]&&assignments[e][todayIso];if(WORK[k])cov++;});
-    if($('ovCov'))$('ovCov').textContent=cov+' / '+emails.length;
+    // baca board bersama (team + tasks) — fresh dari API, fallback file statis
+    let payload=null;
+    try{const r=await fetch((window.CONFIG.API_BASE||'')+'/api/schedule',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getBoard'})});const j=await r.json();if(j&&j.ok)payload=j.payload;}catch(e){}
+    if(!payload){try{const r=await fetch((window.CONFIG.API_BASE||'')+'/data/board.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();payload=d&&d.payload;}}catch(e){}}
+    const team=(payload&&payload.team)||[];const tasks=(payload&&payload.tasks)||[];
+    const todayIdx=(new Date().getDay()+6)%7;
+    const WORK={'Shift 1':1,'Shift 2':1,'Backup':1};
+    let cov=0;team.forEach(m=>{const so=(m.schedule||[])[todayIdx]||{};if(WORK[so.type])cov++;});
+    if($('ovCov'))$('ovCov').textContent=cov+' / '+team.length;
     const cnt={belum:0,berlangsung:0,tertunda:0,berkendala:0,selesai:0};
-    emails.forEach(e=>{week.forEach(d=>{const dt=(tasks[e]&&tasks[e][d])||{};Object.keys(dt).forEach(h=>{if(cnt[dt[h].status]!=null)cnt[dt[h].status]++;});});});
+    tasks.forEach(t=>{const s=t.status||'belum';if(cnt[s]!=null)cnt[s]++;});
     if($('ovTaskDone'))$('ovTaskDone').textContent=cnt.selesai;
     if($('ovTaskRun'))$('ovTaskRun').textContent=cnt.berlangsung;
     if($('ovTaskBlock'))$('ovTaskBlock').textContent=cnt.berkendala;
-    const SL={P:'Pagi',S:'Siang',M:'Malam',L:'Libur',C:'Cuti'},SC={P:'sh-p',S:'sh-s',M:'sh-m',L:'sh-l',C:'sh-c'};
+    const SC={'Shift 1':'sh-p','Shift 2':'sh-s','Backup':'sh-c','Off':'sh-l'};
     const box=$('ovShiftToday');
-    if(box){const rows=emails.map(e=>({name:(members[e]&&members[e].name)||e,k:assignments[e]&&assignments[e][todayIso]})).filter(r=>r.k);
-      box.innerHTML=rows.length?rows.slice(0,10).map(r=>'<div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="shift '+(SC[r.k]||'sh-x')+'">'+r.k+'</span> '+esc(r.name)+' <span class="clip">· '+(SL[r.k]||'')+'</span></div>').join(''):'<span class="clip">Belum ada shift terjadwal hari ini.</span>';}
+    if(box){const rows=team.map(m=>({name:m.name,so:(m.schedule||[])[todayIdx]||{}})).filter(r=>r.so&&r.so.type&&r.so.type!=='Off');
+      box.innerHTML=rows.length?rows.slice(0,12).map(r=>'<div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="shift '+(SC[r.so.type]||'sh-x')+'">'+esc(r.so.type)+'</span> '+esc(r.name)+' <span class="clip">· '+esc(r.so.location||'')+'</span></div>').join(''):'<span class="clip">Belum ada shift terjadwal hari ini.</span>';}
     const cd={labels:['Selesai','Berlangsung','Tertunda','Berkendala','Belum'],datasets:[{data:[cnt.selesai,cnt.berlangsung,cnt.tertunda,cnt.berkendala,cnt.belum],backgroundColor:['#57d38a','#5aa2ff','#e9b24b','#f0716b','#5c6a7d'],borderColor:'rgba(0,0,0,.25)',borderWidth:2,hoverOffset:6}]};
     if(this._taskChart){this._taskChart.data=cd;this._taskChart.update();}
     else if($('ovTaskChart'))this._taskChart=new Chart($('ovTaskChart'),{type:'doughnut',data:cd,options:{cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:10}}},maintainAspectRatio:false}});

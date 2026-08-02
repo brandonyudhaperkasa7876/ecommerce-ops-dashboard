@@ -336,7 +336,7 @@ const Cloud=(function(){
     get mode(){return mode;},
     async ping(){try{await get('/api/health');mode='cloud';}catch(e){mode='local';}return mode;},
     async auth(action,p){if(mode==='cloud'){try{return await post('/api/auth',Object.assign({action},p));}catch(e){if(/salah|terdaftar|valid|diizinkan|Owner|admin|PIN|cocok|karakter|digit|ditemukan|wajib/i.test(e.message))throw e;mode='local';}}return localAuth(action,p);},
-    async getBoard(){if(mode==='cloud'){try{const r=await fetch(base()+'/data/board.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json()||{};return d.payload||null;}}catch(e){}try{const r=await post('/api/schedule',{action:'getBoard'});return r.payload||null;}catch(e){mode='local';}}const b=LS.board();return b?b.payload:null;},
+    async getBoard(){if(mode==='cloud'){try{const r=await post('/api/schedule',{action:'getBoard'});return r.payload||null;}catch(e){}try{const r=await fetch(base()+'/data/board.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json()||{};return d.payload||null;}}catch(e){mode='local';}}const b=LS.board();return b?b.payload:null;},
     async saveBoard(team,tasks,pin){if(mode==='cloud'){const body={action:'saveBoard',email:Auth.session?Auth.session.email:'',pin,team,tasks};const json=JSON.stringify(body);if(window.pako&&json.length>3000){const gz=window.pako.gzip(json);let s='';const CH=0x8000;for(let i=0;i<gz.length;i+=CH)s+=String.fromCharCode.apply(null,gz.subarray(i,i+CH));return await post('/api/schedule',{gz:btoa(s)});}return await post('/api/schedule',body);}LS.saveBoard({payload:{team,tasks}});return {ok:true};}
   };
 })();
