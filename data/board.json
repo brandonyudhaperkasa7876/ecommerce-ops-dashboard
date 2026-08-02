@@ -108,7 +108,7 @@
           },
           {
             "type": "Shift 1",
-            "location": "GPN"
+            "location": "CIKINI"
           }
         ]
       },
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:42:50.681Z"
+  "updatedAt": "2026-08-02T06:42:51.350Z"
 }
