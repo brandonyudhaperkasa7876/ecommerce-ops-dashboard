@@ -157,8 +157,8 @@
         "avatar": "https://ui-avatars.com/api/?name=Endang&background=0e7490&color=cffafe&bold=true",
         "schedule": [
           {
-            "type": "Shift 1",
-            "location": "CIKINI"
+            "type": "Shift 2",
+            "location": "GPN"
           },
           {
             "type": "Off",
@@ -230,5 +230,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:44:27.285Z"
+  "updatedAt": "2026-08-02T06:44:30.966Z"
 }
