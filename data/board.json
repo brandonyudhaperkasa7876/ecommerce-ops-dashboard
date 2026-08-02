@@ -4,65 +4,149 @@
       {
         "id": 1,
         "name": "Geri",
-        "role": "Admin Logistik",
+        "role": "Admin",
         "email": "",
         "avatar": "https://ui-avatars.com/api/?name=Geri&background=0e7490&color=cffafe&bold=true",
         "schedule": [
-          "Shift 2",
-          "Shift 1",
-          "Shift 2",
-          "Shift 1",
-          "Shift 2",
-          "Off",
-          "Off"
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          }
         ]
       },
       {
         "id": 2,
         "name": "Toni",
-        "role": "Admin Keuangan",
+        "role": "Admin",
         "email": "",
         "avatar": "https://ui-avatars.com/api/?name=Toni&background=0e7490&color=cffafe&bold=true",
         "schedule": [
-          "Shift 2",
-          "Shift 1",
-          "Shift 1",
-          "Shift 2",
-          "Shift 1",
-          "Off",
-          "Off"
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          }
         ]
       },
       {
         "id": 3,
         "name": "Rifky",
-        "role": "Pick Pack Lead",
+        "role": "Pick Pack",
         "email": "",
         "avatar": "https://ui-avatars.com/api/?name=Rifky&background=0e7490&color=cffafe&bold=true",
         "schedule": [
-          "Shift 1",
-          "Shift 2",
-          "Shift 2",
-          "Shift 1",
-          "Shift 1",
-          "Off",
-          "Off"
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          }
         ]
       },
       {
         "id": 4,
         "name": "Haris",
-        "role": "Pick Pack Officer",
+        "role": "Pick Pack",
         "email": "",
         "avatar": "https://ui-avatars.com/api/?name=Haris&background=0e7490&color=cffafe&bold=true",
         "schedule": [
-          "Shift 2",
-          "Shift 2",
-          "Shift 1",
-          "Shift 2",
-          "Shift 2",
-          "Off",
-          "Off"
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 1",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Shift 2",
+            "location": "GPN"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          }
         ]
       }
     ],
@@ -109,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T04:54:41.558Z"
+  "updatedAt": "2026-08-02T05:57:40.145Z"
 }
