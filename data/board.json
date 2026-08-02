@@ -46,8 +46,8 @@
         "avatar": "https://ui-avatars.com/api/?name=Toni&background=0e7490&color=cffafe&bold=true",
         "schedule": [
           {
-            "type": "Backup",
-            "location": "CIKINI"
+            "type": "Off",
+            "location": "-"
           },
           {
             "type": "Shift 1",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:41:08.457Z"
+  "updatedAt": "2026-08-02T06:41:09.352Z"
 }
