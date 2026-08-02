@@ -49,6 +49,9 @@
       "mrifkisaputra892004@gmail.com": {
         "2026-08-03": "P",
         "2026-08-01": "P"
+      },
+      "dimaasgery21@gmail.com": {
+        "2026-08-01": "L"
       }
     },
     "tasks": {
@@ -88,7 +91,8 @@
             "status": "berlangsung"
           }
         }
-      }
+      },
+      "dimaasgery21@gmail.com": {}
     },
     "locks": {
       "brandonyudhaperkasa7876@gmail.com": {
@@ -96,5 +100,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-02T03:22:56.997Z"
+  "updatedAt": "2026-08-02T03:23:45.697Z"
 }
