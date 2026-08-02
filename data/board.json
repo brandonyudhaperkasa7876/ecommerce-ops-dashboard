@@ -120,8 +120,8 @@
         "avatar": "https://ui-avatars.com/api/?name=Haris&background=0e7490&color=cffafe&bold=true",
         "schedule": [
           {
-            "type": "Shift 2",
-            "location": "CIKINI"
+            "type": "Off",
+            "location": "-"
           },
           {
             "type": "Shift 2",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:43:00.930Z"
+  "updatedAt": "2026-08-02T06:43:03.947Z"
 }
