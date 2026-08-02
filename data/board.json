@@ -136,8 +136,8 @@
             "location": "-"
           },
           {
-            "type": "Off",
-            "location": "-"
+            "type": "Shift 1",
+            "location": "GPN"
           },
           {
             "type": "Off",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:43:47.662Z"
+  "updatedAt": "2026-08-02T06:43:49.027Z"
 }
