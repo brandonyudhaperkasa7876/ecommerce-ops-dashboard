@@ -47,7 +47,7 @@
         "schedule": [
           {
             "type": "Shift 2",
-            "location": "GPN"
+            "location": "CIKINI"
           },
           {
             "type": "Shift 1",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:41:03.608Z"
+  "updatedAt": "2026-08-02T06:41:06.448Z"
 }
