@@ -136,7 +136,7 @@
             "location": "-"
           },
           {
-            "type": "Shift 2",
+            "type": "Backup",
             "location": "GPN"
           },
           {
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:43:42.464Z"
+  "updatedAt": "2026-08-02T06:43:45.591Z"
 }
