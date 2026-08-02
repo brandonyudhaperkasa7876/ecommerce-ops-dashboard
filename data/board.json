@@ -148,6 +148,43 @@
             "location": "CIKINI"
           }
         ]
+      },
+      {
+        "id": 1785653044251,
+        "name": "Endang",
+        "role": "SPV",
+        "email": "",
+        "avatar": "https://ui-avatars.com/api/?name=Endang&background=0e7490&color=cffafe&bold=true",
+        "schedule": [
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          },
+          {
+            "type": "Off",
+            "location": "-"
+          }
+        ]
       }
     ],
     "tasks": [
@@ -193,5 +230,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:43:54.723Z"
+  "updatedAt": "2026-08-02T06:44:21.493Z"
 }
