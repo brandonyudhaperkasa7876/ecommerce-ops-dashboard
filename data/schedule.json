@@ -30,6 +30,16 @@
         "email": "fatonythoni@gmail.com",
         "role": "Admin",
         "updatedAt": "2026-08-02T03:20:20.223Z"
+      },
+      "dimaasgery21@gmail.com": {
+        "email": "dimaasgery21@gmail.com",
+        "role": "Admin",
+        "name": "Dimaas Geri Saputra",
+        "nik": "0326060297",
+        "dob": "2026-08-02",
+        "gender": "Laki-laki",
+        "photo": "",
+        "updatedAt": "2026-08-02T03:22:56.994Z"
       }
     },
     "assignments": {
@@ -86,5 +96,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-02T03:20:20.223Z"
+  "updatedAt": "2026-08-02T03:22:56.997Z"
 }
