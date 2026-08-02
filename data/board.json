@@ -132,7 +132,7 @@
             "location": "CIKINI"
           },
           {
-            "type": "Shift 1",
+            "type": "Shift 2",
             "location": "CIKINI"
           },
           {
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:43:37.293Z"
+  "updatedAt": "2026-08-02T06:43:39.453Z"
 }
