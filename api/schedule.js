@@ -15,6 +15,7 @@ import { ghGetFile, ghPutFile, readJSON, verifySecret, readBody, ok, fail, ENV }
 import zlib from 'node:zlib';
 
 const FILE  = 'data/schedule.json';
+const BOARD = 'data/board.json';
 const USERS = 'data/users.json';
 const ROLES = ['Admin', 'Pick Pack', 'Data Support', 'Supervisor'];
 const STATUSES = ['belum', 'berlangsung', 'tertunda', 'berkendala', 'selesai'];
@@ -29,6 +30,13 @@ function isAdmin(users, pin){
   if(!p) return false;
   if(p === ENV.ADMIN_PIN) return true;
   return users.some(u => (u.role === 'admin' || u.role === 'owner') && verifySecret(p, u.pin));
+}
+// editor board = owner/admin/regular (bukan viewer), atau ADMIN_PIN
+function isEditor(users, pin){
+  const p = String(pin || '');
+  if(!p) return false;
+  if(p === ENV.ADMIN_PIN) return true;
+  return users.some(u => (u.role==='owner'||u.role==='admin'||u.role==='regular') && verifySecret(p, u.pin));
 }
 // boleh edit target: admin/owner, atau (pin milik actor & actor === target)
 function canEdit(users, actorEmail, pin, target){
@@ -68,6 +76,28 @@ export default async function handler(req, res){
     if(action === 'get'){
       const { data } = await readJSON(FILE, { payload: null });
       return ok(res, { payload: (data && data.payload) || null });
+    }
+
+    // ---- Board (jadwal.html): team + tasks bersama ----
+    if(action === 'getBoard'){
+      const { data } = await readJSON(BOARD, { payload: null });
+      return ok(res, { payload: (data && data.payload) || null });
+    }
+    if(action === 'saveBoard'){
+      if(!isEditor(users, pin)) return fail(res, 'Hanya Owner/Super Admin/Admin yang dapat menyimpan (Viewer hanya melihat).', 403);
+      const team = Array.isArray(b.team) ? b.team : [];
+      const tasks = Array.isArray(b.tasks) ? b.tasks : [];
+      const rec = { payload: { team, tasks }, updatedAt: new Date().toISOString() };
+      // tulis dengan retry sederhana
+      let done = false, lastErr;
+      for(let i=0;i<3 && !done;i++){
+        const f = await ghGetFile(BOARD);
+        const contentB64 = Buffer.from(JSON.stringify(rec, null, 2), 'utf8').toString('base64');
+        try{ await ghPutFile(BOARD, contentB64, 'save board', f ? f.sha : undefined); done = true; }
+        catch(e){ lastErr = e; if(/409|422|sha|conflict|Not Found/i.test(e.message)){ await new Promise(r=>setTimeout(r,120*(i+1))); continue; } throw e; }
+      }
+      if(!done) throw lastErr || new Error('Gagal menyimpan board.');
+      return ok(res, { updatedAt: rec.updatedAt });
     }
 
     if(action === 'saveProfile'){
