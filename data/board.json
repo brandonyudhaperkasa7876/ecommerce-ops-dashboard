@@ -189,16 +189,6 @@
     ],
     "tasks": [
       {
-        "id": 1004,
-        "memberId": 4,
-        "name": "Pengepakan prioritas ekspedisi malam",
-        "day": 0,
-        "startHour": 14,
-        "endHour": 18,
-        "color": "rose",
-        "status": "belum"
-      },
-      {
         "id": 1785660363396,
         "memberId": 1785653044251,
         "name": "host admin",
@@ -210,5 +200,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T08:46:33.512Z"
+  "updatedAt": "2026-08-02T08:46:34.441Z"
 }
