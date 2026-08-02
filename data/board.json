@@ -47,7 +47,7 @@
         "schedule": [
           {
             "type": "Backup",
-            "location": "GPN"
+            "location": "CIKINI"
           },
           {
             "type": "Shift 1",
@@ -193,5 +193,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:41:07.199Z"
+  "updatedAt": "2026-08-02T06:41:08.457Z"
 }
