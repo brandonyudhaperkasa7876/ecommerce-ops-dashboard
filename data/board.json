@@ -227,8 +227,18 @@
         "endHour": 18,
         "color": "rose",
         "status": "belum"
+      },
+      {
+        "id": 1785660363396,
+        "memberId": 1785653044251,
+        "name": "host admin",
+        "day": 0,
+        "startHour": 19,
+        "endHour": 21,
+        "color": "cyan",
+        "status": "belum"
       }
     ]
   },
-  "updatedAt": "2026-08-02T06:49:55.273Z"
+  "updatedAt": "2026-08-02T08:46:12.527Z"
 }
