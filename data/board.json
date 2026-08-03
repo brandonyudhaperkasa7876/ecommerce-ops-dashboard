@@ -207,18 +207,8 @@
         "endHour": 21,
         "color": "rose",
         "status": "belum"
-      },
-      {
-        "id": 1785660459583,
-        "memberId": 1,
-        "name": "operator live",
-        "day": 0,
-        "startHour": 18,
-        "endHour": 21,
-        "color": "amber",
-        "status": "belum"
       }
     ]
   },
-  "updatedAt": "2026-08-02T08:47:40.916Z"
+  "updatedAt": "2026-08-03T09:48:35.560Z"
 }
