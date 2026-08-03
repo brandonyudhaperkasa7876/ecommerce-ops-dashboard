@@ -196,7 +196,7 @@
         "startHour": 19,
         "endHour": 21,
         "color": "cyan",
-        "status": "belum"
+        "status": "berlangsung"
       },
       {
         "id": 1785660437682,
@@ -210,5 +210,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-03T09:48:53.129Z"
+  "updatedAt": "2026-08-03T09:48:55.911Z"
 }
