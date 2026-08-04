@@ -546,6 +546,7 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       <a data-nav="sales" onclick="App.go('sales')"><span class="ic">▤</span> Sales Database</a>
       <a data-nav="berita" onclick="App.go('berita')"><span class="ic">▦</span> Berita Acara</a>
       <a data-nav="schedule" onclick="App.go('schedule')"><span class="ic">🗂</span> Penjadwalan Tim</a>
+      <a data-nav="pr" onclick="App.go('pr')"><span class="ic">🧾</span> PR (Purchase Requisition)</a>
     </nav>
     <div class="navsec">Sistem</div>
     <nav class="nav">
@@ -663,6 +664,8 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
           <div class="fg"><label>Month</label><select id="mfM"></select></div>
           <div class="fg"><label>Day</label><select id="mfD"></select></div>
           <div class="fg"><label>Lokasi</label><select id="mfLoc"></select></div>
+          <div class="fg"><label>Status</label><select id="mfStatus"></select></div>
+          <div class="fg"><label>Sumber</label><select id="mfSumber"></select></div>
           <label class="chk" id="mwInfL"><input type="checkbox" id="mcbInfL"> Infinity Lengkap</label>
           <label class="chk" id="mwInfN"><input type="checkbox" id="mcbInfN"> Infinity Tidak Lengkap</label>
           <label class="chk" id="mwSapL"><input type="checkbox" id="mcbSapL"> SAP Lengkap</label>
@@ -824,6 +827,127 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
         <iframe id="schedFrame" title="Penjadwalan Tim" style="width:100%;height:calc(100vh - 150px);min-height:560px;border:0;display:block;background:#0b0f19;border-radius:16px"></iframe>
       </div>
     </section>
+
+    <!-- ============ PR — PURCHASE REQUISITION ============ -->
+    <style>
+      .pr-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+      .pr-fg label{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+      .pr-fg input,.pr-fg select,.pr-fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--ink,#f4f6fb);padding:9px 11px;font:inherit;font-size:13px}
+      .pr-fg input[readonly]{background:rgba(217,181,106,.10);border-color:rgba(217,181,106,.35);color:#f4d99a;font-weight:700}
+      .pr-items{width:100%;border-collapse:collapse;margin-top:6px}
+      .pr-items th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.12)}
+      .pr-items td{padding:6px 6px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:top}
+      .pr-items td.no{width:44px;text-align:center;color:var(--muted);font-weight:700}
+      .pr-items td.qty{width:90px}.pr-items td.price{width:180px}.pr-items td.amt{width:170px;text-align:right;color:#f4d99a;font-weight:700;white-space:nowrap}
+      .pr-items td.act{width:44px;text-align:center}
+      .pr-items textarea{width:100%;min-height:38px;resize:none;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--ink,#f4f6fb);padding:8px 9px;font:inherit;font-size:13px;line-height:1.4}
+      .pr-items input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--ink,#f4f6fb);padding:8px 9px;font:inherit;font-size:13px}
+      .pr-items input[type=number]{text-align:right}
+      .pr-delrow{background:transparent;border:0;color:#e06b6b;cursor:pointer;font-size:16px;line-height:1}
+      .pr-total{display:flex;justify-content:flex-end;gap:22px;align-items:baseline;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
+      .pr-total b{font-size:22px;color:#f4d99a}
+      .pr-listrow td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+      .pr-badge{display:inline-block;padding:2px 9px;border-radius:999px;background:rgba(217,181,106,.16);color:#f4d99a;font-size:11px;font-weight:700}
+      /* Area cetak formal (di-generate saat print / PDF) */
+      #prPrint{position:fixed;left:-99999px;top:0;width:210mm;background:#fff;color:#1a1a1a}
+      #prPrint *{color:#1a1a1a}
+      #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
+      #prPrint .kop img{height:52px;width:auto}
+      #prPrint h1{font-size:20px;margin:0;letter-spacing:.04em}
+      #prPrint table{width:100%;border-collapse:collapse;font-size:12px}
+      #prPrint .doc th,#prPrint .doc td{border:1px solid #333;padding:6px 8px}
+      #prPrint .doc th{background:#0b1f3a;color:#fff !important;text-align:left}
+      #prPrint .meta td{border:1px solid #999;padding:6px 8px}
+      #prPrint .amt{text-align:right;white-space:nowrap}
+      @media print{
+        body *{visibility:hidden !important}
+        #prPrint,#prPrint *{visibility:visible !important}
+        #prPrint{position:absolute !important;left:0 !important;top:0 !important}
+      }
+    </style>
+    <section data-view="pr" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="prDot"></span>
+        <b>PR — Purchase Requisition</b>
+        <span class="pill" id="prPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="PR.load(true)">↻ Muat ulang</button>
+        <button class="btn primary small admin-only" id="prNewBtn" onclick="PR.newDoc()">+ PR Baru</button>
+      </div>
+
+      <!-- LIST VIEW -->
+      <div id="prListView">
+        <div class="panel glass">
+          <div class="eyebrow">Arsip</div>
+          <h3>Daftar PR</h3>
+          <p class="sub">Seluruh Purchase Requisition tersimpan di Cloud (GitHub + Vercel) dan terlihat sama untuk semua pengguna. <span class="view-only">Peran Viewer hanya dapat melihat &amp; mencetak.</span></p>
+          <div class="fg" style="max-width:320px;margin-bottom:10px"><input id="prSearch" placeholder="Cari nomor / vendor / departemen…" oninput="PR.renderList()" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:inherit;padding:9px 11px;font:inherit"></div>
+          <div class="scroll" style="max-height:none">
+            <table class="grid">
+              <thead><tr><th>PR Number</th><th>PR Date</th><th>Department</th><th>Rec Vendor</th><th>Items</th><th>Est. Amount</th><th>Printed On</th><th></th></tr></thead>
+              <tbody id="prListBody"><tr><td colspan="8" style="padding:16px;color:var(--muted)">Memuat…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDITOR VIEW -->
+      <div id="prEditView" style="display:none">
+        <div class="panel glass">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+            <button class="btn ghost small" onclick="PR.back()">← Kembali</button>
+            <div class="eyebrow" style="margin:0">Formulir PR</div>
+            <h3 id="prFormTitle" style="margin:0 0 0 4px">PR Baru</h3>
+            <span class="spacer" style="flex:1"></span>
+            <button class="btn success small admin-only" onclick="PR.save()">💾 Simpan</button>
+            <button class="btn ghost small" onclick="PR.print()">🖨 Print</button>
+            <button class="btn ghost small" onclick="PR.exportPDF()">📄 PDF</button>
+            <button class="btn ghost small" onclick="PR.exportXLSX()">📊 Excel</button>
+          </div>
+
+          <div class="pr-meta">
+            <div class="pr-fg"><label>PR Date</label><input id="prDate" type="date" readonly></div>
+            <div class="pr-fg"><label>PR Number</label><input id="prNumber" readonly placeholder="otomatis saat disimpan"></div>
+            <div class="pr-fg"><label>Rec Vendor</label><input id="prVendor" placeholder="Nama vendor / supplier"></div>
+            <div class="pr-fg"><label>Department</label>
+              <select id="prDept" onchange="PR.onDeptChange()"></select>
+            </div>
+            <div class="pr-fg"><label>PR Code</label><input id="prCode" readonly></div>
+            <div class="pr-fg"><label>Mata Uang (Currency)</label>
+              <select id="prCurrency" onchange="PR.recalc()">
+                <option value="IDR">IDR — Rupiah (Rp)</option>
+                <option value="USD">USD — US Dollar ($)</option>
+                <option value="EUR">EUR — Euro (€)</option>
+                <option value="SGD">SGD — Singapore Dollar (S$)</option>
+                <option value="CNY">CNY — Yuan (¥)</option>
+                <option value="JPY">JPY — Yen (¥)</option>
+                <option value="MYR">MYR — Ringgit (RM)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin:14px 0 4px;align-items:center">
+            <button class="btn ghost small admin-only" onclick="PR.addDept()">+ Tambah Department</button>
+          </div>
+
+          <div class="scroll" style="max-height:none;margin-top:6px">
+            <table class="pr-items" id="prItemsTable">
+              <thead><tr><th class="no">No</th><th>Description</th><th class="qty">QTY</th><th class="price">Est. @Price</th><th class="amt">Est. Amount</th><th class="act"></th></tr></thead>
+              <tbody id="prItemsBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px"><button class="btn ghost small admin-only" onclick="PR.addRow()">+ Tambah Baris</button></div>
+
+          <div class="pr-total"><span class="sub">TOTAL EST. AMOUNT</span><b id="prTotal">0</b></div>
+
+          <div class="pr-meta" style="margin-top:16px">
+            <div class="pr-fg"><label>Printed On</label><input id="prPrinted" readonly placeholder="belum pernah dicetak"></div>
+            <div class="pr-fg"><label>Dibuat Oleh</label><input id="prBy" readonly></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="prPrint"></div>
 
     <!-- ============ UPDATE DATA STATUS ============ -->
     <section data-view="datastatus" class="hidden">
@@ -1154,7 +1278,19 @@ const Cloud = (function(){
     if(action==='getAttachment') throw new Error('Lampiran tersimpan inline pada mode lokal.');
     throw new Error('Aksi tidak dikenal.');
   }
+  function localPR(b){
+    const rec=LS.getData('pr');const pl=(rec&&rec.payload)||{list:[],depts:[],counters:{}};
+    pl.list=pl.list||[];pl.counters=pl.counters||{};pl.depts=pl.depts||[];
+    if(b.action==='getPR')return {ok:true,payload:pl};
+    if(b.action==='savePR'){const pr=b.pr||{};if(Array.isArray(b.depts))pl.depts=b.depts;
+      if(pr.id){const i=pl.list.findIndex(x=>x.id===pr.id);pr.updatedAt=new Date().toISOString();if(i>=0){pr.number=pl.list[i].number;pr.code=pl.list[i].code;pr.createdAt=pl.list[i].createdAt;pl.list[i]=pr;}else pl.list.push(pr);}
+      else{const code=pr.code||'GEN';const yr=new Date().getFullYear();const key=code+'-'+yr;pl.counters[key]=(pl.counters[key]||0)+1;pr.id='pr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);pr.number='PR/'+code+'/'+String(pl.counters[key]).padStart(4,'0')+'/'+yr;pr.createdAt=new Date().toISOString();pr.updatedAt=pr.createdAt;pl.list.push(pr);}
+      LS.putData('pr',pl);return {ok:true,pr:pr,updatedAt:new Date().toISOString()};}
+    if(b.action==='deletePR'){pl.list=pl.list.filter(x=>x.id!==b.id);LS.putData('pr',pl);return {ok:true};}
+    return {ok:true};
+  }
   function localSched(b){
+    if(b.action==='getPR'||b.action==='savePR'||b.action==='deletePR')return localPR(b);
     const rec=LS.getData('schedule');const p=(rec&&rec.payload)||{};
     const s={members:p.members||{},assignments:p.assignments||{},tasks:p.tasks||{},locks:p.locks||{}};
     const lc2=x=>String(x||'').toLowerCase().trim();const target=lc2(b.target||b.email);
@@ -1292,6 +1428,7 @@ const VIEWS={
   sales:{title:'Sales Database',crumb:'YTD · Template · Month-to-Date — pivot dipertahankan'},
   berita:{title:'Berita Acara',crumb:'Dokumen resmi internal — arsip cloud'},
   schedule:{title:'Penjadwalan Tim Kerja',crumb:'Roster shift mingguan — tersinkron cloud'},
+  pr:{title:'PR — Purchase Requisition',crumb:'Formulir permintaan pembelian — tersinkron cloud'},
   users:{title:'Kelola User',crumb:'Daftar user terdaftar & aktivasi peran'},
   howto:{title:'How To (Super Admin)',crumb:'Panduan update database & sinkronisasi'},
   settings:{title:'Pengaturan & Cloud',crumb:'Konektivitas GitHub + Vercel'}
@@ -1403,6 +1540,7 @@ const App={
     if(v==='datastatus')DataStatus.load();
     if(v==='users')UserAdmin.open();
     if(v==='schedule'){var _f=document.getElementById('schedFrame');if(_f&&!_f.getAttribute('src'))_f.setAttribute('src','jadwal.html?embed=1');}
+    if(v==='pr')PR.open();
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();
@@ -1545,7 +1683,7 @@ const Monitoring=(function(){
     {k:'QTY',h:'QTY'},{k:'amount',h:'Amount'},{k:'Sumber',h:'Sumber'},{k:'Status',h:'Status'},
     {k:'OrderID',h:'Order ID'},{k:'LokasiW',h:'Lokasi (W)'},{k:'Generic',h:'Generic'},
     {k:'ProductName',h:'Product Name'},{k:'SYear',h:'S.Year'},{k:'Division',h:'Division'},
-    {k:'SO_Inf',h:'SO Infinity'},{k:'TI_Inf',h:'TI Infinity'},{k:'TO_Inf',h:'TO Infinity'},{k:'TitoSrc',h:'Match TI/TO'},
+    {k:'SO_Inf',h:'SO Infinity'},{k:'SR_Inf',h:'SR Infinity'},{k:'TI_Inf',h:'TI Infinity'},{k:'TO_Inf',h:'TO Infinity'},{k:'TitoSrc',h:'Match TI/TO'},
     {k:'SO_SAP',h:'SO SAP'},{k:'DO_SAP',h:'DO SAP'},{k:'Bill_SAP',h:'Billing SAP'},{k:'DupSO',h:'SO / Pesanan'},
     {k:'InfStatus',h:'Infinity'},{k:'SapStatus',h:'SAP'},{k:'DupStatus',h:'Duplikat'}
   ];
@@ -1597,10 +1735,13 @@ const Monitoring=(function(){
           Sumber:nz(row[I.K]),Status:nz(row[I.M]),OrderID:nz(row[I.V]),LokasiW:nz(row[I.W]),Generic:nz(row[I.X]),ProductName:nz(row[I.Y]),SYear:nz(row[I.Z]),Division:nz(row[I.AA]),
           _name:normName(row[I.G]),_sku:normSKU(row[I.A])});}
       setOv('JUBELIO: '+base.length+' baris (2026+). Membaca AdminLPH…');await wait(30);
-      let lphByRef={},lphByName={};
+      let lphByRef={},lphByName={},lphSRBySO={};
       if(files.L){const awb=XLSX.read(await readAB(files.L),{type:'array',dense:true,cellStyles:false,cellFormula:false});const a=XLSX.utils.sheet_to_json(awb.Sheets[awb.SheetNames[0]],{header:1,raw:true,defval:null});
+        // deteksi kolom SR dari baris header (cari header yang mengandung "SR")
+        let srCol=-1;for(const hi of [0,1]){const hr=a[hi];if(!hr)continue;for(let ci=0;ci<hr.length;ci++){const hv=String(hr[ci]==null?'':hr[ci]).toUpperCase().trim();if(hv==='SR'||hv==='NO SR'||hv==='NO. SR'||hv==='SR INFINITY'||hv==='SR NUMBER'||/\bSR\b/.test(hv)){srCol=ci;break;}}if(srCol>=0)break;}
         for(let r=2;r<a.length;r++){const row=a[r];if(!row)continue;const site=nz(row[0]),so=nz(row[4]);if(!so||/total/i.test(site)||/total/i.test(so))continue;if(!/^SO/i.test(so))continue;
-          const oref=normRef(row[11]),nm=normName(row[10]);if(oref&&!(oref in lphByRef))lphByRef[oref]=so;if(nm&&!(nm in lphByName))lphByName[nm]=so;}}
+          const oref=normRef(row[11]),nm=normName(row[10]);if(oref&&!(oref in lphByRef))lphByRef[oref]=so;if(nm&&!(nm in lphByName))lphByName[nm]=so;
+          if(srCol>=0){const sr=nz(row[srCol]);if(sr){const key=normName(so);if(!(key in lphSRBySO))lphSRBySO[key]=sr;}}}}
       setOv('Membaca TransferIn (SO + fuzzy Jubelio)…');await wait(30);
       let tiBySO={},jubBySkuDate=[];
       if(files.T){const twb=XLSX.read(await readAB(files.T),{type:'array',dense:true,cellStyles:false,cellFormula:false});const tt=XLSX.utils.sheet_to_json(twb.Sheets[twb.SheetNames[0]],{header:1,raw:true,defval:null});let grp=null;
@@ -1618,6 +1759,7 @@ const Monitoring=(function(){
       for(const b of base){const k1=normRef(b.OrderID),k2=normRef(b.NoPesanan);const sap=sapByRef[k1]||sapByRef[k2]||(b._name?sapByName[b._name]:null)||null;
         b.SO_SAP=sap?sap.SO:'';b.DO_SAP=sap?sap.DO:'';b.Bill_SAP=sap?sap.Bill:'';
         let so=lphByRef[k1]||lphByRef[k2]||(b._name?lphByName[b._name]:null)||'';if(!so&&sap&&sap.SOext)so='SO-'+sap.SOext.replace(/^SO/,'');b.SO_Inf=so;
+        b.SR_Inf=(so&&lphSRBySO[normName(so)])||'';
         let tito=so?tiBySO[normName(so)]:null,src='';
         if(tito){src='Langsung';}else{const bs=isoToSerial(b.TanggalStr);let best=null,bestd=1e9;for(const t of jubBySkuDate){if(t.sku!==b._sku)continue;const dd=(bs!=null&&t.serial!=null)?Math.abs(bs-t.serial):0;if(dd<=FUZZY_DATE_DAYS&&dd<bestd){best=t;bestd=dd;}}if(best){tito={TI:best.TI,TO:best.TO};src='Fuzzy';fuzzyCount++;}}
         b.TI_Inf=tito?tito.TI:'';b.TO_Inf=tito?tito.TO:'';b.TitoSrc=src;
@@ -1639,13 +1781,13 @@ const Monitoring=(function(){
 
   function uniqSorted(arr){return [...new Set(arr)].filter(v=>v!==''&&v!=null).sort((a,b)=>(typeof a==='number'&&typeof b==='number')?a-b:(''+a).localeCompare(''+b));}
   function fillSel(sel,vals,allLabel){sel.innerHTML='';const o=document.createElement('option');o.value='';o.textContent=allLabel;sel.appendChild(o);vals.forEach(v=>{const op=document.createElement('option');op.value=v;op.textContent=v;sel.appendChild(op);});}
-  function buildFilters(){fillSel(el('mfY'),uniqSorted(rows.map(r=>r.Y)),'Semua Year');fillSel(el('mfM'),uniqSorted(rows.map(r=>r.M)),'Semua Month');fillSel(el('mfD'),uniqSorted(rows.map(r=>r.D)),'Semua Day');fillSel(el('mfLoc'),uniqSorted(rows.map(r=>r.Lokasi)),'Semua Lokasi');}
-  ['mfY','mfM','mfD','mfLoc'].forEach(id=>el(id).onchange=applyFilters);
+  function buildFilters(){fillSel(el('mfY'),uniqSorted(rows.map(r=>r.Y)),'Semua Year');fillSel(el('mfM'),uniqSorted(rows.map(r=>r.M)),'Semua Month');fillSel(el('mfD'),uniqSorted(rows.map(r=>r.D)),'Semua Day');fillSel(el('mfLoc'),uniqSorted(rows.map(r=>r.Lokasi)),'Semua Lokasi');fillSel(el('mfStatus'),uniqSorted(rows.map(r=>r.Status)),'Semua Status');fillSel(el('mfSumber'),uniqSorted(rows.map(r=>r.Sumber)),'Semua Sumber');}
+  ['mfY','mfM','mfD','mfLoc','mfStatus','mfSumber'].forEach(id=>el(id).onchange=applyFilters);
   [['mcbInfL','mwInfL'],['mcbInfN','mwInfN'],['mcbSapL','mwSapL'],['mcbDup','mwDup'],['mcbFz','mwFz']].forEach(([c,w])=>{el(c).onchange=()=>{el(w).classList.toggle('on',el(c).checked);applyFilters();};});
-  el('mbtnClearF').onclick=()=>{['mfY','mfM','mfD','mfLoc'].forEach(id=>el(id).value='');['mcbInfL','mcbInfN','mcbSapL','mcbDup','mcbFz'].forEach(c=>el(c).checked=false);['mwInfL','mwInfN','mwSapL','mwDup','mwFz'].forEach(w=>el(w).classList.remove('on'));applyFilters();};
-  function applyFilters(){const y=el('mfY').value,m=el('mfM').value,d=el('mfD').value,loc=el('mfLoc').value;
+  el('mbtnClearF').onclick=()=>{['mfY','mfM','mfD','mfLoc','mfStatus','mfSumber'].forEach(id=>el(id).value='');['mcbInfL','mcbInfN','mcbSapL','mcbDup','mcbFz'].forEach(c=>el(c).checked=false);['mwInfL','mwInfN','mwSapL','mwDup','mwFz'].forEach(w=>el(w).classList.remove('on'));applyFilters();};
+  function applyFilters(){const y=el('mfY').value,m=el('mfM').value,d=el('mfD').value,loc=el('mfLoc').value,st=el('mfStatus').value,sb=el('mfSumber').value;
     const infL=el('mcbInfL').checked,infN=el('mcbInfN').checked,sapL=el('mcbSapL').checked,dup=el('mcbDup').checked,fz=el('mcbFz').checked;
-    filtered=rows.filter(r=>{if(y&&(''+r.Y)!==y)return false;if(m&&(''+r.M)!==m)return false;if(d&&(''+r.D)!==d)return false;if(loc&&r.Lokasi!==loc)return false;
+    filtered=rows.filter(r=>{if(y&&(''+r.Y)!==y)return false;if(m&&(''+r.M)!==m)return false;if(d&&(''+r.D)!==d)return false;if(loc&&r.Lokasi!==loc)return false;if(st&&(''+r.Status)!==st)return false;if(sb&&(''+r.Sumber)!==sb)return false;
       const isLen=r.InfStatus==='Lengkap';if(infL&&!infN&&!isLen)return false;if(infN&&!infL&&isLen)return false;if(sapL&&r.SapStatus!=='Lengkap')return false;if(dup&&!(r.DupSO>1))return false;if(fz&&r.TitoSrc!=='Fuzzy')return false;return true;});
     page=1;renderCards();renderCharts();renderTable();}
 
@@ -2125,6 +2267,157 @@ const UserAdmin=(function(){
     try{ await Cloud.auth('deleteUser',{pin,email}); toast('User dihapus','err'); await U.reload(); }catch(e){ toast(e.message,'err'); }
   };
   return U;
+})();
+
+/* ============================================================
+ *  MODULE: PR — PURCHASE REQUISITION (tersinkron Cloud)
+ * ============================================================ */
+const PR=(function(){
+  const DEPTS=[
+    {name:'E-Commerce',code:'ECM'},{name:'Retail',code:'RTL'},{name:'B2B / Wholesales',code:'B2B'},
+    {name:'Modern Market',code:'MM'},{name:'Information Technology',code:'IT'},{name:'Human Resource Department',code:'HRD'},
+    {name:'General Affair',code:'GA'},{name:'Product',code:'PRD'},{name:'Logistic',code:'LOG'},
+    {name:'Supply Chain',code:'SC'},{name:'Warehouse',code:'WH'},{name:'Finance & Accounting',code:'FA'}
+  ];
+  const CUR={IDR:'Rp',USD:'$',EUR:'€',SGD:'S$',CNY:'¥',JPY:'¥',MYR:'RM'};
+  let list=[], depts=DEPTS.slice(), cur=null, cachedPin=null, loaded=false;
+  const P={};
+  const pad=n=>(''+n).padStart(2,'0');
+  const todayIso=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+  const fmtDate=iso=>{if(!iso)return '';const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso);return m?m[3]+'/'+m[2]+'/'+m[1]:iso;};
+  const money=(v,c)=>(CUR[c]||'')+' '+(Number(v)||0).toLocaleString('id-ID',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const deptCode=name=>{const d=depts.find(x=>x.name===name);return d?d.code:'GEN';};
+  const total=r=>(r.items||[]).reduce((s,it)=>s+(Number(it.qty)||0)*(Number(it.price)||0),0);
+  async function ensurePin(){if(cachedPin)return cachedPin;const p=await Berita.askPin('Masukkan PIN admin untuk menyimpan PR ke Cloud');if(p==null)return null;cachedPin=p;return p;}
+  function cloudPill(){const d=$('prDot'),p=$('prPill');const cloud=Cloud.mode==='cloud';if(d)d.className='dot'+(cloud?' live':'');if(p){p.textContent=(cloud?'GitHub + Vercel':'Mode Lokal')+' · '+list.length+' PR';p.className='pill '+(cloud?'ok':'no');}}
+  function fillDeptSel(){const sel=$('prDept');if(!sel)return;const keep=sel.value;sel.innerHTML='<option value="">— pilih —</option>'+depts.map(d=>'<option value="'+esc(d.name)+'">'+esc(d.name)+' ('+esc(d.code)+')</option>').join('');if(keep)sel.value=keep;}
+
+  P.open=async function(){cloudPill();fillDeptSel();if(!loaded)await P.load();else{P.back();P.renderList();}};
+
+  P.load=async function(force){
+    try{
+      const r=await Cloud.sched({action:'getPR'});
+      const pl=(r&&r.payload)||{};
+      list=Array.isArray(pl.list)?pl.list:[];
+      if(Array.isArray(pl.depts)&&pl.depts.length){const map={};DEPTS.concat(pl.depts).forEach(d=>{if(d&&d.name)map[d.name]={name:d.name,code:d.code||deptCode(d.name)};});depts=Object.keys(map).map(k=>map[k]);}
+      loaded=true;fillDeptSel();cloudPill();P.renderList();
+    }catch(e){if(force)toast('Gagal memuat PR: '+e.message,'err');$('prListBody').innerHTML='<tr><td colspan="8" style="padding:16px;color:var(--err)">'+esc(e.message)+'</td></tr>';}
+  };
+
+  P.renderList=function(){
+    const q=($('prSearch').value||'').toLowerCase().trim();
+    const admin=App.isAdmin();
+    let arr=list.slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+    if(q)arr=arr.filter(r=>[r.number,r.vendor,r.dept,r.code].some(v=>String(v||'').toLowerCase().includes(q)));
+    if(!arr.length){$('prListBody').innerHTML='<tr><td colspan="8" style="padding:16px;color:var(--muted)">Belum ada PR. '+(admin?'Klik <b>+ PR Baru</b> untuk membuat.':'')+'</td></tr>';return;}
+    $('prListBody').innerHTML=arr.map(r=>{
+      const del=admin?'<button class="mini del" onclick="PR.remove(\''+esc(r.id)+'\')">Hapus</button>':'';
+      const open='<button class="mini" onclick="PR.edit(\''+esc(r.id)+'\')">'+(admin?'Buka / Edit':'Lihat')+'</button>';
+      return '<tr class="pr-listrow"><td><span class="pr-badge">'+esc(r.number||'—')+'</span></td><td>'+fmtDate(r.date)+'</td><td>'+esc(r.dept||'—')+'</td><td>'+esc(r.vendor||'—')+'</td><td>'+((r.items||[]).length)+'</td><td style="text-align:right;color:#f4d99a;font-weight:700;white-space:nowrap">'+money(total(r),r.currency)+'</td><td>'+(r.printedOn?fmtDate(r.printedOn):'—')+'</td><td style="text-align:right;white-space:nowrap">'+open+' '+del+'</td></tr>';
+    }).join('');
+  };
+
+  function showEditor(){$('prListView').style.display='none';$('prEditView').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+  P.back=function(){$('prEditView').style.display='none';$('prListView').style.display='';};
+
+  P.newDoc=function(){
+    if(!App.isAdmin()){toast('Hanya Admin/Super Admin/Owner yang dapat membuat PR.','err');return;}
+    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
+    $('prFormTitle').textContent='PR Baru';bind();showEditor();
+  };
+  P.edit=function(id){const r=list.find(x=>x.id===id);if(!r)return;cur=JSON.parse(JSON.stringify(r));if(!cur.items||!cur.items.length)cur.items=[{desc:'',qty:1,price:0}];$('prFormTitle').textContent=cur.number||'PR';bind();showEditor();
+    if(!App.isAdmin())setReadonly(true);else setReadonly(false);};
+
+  function setReadonly(ro){['prVendor','prDept','prCurrency'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
+    document.querySelectorAll('#prEditView .admin-only').forEach(e=>e.style.display=ro?'none':'');
+    $('prItemsBody').querySelectorAll('input,textarea').forEach(e=>e.disabled=ro);}
+
+  function bind(){
+    $('prDate').value=cur.date;$('prNumber').value=cur.number||'';$('prVendor').value=cur.vendor||'';
+    fillDeptSel();$('prDept').value=cur.dept||'';$('prCode').value=cur.code||deptCode(cur.dept)||'';
+    $('prCurrency').value=cur.currency||'IDR';$('prPrinted').value=cur.printedOn?fmtDate(cur.printedOn):'';$('prBy').value=cur.by||'';
+    renderItems();
+  }
+  P.onDeptChange=function(){$('prCode').value=deptCode($('prDept').value);};
+  P.addDept=function(){if(!App.isAdmin())return;const name=(prompt('Nama Department baru:')||'').trim();if(!name)return;let code=(prompt('Kode singkat (mis. QA):')||'').trim().toUpperCase();if(!code)code=name.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()||'GEN';if(!depts.find(d=>d.name===name)){depts.push({name,code});}fillDeptSel();$('prDept').value=name;P.onDeptChange();toast('Department ditambahkan (tersimpan saat PR disimpan).','ok');};
+
+  function itemRow(it,i){
+    return '<tr><td class="no">'+(i+1)+'</td>'+
+      '<td><textarea class="pr-desc" rows="1" oninput="PR.autosize(this)" placeholder="Deskripsi barang / jasa…">'+esc(it.desc||'')+'</textarea></td>'+
+      '<td class="qty"><input class="pr-qty" type="number" min="0" step="any" value="'+(it.qty!=null?it.qty:'')+'" oninput="PR.recalc()"></td>'+
+      '<td class="price"><input class="pr-price" type="number" min="0" step="any" value="'+(it.price!=null?it.price:'')+'" oninput="PR.recalc()"></td>'+
+      '<td class="amt pr-amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),cur.currency)+'</td>'+
+      '<td class="act"><button class="pr-delrow admin-only" title="Hapus baris" onclick="PR.delRow('+i+')">✕</button></td></tr>';
+  }
+  function renderItems(){$('prItemsBody').innerHTML=(cur.items||[]).map((it,i)=>itemRow(it,i)).join('');
+    $('prItemsBody').querySelectorAll('.pr-desc').forEach(t=>P.autosize(t));P.recalc();}
+  P.autosize=function(t){t.style.height='auto';t.style.height=(t.scrollHeight)+'px';};
+  P.addRow=function(){if(!App.isAdmin())return;readForm(true);cur.items.push({desc:'',qty:1,price:0});renderItems();};
+  P.delRow=function(i){if(!App.isAdmin())return;readForm(true);cur.items.splice(i,1);if(!cur.items.length)cur.items.push({desc:'',qty:1,price:0});renderItems();};
+
+  function readForm(keepItems){
+    if(!cur)return;
+    cur.vendor=$('prVendor').value.trim();cur.dept=$('prDept').value;cur.code=deptCode(cur.dept);cur.currency=$('prCurrency').value;
+    const rows=$('prItemsBody').querySelectorAll('tr');const items=[];
+    rows.forEach(tr=>{const d=tr.querySelector('.pr-desc'),q=tr.querySelector('.pr-qty'),p=tr.querySelector('.pr-price');if(!d)return;items.push({desc:d.value,qty:parseFloat(q.value)||0,price:parseFloat(p.value)||0});});
+    if(keepItems)cur.items=items; else cur.items=items.filter(it=>String(it.desc).trim()||it.qty||it.price);
+  }
+  P.recalc=function(){
+    const c=$('prCurrency').value;let t=0;
+    $('prItemsBody').querySelectorAll('tr').forEach(tr=>{const q=parseFloat(tr.querySelector('.pr-qty').value)||0,p=parseFloat(tr.querySelector('.pr-price').value)||0;const amt=q*p;t+=amt;tr.querySelector('.pr-amt').textContent=money(amt,c);});
+    $('prTotal').textContent=money(t,c);
+  };
+
+  P.save=async function(){
+    if(!App.isAdmin()){toast('Hanya Admin/Super Admin/Owner yang dapat menyimpan.','err');return;}
+    readForm(false);
+    if(!cur.dept){toast('Pilih Department dulu.','err');return;}
+    if(!cur.items.length){toast('Isi minimal satu baris deskripsi.','err');return;}
+    const pin=await ensurePin();if(pin==null)return;
+    try{
+      const r=await Cloud.sched({action:'savePR',pin,pr:cur,depts:depts});
+      if(r&&r.pr){cur=r.pr;$('prNumber').value=cur.number||'';$('prFormTitle').textContent=cur.number||'PR';}
+      toast('PR tersimpan ✓ '+((cur.number)||''),'ok');
+      await P.load(true);
+    }catch(e){toast('Gagal menyimpan: '+e.message,'err');cachedPin=null;}
+  };
+  P.remove=async function(id){
+    if(!App.isAdmin())return;if(!confirm('Hapus PR ini?'))return;
+    const pin=await ensurePin();if(pin==null)return;
+    try{await Cloud.sched({action:'deletePR',pin,id});toast('PR dihapus','err');await P.load(true);}catch(e){toast(e.message,'err');cachedPin=null;}
+  };
+
+  function buildPrintHTML(r){
+    const rowsH=(r.items||[]).map((it,i)=>'<tr><td style="text-align:center">'+(i+1)+'</td><td>'+esc(String(it.desc||'').replace(/\n/g,'<br>'))+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
+    return '<div style="padding:14mm 12mm">'
+      +'<div class="kop"><img src="League.png" alt="LEAGUE" onerror="this.style.display=\'none\'"><div><h1>PT. BERCA SPORTINDO</h1><div style="font-size:12px;letter-spacing:.12em">BRAND · LEAGUE</div></div><div style="margin-left:auto;text-align:right"><h1 style="font-size:22px">PURCHASE REQUISITION</h1></div></div>'
+      +'<table class="meta" style="margin-bottom:10px"><tr><td style="width:16%"><b>PR NUMBER</b></td><td style="width:34%">'+esc(r.number||'-')+'</td><td style="width:16%"><b>PR DATE</b></td><td>'+fmtDate(r.date)+'</td></tr>'
+      +'<tr><td><b>DEPARTMENT</b></td><td>'+esc(r.dept||'-')+' ('+esc(r.code||'')+')</td><td><b>REC VENDOR</b></td><td>'+esc(r.vendor||'-')+'</td></tr>'
+      +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
+      +'<table class="doc"><thead><tr><th style="width:6%">NO</th><th>DESCRIPTION</th><th style="width:8%">QTY</th><th style="width:16%">EST. @PRICE</th><th style="width:18%">EST. AMOUNT</th></tr></thead><tbody>'+rowsH
+      +'<tr><td colspan="4" style="text-align:right"><b>TOTAL EST. AMOUNT</b></td><td class="amt"><b>'+money(total(r),r.currency)+'</b></td></tr></tbody></table>'
+      +'<table class="meta" style="margin-top:24px;border:0"><tr style="text-align:center"><td style="border:0"><br><br><br>___________________<br>Prepared by<br><b>'+esc(r.by||'')+'</b></td><td style="border:0"><br><br><br>___________________<br>Checked by</td><td style="border:0"><br><br><br>___________________<br>Approved by</td></tr></table>'
+      +'</div>';
+  }
+  async function markPrinted(){
+    if(!cur)return;cur.printedOn=todayIso();$('prPrinted').value=fmtDate(cur.printedOn);
+    if(cur.id&&App.isAdmin()){const pin=await ensurePin();if(pin!=null){try{const r=await Cloud.sched({action:'savePR',pin,pr:cur,depts:depts});if(r&&r.pr)cur=r.pr;await P.load(true);}catch(e){}}}
+  }
+  P.print=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);setTimeout(()=>window.print(),80);};
+  P.exportPDF=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);
+    const fn='PR '+((cur.number||'baru').replace(/[\/\\]/g,'-'))+'.pdf';
+    if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('prPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:210mm;background:#fff';html2pdf().set({margin:0,filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
+  P.exportXLSX=function(){readForm(false);const r=cur;
+    const aoa=[['PT. BERCA SPORTINDO — PURCHASE REQUISITION'],[],
+      ['PR NUMBER',r.number||'',' ','PR DATE',fmtDate(r.date)],
+      ['DEPARTMENT',(r.dept||'')+' ('+(r.code||'')+')',' ','REC VENDOR',r.vendor||''],
+      ['CURRENCY',r.currency||'IDR',' ','PRINTED ON',r.printedOn?fmtDate(r.printedOn):''],[],
+      ['NO','DESCRIPTION','QTY','EST. @PRICE','EST. AMOUNT']];
+    (r.items||[]).forEach((it,i)=>aoa.push([i+1,it.desc||'',Number(it.qty)||0,Number(it.price)||0,(Number(it.qty)||0)*(Number(it.price)||0)]));
+    aoa.push(['','','','TOTAL',total(r)]);
+    const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:6},{wch:48},{wch:8},{wch:16},{wch:18}];
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'PR');XLSX.writeFile(wb,'PR '+((r.number||'baru').replace(/[\/\\]/g,'-'))+'.xlsx');};
+  return P;
 })();
 </script>
 <script>
