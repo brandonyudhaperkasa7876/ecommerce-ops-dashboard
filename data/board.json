@@ -124,8 +124,8 @@
             "location": "CIKINI"
           },
           {
-            "type": "Backup",
-            "location": "CIKINI"
+            "type": "Off",
+            "location": "-"
           },
           {
             "type": "Shift 1",
@@ -210,5 +210,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-04T10:44:26.099Z"
+  "updatedAt": "2026-08-04T10:44:26.737Z"
 }
