@@ -33,8 +33,8 @@
             "location": "GPN"
           },
           {
-            "type": "Backup",
-            "location": "CIKINI"
+            "type": "Off",
+            "location": "-"
           }
         ]
       },
@@ -210,5 +210,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-04T10:45:30.435Z"
+  "updatedAt": "2026-08-04T10:45:31.348Z"
 }
