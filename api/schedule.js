@@ -16,6 +16,7 @@ import zlib from 'node:zlib';
 
 const FILE  = 'data/schedule.json';
 const BOARD = 'data/board.json';
+const PR_FILE = 'data/pr.json';
 const USERS = 'data/users.json';
 const ROLES = ['Admin', 'Pick Pack', 'Data Support', 'Supervisor'];
 const STATUSES = ['belum', 'berlangsung', 'tertunda', 'berkendala', 'selesai'];
@@ -63,6 +64,23 @@ async function mutate(apply){
   throw new Error('Gagal menyimpan (konflik berulang). Coba lagi.');
 }
 
+// read-modify-write untuk data/pr.json (Purchase Requisition)
+async function prMutate(apply){
+  let extra = {};
+  for(let i = 0; i < 4; i++){
+    const f = await ghGetFile(PR_FILE);
+    let payload = { list: [], depts: [], counters: {} };
+    if(f){ try{ const p = (JSON.parse(Buffer.from(f.contentB64, 'base64').toString('utf8')) || {}).payload; if(p) payload = p; }catch(e){} }
+    const s = { list: Array.isArray(payload.list) ? payload.list : [], depts: Array.isArray(payload.depts) ? payload.depts : [], counters: payload.counters || {} };
+    extra = apply(s) || {};
+    const rec = { payload: { list: s.list, depts: s.depts, counters: s.counters }, updatedAt: new Date().toISOString() };
+    const contentB64 = Buffer.from(JSON.stringify(rec, null, 2), 'utf8').toString('base64');
+    try{ await ghPutFile(PR_FILE, contentB64, 'pr ' + (extra.msg || 'update'), f ? f.sha : undefined); return { updatedAt: rec.updatedAt, extra }; }
+    catch(e){ if(i < 3 && /409|422|sha|conflict|Not Found/i.test(e.message)) { await new Promise(r => setTimeout(r, 120 * (i + 1))); continue; } throw e; }
+  }
+  throw new Error('Gagal menyimpan PR (konflik berulang). Coba lagi.');
+}
+
 export default async function handler(req, res){
   if(req.method !== 'POST') return fail(res, 'Gunakan POST.', 405);
   try{
@@ -98,6 +116,66 @@ export default async function handler(req, res){
       }
       if(!done) throw lastErr || new Error('Gagal menyimpan board.');
       return ok(res, { updatedAt: rec.updatedAt });
+    }
+
+    // ---- PR (Purchase Requisition) ----
+    if(action === 'getPR'){
+      const { data } = await readJSON(PR_FILE, { payload: null });
+      return ok(res, { payload: (data && data.payload) || { list: [], depts: [], counters: {} } });
+    }
+    if(action === 'savePR'){
+      if(!isEditor(users, pin)) return fail(res, 'Hanya Owner/Super Admin/Admin yang dapat menyimpan PR (Viewer hanya melihat).', 403);
+      const pr = b.pr || {};
+      const inDepts = Array.isArray(b.depts) ? b.depts : null;
+      let saved = null;
+      const r = await prMutate(s => {
+        if(inDepts) s.depts = inDepts;
+        const clean = {
+          vendor: String(pr.vendor || '').slice(0, 200),
+          dept: String(pr.dept || '').slice(0, 120),
+          code: String(pr.code || 'GEN').slice(0, 12),
+          date: /^\d{4}-\d{2}-\d{2}$/.test(pr.date) ? pr.date : new Date().toISOString().slice(0, 10),
+          currency: String(pr.currency || 'IDR').slice(0, 6),
+          by: String(pr.by || '').slice(0, 120),
+          printedOn: /^\d{4}-\d{2}-\d{2}$/.test(pr.printedOn) ? pr.printedOn : '',
+          items: (Array.isArray(pr.items) ? pr.items : []).slice(0, 200).map(it => ({
+            desc: String((it && it.desc) || '').slice(0, 1000),
+            qty: Number((it && it.qty) || 0) || 0,
+            price: Number((it && it.price) || 0) || 0
+          }))
+        };
+        if(pr.id){
+          const i = s.list.findIndex(x => x.id === pr.id);
+          if(i >= 0){
+            const prev = s.list[i];
+            saved = Object.assign({}, prev, clean, { id: prev.id, number: prev.number, code: prev.code, createdAt: prev.createdAt, updatedAt: new Date().toISOString() });
+            s.list[i] = saved;
+          } else {
+            saved = Object.assign({ id: pr.id }, clean, { number: pr.number || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            s.list.push(saved);
+          }
+        } else {
+          const yr = new Date().getFullYear();
+          const key = clean.code + '-' + yr;
+          s.counters[key] = (s.counters[key] || 0) + 1;
+          const seq = String(s.counters[key]).padStart(4, '0');
+          saved = Object.assign({
+            id: 'pr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            number: 'PR/' + clean.code + '/' + seq + '/' + yr,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }, clean);
+          s.list.push(saved);
+        }
+        return { msg: 'save ' + (saved.number || '') };
+      });
+      return ok(res, { pr: saved, updatedAt: r.updatedAt });
+    }
+    if(action === 'deletePR'){
+      if(!isEditor(users, pin)) return fail(res, 'Hanya Owner/Super Admin/Admin yang dapat menghapus PR.', 403);
+      const id = String(b.id || '');
+      const r = await prMutate(s => { s.list = s.list.filter(x => x.id !== id); return { msg: 'delete ' + id }; });
+      return ok(res, { updatedAt: r.updatedAt });
     }
 
     if(action === 'saveProfile'){
