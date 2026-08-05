@@ -866,13 +866,14 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       /* lebar & tinggi = area cetak A4 setelah margin 14mm (210-28=182, 297-28=269) */
       .pr-page{width:100%;min-height:263mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
       .pr-page .pr-fill{flex:1 1 auto}
-      .pr-page .pr-foot{flex:0 0 auto;margin-top:16mm}
+      .pr-page .pr-bottom{flex:0 0 auto}
+      .pr-page .pr-foot{margin-top:10mm}
       #prPrint .sign td{padding-top:4px;font-size:12px}
       #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
       #prPrint .kop img{height:52px;width:auto}
       #prPrint h1{font-size:17px;margin:0;letter-spacing:.03em}
       #prPrint table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-      #prPrint .doc{height:100%}
+      #prPrint .doc{width:100%;height:100%}
       #prPrint .doc th,#prPrint .doc td{border:1px solid #333;padding:6px 8px;vertical-align:top;word-wrap:break-word;overflow-wrap:anywhere}
       #prPrint .doc th{background:#0b1f3a;color:#fff !important;text-align:left}
       #prPrint .doc td.no{text-align:center}
@@ -2451,9 +2452,11 @@ const PR=(function(){
   function buildPrintHTML(r){
     const items=r.items||[];
     const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'')).replace(/\n/g,'<br>')+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
-    // satu baris peregang fleksibel: mengisi sisa ruang agar tabel penuh 1 halaman
-    // (tanpa menambah tinggi tetap, sehingga tidak tumpah ke halaman ke-2)
+    // baris peregang: memanjangkan tabel mengisi ruang (area kosong tanpa data) —
+    // sehingga Sub Total/PPN/PPh/Total turun ke bawah mendekati tanda tangan
     const stretch='<tr class="filler" style="height:100%"><td class="no">&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
+    // template lebar kolom (dipakai tabel item & tabel ringkasan agar kolom lurus)
+    const CG='<colgroup><col style="width:7%"><col><col style="width:9%"><col style="width:17%"><col style="width:19%"></colgroup>';
     return '<div class="pr-page">'
       +'<div>'
       +'<div class="kop"><img src="League.png" alt="LEAGUE" onerror="this.style.display=\'none\'"><div style="flex:1 1 auto"><h1>PT. BERCA SPORTINDO</h1><div style="font-size:12px;letter-spacing:.12em">BRAND · LEAGUE</div></div><div style="text-align:right;flex:0 0 auto"><h1 style="font-size:16px">PURCHASE REQUISITION</h1></div></div>'
@@ -2461,7 +2464,7 @@ const PR=(function(){
       +'<tr><td><b>DEPARTMENT</b></td><td>'+esc(r.dept||'-')+' ('+esc(r.code||'')+')</td><td><b>REC VENDOR</b></td><td>'+esc(r.vendor||'-')+'</td></tr>'
       +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
       +'</div>'
-      +'<div class="pr-fill"><table class="doc"><thead><tr><th style="width:7%">NO</th><th>DESCRIPTION</th><th style="width:9%">QTY</th><th style="width:17%">EST. @PRICE</th><th style="width:19%">EST. AMOUNT</th></tr></thead>'
+      +'<div class="pr-fill"><table class="doc">'+CG+'<thead><tr><th>NO</th><th>DESCRIPTION</th><th>QTY</th><th style="text-align:right">EST. @PRICE</th><th style="text-align:right">EST. AMOUNT</th></tr></thead>'
       +'<tbody>'+rowsH+stretch+prSummaryRows(r)+'</tbody></table></div>'
       +'<div class="pr-foot"><table class="meta sign" style="border:0"><tr style="text-align:center">'
       +'<td style="border:0;width:33%">Prepared by<br><br><br><br>___________________<br><b>'+esc(r.sign1||'')+'</b></td>'
