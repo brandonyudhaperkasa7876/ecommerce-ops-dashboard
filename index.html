@@ -861,10 +861,10 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       .pr-listrow td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
       .pr-badge{display:inline-block;padding:2px 9px;border-radius:999px;background:rgba(217,181,106,.16);color:#f4d99a;font-size:11px;font-weight:700}
       /* Area cetak formal (di-generate saat print / PDF) — selalu 1 halaman penuh A4 */
-      #prPrint{position:fixed;left:-99999px;top:0;width:182mm;background:#fff;color:#1a1a1a}
+      #prPrint{position:fixed;left:-99999px;top:0;width:210mm;background:#fff;color:#1a1a1a}
       #prPrint *{color:#1a1a1a}
-      /* lebar & tinggi = area cetak A4 setelah margin 14mm (210-28=182, 297-28=269) */
-      .pr-page{width:100%;min-height:263mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
+      /* halaman A4 penuh; margin 14mm dibuat sebagai padding di dalam (anti-terpotong) */
+      .pr-page{width:100%;min-height:294mm;box-sizing:border-box;padding:14mm;background:#fff;display:flex;flex-direction:column}
       .pr-page .pr-fill{flex:0 0 auto}
       .pr-page .pr-foot{flex:0 0 auto;margin-top:10mm}
       #prPrint .sign td{padding-top:4px;font-size:12px}
@@ -879,13 +879,13 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       #prPrint .doc .filler td{border:1px solid #333;border-top:0}
       #prPrint .meta td{border:1px solid #999;padding:6px 8px}
       #prPrint .amt{text-align:right;white-space:nowrap}
-      @page{size:A4;margin:14mm}
+      @page{size:A4;margin:0}
       @media print{
         html,body{background:#fff}
         body *{visibility:hidden !important}
         #prPrint,#prPrint *{visibility:visible !important}
-        #prPrint{position:absolute !important;left:0 !important;top:0 !important;width:100% !important}
-        .pr-page{margin:0;min-height:263mm}
+        #prPrint{position:absolute !important;left:0 !important;top:0 !important;width:210mm !important}
+        .pr-page{margin:0;min-height:297mm}
       }
     </style>
     <section data-view="pr" class="hidden">
@@ -2481,7 +2481,7 @@ const PR=(function(){
   P.print=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);setTimeout(()=>window.print(),80);};
   P.exportPDF=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);
     const fn='PR '+((cur.number||'baru').replace(/[\/\\]/g,'-'))+'.pdf';
-    if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('prPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:182mm;background:#fff';html2pdf().set({margin:[14,14,14,14],filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
+    if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('prPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:210mm;background:#fff';html2pdf().set({margin:0,filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
   P.exportXLSX=function(){readForm(false);const r=cur;
     const aoa=[['PT. BERCA SPORTINDO — PURCHASE REQUISITION'],[],
       ['PR NUMBER',r.number||'',' ','PR DATE',fmtDate(r.date)],
