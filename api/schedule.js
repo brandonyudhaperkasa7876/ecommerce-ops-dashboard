@@ -149,6 +149,10 @@ export default async function handler(req, res){
           code: String(pr.code || 'GEN').slice(0, 12),
           date: /^\d{4}-\d{2}-\d{2}$/.test(pr.date) ? pr.date : new Date().toISOString().slice(0, 10),
           currency: String(pr.currency || 'IDR').slice(0, 6),
+          ppn: !!pr.ppn,
+          pph: !!pr.pph,
+          ppnRate: (pr.ppnRate != null && isFinite(Number(pr.ppnRate))) ? Number(pr.ppnRate) : 11,
+          pphRate: (pr.pphRate != null && isFinite(Number(pr.pphRate))) ? Number(pr.pphRate) : 2,
           by: String(pr.by || '').slice(0, 120),
           printedOn: /^\d{4}-\d{2}-\d{2}$/.test(pr.printedOn) ? pr.printedOn : '',
           items: (Array.isArray(pr.items) ? pr.items : []).slice(0, 200).map(it => ({
