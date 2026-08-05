@@ -849,12 +849,22 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       .pr-delrow{background:transparent;border:0;color:#e06b6b;cursor:pointer;font-size:16px;line-height:1}
       .pr-total{display:flex;justify-content:flex-end;gap:22px;align-items:baseline;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
       .pr-total b{font-size:22px;color:#f4d99a}
+      .pr-taxopt{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px}
+      .pr-taxopt label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink,#f4f6fb);cursor:pointer}
+      .pr-taxopt .rate{width:60px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:7px;color:var(--ink,#f4f6fb);padding:3px 6px;font:inherit;font-size:12px;text-align:right}
+      .pr-summary{margin-top:12px;margin-left:auto;max-width:380px;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
+      .pr-summary .row{display:flex;justify-content:space-between;gap:24px;padding:4px 0;font-size:14px}
+      .pr-summary .row .v{white-space:nowrap;font-variant-numeric:tabular-nums}
+      .pr-summary .row.grand{border-top:1px solid rgba(255,255,255,.18);margin-top:6px;padding-top:8px;font-size:19px}
+      .pr-summary .row.grand b{color:#f4d99a}
+      .pr-summary .lbl{color:var(--muted)}
       .pr-listrow td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
       .pr-badge{display:inline-block;padding:2px 9px;border-radius:999px;background:rgba(217,181,106,.16);color:#f4d99a;font-size:11px;font-weight:700}
       /* Area cetak formal (di-generate saat print / PDF) — selalu 1 halaman penuh A4 */
-      #prPrint{position:fixed;left:-99999px;top:0;background:#fff;color:#1a1a1a}
+      #prPrint{position:fixed;left:-99999px;top:0;width:182mm;background:#fff;color:#1a1a1a}
       #prPrint *{color:#1a1a1a}
-      .pr-page{width:210mm;min-height:296mm;box-sizing:border-box;padding:16mm 14mm;background:#fff;display:flex;flex-direction:column}
+      /* lebar & tinggi = area cetak A4 setelah margin 14mm (210-28=182, 297-28=269) */
+      .pr-page{width:100%;min-height:269mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
       .pr-page .pr-fill{flex:1 1 auto}
       .pr-page .pr-foot{flex:0 0 auto;margin-top:12px}
       #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
@@ -868,13 +878,13 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       #prPrint .doc .filler td{border:1px solid #333;border-top:0}
       #prPrint .meta td{border:1px solid #999;padding:6px 8px}
       #prPrint .amt{text-align:right;white-space:nowrap}
-      @page{size:A4;margin:0}
+      @page{size:A4;margin:14mm}
       @media print{
         html,body{background:#fff}
         body *{visibility:hidden !important}
         #prPrint,#prPrint *{visibility:visible !important}
-        #prPrint{position:absolute !important;left:0 !important;top:0 !important}
-        .pr-page{margin:0}
+        #prPrint{position:absolute !important;left:0 !important;top:0 !important;width:100% !important}
+        .pr-page{margin:0;min-height:269mm}
       }
     </style>
     <section data-view="pr" class="hidden">
@@ -950,7 +960,11 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
           </div>
           <div style="margin-top:10px"><button class="btn ghost small admin-only" onclick="PR.addRow()">+ Tambah Baris</button></div>
 
-          <div class="pr-total"><span class="sub">TOTAL EST. AMOUNT</span><b id="prTotal">0</b></div>
+          <div class="pr-taxopt">
+            <label><input type="checkbox" id="prPpn" onchange="PR.recalc()"> PPN (<input class="rate" id="prPpnRate" type="number" min="0" step="any" value="11" oninput="PR.recalc()">%)</label>
+            <label><input type="checkbox" id="prPph" onchange="PR.recalc()"> PPh 23 Perusahaan (<input class="rate" id="prPphRate" type="number" min="0" step="any" value="2" oninput="PR.recalc()">%)</label>
+          </div>
+          <div class="pr-summary" id="prSummary"></div>
 
           <div class="pr-meta" style="margin-top:16px">
             <div class="pr-fg"><label>Printed On</label><input id="prPrinted" readonly placeholder="belum pernah dicetak"></div>
@@ -2300,6 +2314,13 @@ const PR=(function(){
   const money=(v,c)=>(CUR[c]||'')+' '+(Number(v)||0).toLocaleString('id-ID',{minimumFractionDigits:0,maximumFractionDigits:2});
   const deptCode=name=>{const d=depts.find(x=>x.name===name);return d?d.code:'GEN';};
   const total=r=>(r.items||[]).reduce((s,it)=>s+(Number(it.qty)||0)*(Number(it.price)||0),0);
+  const DEF_PPN=11, DEF_PPH=2;
+  const fmtRate=n=>{const x=Math.round((Number(n)||0)*100)/100;return (''+x);};
+  const taxCalc=r=>{const sub=total(r);
+    const pRate=(r&&r.ppnRate!=null)?(Number(r.ppnRate)||0):DEF_PPN;
+    const hRate=(r&&r.pphRate!=null)?(Number(r.pphRate)||0):DEF_PPH;
+    const ppn=(r&&r.ppn)?sub*pRate/100:0;const pph=(r&&r.pph)?sub*hRate/100:0;
+    return {sub,ppn,pph,ppnRate:pRate,pphRate:hRate,grand:sub+ppn-pph};};
   async function ensurePin(){if(cachedPin)return cachedPin;const p=await Berita.askPin('Masukkan PIN admin untuk menyimpan PR ke Cloud');if(p==null)return null;cachedPin=p;return p;}
   function cloudPill(){const d=$('prDot'),p=$('prPill');const cloud=Cloud.mode==='cloud';if(d)d.className='dot'+(cloud?' live':'');if(p){p.textContent=(cloud?'GitHub + Vercel':'Mode Lokal')+' · '+list.length+' PR';p.className='pill '+(cloud?'ok':'no');}}
   function fillDeptSel(){const sel=$('prDept');if(!sel)return;const keep=sel.value;sel.innerHTML='<option value="">— pilih —</option>'+depts.map(d=>'<option value="'+esc(d.name)+'">'+esc(d.name)+' ('+esc(d.code)+')</option>').join('');if(keep)sel.value=keep;}
@@ -2325,7 +2346,7 @@ const PR=(function(){
     $('prListBody').innerHTML=arr.map(r=>{
       const del=admin?'<button class="mini del" onclick="PR.remove(\''+esc(r.id)+'\')">Hapus</button>':'';
       const open='<button class="mini" onclick="PR.edit(\''+esc(r.id)+'\')">'+(admin?'Buka / Edit':'Lihat')+'</button>';
-      return '<tr class="pr-listrow"><td><span class="pr-badge">'+esc(r.number||'—')+'</span></td><td>'+fmtDate(r.date)+'</td><td>'+esc(r.dept||'—')+'</td><td>'+esc(r.vendor||'—')+'</td><td>'+((r.items||[]).length)+'</td><td style="text-align:right;color:#f4d99a;font-weight:700;white-space:nowrap">'+money(total(r),r.currency)+'</td><td>'+(r.printedOn?fmtDate(r.printedOn):'—')+'</td><td style="text-align:right;white-space:nowrap">'+open+' '+del+'</td></tr>';
+      return '<tr class="pr-listrow"><td><span class="pr-badge">'+esc(r.number||'—')+'</span></td><td>'+fmtDate(r.date)+'</td><td>'+esc(r.dept||'—')+'</td><td>'+esc(r.vendor||'—')+'</td><td>'+((r.items||[]).length)+'</td><td style="text-align:right;color:#f4d99a;font-weight:700;white-space:nowrap">'+money(taxCalc(r).grand,r.currency)+'</td><td>'+(r.printedOn?fmtDate(r.printedOn):'—')+'</td><td style="text-align:right;white-space:nowrap">'+open+' '+del+'</td></tr>';
     }).join('');
   };
 
@@ -2334,13 +2355,13 @@ const PR=(function(){
 
   P.newDoc=function(){
     if(!App.isAdmin()){toast('Hanya Admin/Super Admin/Owner yang dapat membuat PR.','err');return;}
-    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
+    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',ppn:false,pph:false,ppnRate:DEF_PPN,pphRate:DEF_PPH,items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
     $('prFormTitle').textContent='PR Baru';bind();showEditor();
   };
   P.edit=function(id){const r=list.find(x=>x.id===id);if(!r)return;cur=JSON.parse(JSON.stringify(r));if(!cur.items||!cur.items.length)cur.items=[{desc:'',qty:1,price:0}];$('prFormTitle').textContent=cur.number||'PR';bind();showEditor();
     if(!App.isAdmin())setReadonly(true);else setReadonly(false);};
 
-  function setReadonly(ro){['prVendor','prDept','prCurrency'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
+  function setReadonly(ro){['prVendor','prDept','prCurrency','prPpn','prPph','prPpnRate','prPphRate'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
     document.querySelectorAll('#prEditView .admin-only').forEach(e=>e.style.display=ro?'none':'');
     $('prItemsBody').querySelectorAll('input,textarea').forEach(e=>e.disabled=ro);}
 
@@ -2348,6 +2369,8 @@ const PR=(function(){
     $('prDate').value=cur.date;$('prNumber').value=cur.number||'';$('prVendor').value=cur.vendor||'';
     fillDeptSel();$('prDept').value=cur.dept||'';$('prCode').value=cur.code||deptCode(cur.dept)||'';
     $('prCurrency').value=cur.currency||'IDR';$('prPrinted').value=cur.printedOn?fmtDate(cur.printedOn):'';$('prBy').value=cur.by||'';
+    $('prPpn').checked=!!cur.ppn;$('prPph').checked=!!cur.pph;
+    $('prPpnRate').value=(cur.ppnRate!=null?cur.ppnRate:DEF_PPN);$('prPphRate').value=(cur.pphRate!=null?cur.pphRate:DEF_PPH);
     renderItems();
   }
   P.onDeptChange=function(){$('prCode').value=deptCode($('prDept').value);};
@@ -2370,14 +2393,23 @@ const PR=(function(){
   function readForm(keepItems){
     if(!cur)return;
     cur.vendor=$('prVendor').value.trim();cur.dept=$('prDept').value;cur.code=deptCode(cur.dept);cur.currency=$('prCurrency').value;
+    cur.ppn=$('prPpn').checked;cur.pph=$('prPph').checked;
+    cur.ppnRate=parseFloat($('prPpnRate').value)||0;cur.pphRate=parseFloat($('prPphRate').value)||0;
     const rows=$('prItemsBody').querySelectorAll('tr');const items=[];
     rows.forEach(tr=>{const d=tr.querySelector('.pr-desc'),q=tr.querySelector('.pr-qty'),p=tr.querySelector('.pr-price');if(!d)return;items.push({desc:d.value,qty:parseFloat(q.value)||0,price:parseFloat(p.value)||0});});
     if(keepItems)cur.items=items; else cur.items=items.filter(it=>String(it.desc).trim()||it.qty||it.price);
   }
   P.recalc=function(){
-    const c=$('prCurrency').value;let t=0;
-    $('prItemsBody').querySelectorAll('tr').forEach(tr=>{const q=parseFloat(tr.querySelector('.pr-qty').value)||0,p=parseFloat(tr.querySelector('.pr-price').value)||0;const amt=q*p;t+=amt;tr.querySelector('.pr-amt').textContent=money(amt,c);});
-    $('prTotal').textContent=money(t,c);
+    const c=$('prCurrency').value;let sub=0;
+    $('prItemsBody').querySelectorAll('tr').forEach(tr=>{const q=parseFloat(tr.querySelector('.pr-qty').value)||0,p=parseFloat(tr.querySelector('.pr-price').value)||0;const amt=q*p;sub+=amt;tr.querySelector('.pr-amt').textContent=money(amt,c);});
+    const ppnOn=$('prPpn').checked,pphOn=$('prPph').checked;
+    const ppnR=parseFloat($('prPpnRate').value)||0,pphR=parseFloat($('prPphRate').value)||0;
+    const ppn=ppnOn?sub*ppnR/100:0,pph=pphOn?sub*pphR/100:0,grand=sub+ppn-pph;
+    let h='<div class="row"><span class="lbl">Sub Total</span><span class="v">'+money(sub,c)+'</span></div>';
+    if(ppnOn)h+='<div class="row"><span class="lbl">PPN ('+fmtRate(ppnR)+'%)</span><span class="v">'+money(ppn,c)+'</span></div>';
+    if(pphOn)h+='<div class="row"><span class="lbl">PPh 23 Perusahaan ('+fmtRate(pphR)+'%)</span><span class="v">− '+money(pph,c)+'</span></div>';
+    h+='<div class="row grand"><span>Total</span><b class="v">'+money(grand,c)+'</b></div>';
+    $('prSummary').innerHTML=h;
   };
 
   P.save=async function(){
@@ -2399,6 +2431,14 @@ const PR=(function(){
     try{await Cloud.sched({action:'deletePR',pin,email:(Auth.session&&Auth.session.email)||'',id});toast('PR dihapus','err');await P.load(true);}catch(e){toast(e.message,'err');cachedPin=null;}
   };
 
+  function prSummaryRows(r){
+    const t=taxCalc(r);
+    let s='<tr><td colspan="4" style="text-align:right">Sub Total</td><td class="amt">'+money(t.sub,r.currency)+'</td></tr>';
+    if(r.ppn)s+='<tr><td colspan="4" style="text-align:right">PPN ('+fmtRate(t.ppnRate)+'%)</td><td class="amt">'+money(t.ppn,r.currency)+'</td></tr>';
+    if(r.pph)s+='<tr><td colspan="4" style="text-align:right">PPh 23 Perusahaan ('+fmtRate(t.pphRate)+'%)</td><td class="amt">− '+money(t.pph,r.currency)+'</td></tr>';
+    s+='<tr><td colspan="4" style="text-align:right"><b>TOTAL</b></td><td class="amt"><b>'+money(t.grand,r.currency)+'</b></td></tr>';
+    return s;
+  }
   function buildPrintHTML(r){
     const items=r.items||[];
     const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'').replace(/\n/g,'<br>'))+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
@@ -2415,8 +2455,7 @@ const PR=(function(){
       +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
       +'</div>'
       +'<div class="pr-fill"><table class="doc"><thead><tr><th style="width:7%">NO</th><th>DESCRIPTION</th><th style="width:9%">QTY</th><th style="width:17%">EST. @PRICE</th><th style="width:19%">EST. AMOUNT</th></tr></thead>'
-      +'<tbody>'+rowsH+fillerH+stretch
-      +'<tr><td colspan="4" style="text-align:right"><b>TOTAL EST. AMOUNT</b></td><td class="amt"><b>'+money(total(r),r.currency)+'</b></td></tr></tbody></table></div>'
+      +'<tbody>'+rowsH+fillerH+stretch+prSummaryRows(r)+'</tbody></table></div>'
       +'<div class="pr-foot"><table class="meta" style="border:0"><tr style="text-align:center"><td style="border:0;width:33%"><br><br><br>___________________<br>Prepared by<br><b>'+esc(r.by||'')+'</b></td><td style="border:0;width:33%"><br><br><br>___________________<br>Checked by</td><td style="border:0;width:33%"><br><br><br>___________________<br>Approved by</td></tr></table></div>'
       +'</div>';
   }
@@ -2427,7 +2466,7 @@ const PR=(function(){
   P.print=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);setTimeout(()=>window.print(),80);};
   P.exportPDF=async function(){readForm(false);await markPrinted();$('prPrint').innerHTML=buildPrintHTML(cur);
     const fn='PR '+((cur.number||'baru').replace(/[\/\\]/g,'-'))+'.pdf';
-    if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('prPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:210mm;background:#fff';html2pdf().set({margin:0,filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
+    if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('prPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:182mm;background:#fff';html2pdf().set({margin:[14,14,14,14],filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
   P.exportXLSX=function(){readForm(false);const r=cur;
     const aoa=[['PT. BERCA SPORTINDO — PURCHASE REQUISITION'],[],
       ['PR NUMBER',r.number||'',' ','PR DATE',fmtDate(r.date)],
@@ -2435,7 +2474,11 @@ const PR=(function(){
       ['CURRENCY',r.currency||'IDR',' ','PRINTED ON',r.printedOn?fmtDate(r.printedOn):''],[],
       ['NO','DESCRIPTION','QTY','EST. @PRICE','EST. AMOUNT']];
     (r.items||[]).forEach((it,i)=>aoa.push([i+1,it.desc||'',Number(it.qty)||0,Number(it.price)||0,(Number(it.qty)||0)*(Number(it.price)||0)]));
-    aoa.push(['','','','TOTAL',total(r)]);
+    const t=taxCalc(r);
+    aoa.push(['','','','Sub Total',t.sub]);
+    if(r.ppn)aoa.push(['','','','PPN ('+fmtRate(t.ppnRate)+'%)',t.ppn]);
+    if(r.pph)aoa.push(['','','','PPh 23 Perusahaan ('+fmtRate(t.pphRate)+'%)',-t.pph]);
+    aoa.push(['','','','TOTAL',t.grand]);
     const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:6},{wch:48},{wch:8},{wch:16},{wch:18}];
     const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'PR');XLSX.writeFile(wb,'PR '+((r.number||'baru').replace(/[\/\\]/g,'-'))+'.xlsx');};
   return P;
