@@ -5,8 +5,8 @@
         "id": "pr_1785921327653_371ik",
         "number": "PR/ECM/0001/2026",
         "createdAt": "2026-08-05T09:15:27.653Z",
-        "updatedAt": "2026-08-05T09:15:39.058Z",
-        "vendor": "PT REstorasi Inspirasi Kreasi",
+        "updatedAt": "2026-08-05T09:26:03.067Z",
+        "vendor": "PT Restorasi Inspirasi Kreasi",
         "dept": "E-Commerce",
         "code": "ECM",
         "date": "2026-08-05",
@@ -80,5 +80,5 @@
       "ECM-2026": 1
     }
   },
-  "updatedAt": "2026-08-05T09:15:39.058Z"
+  "updatedAt": "2026-08-05T09:26:03.068Z"
 }
