@@ -154,6 +154,9 @@ export default async function handler(req, res){
           ppnRate: (pr.ppnRate != null && isFinite(Number(pr.ppnRate))) ? Number(pr.ppnRate) : 11,
           pphRate: (pr.pphRate != null && isFinite(Number(pr.pphRate))) ? Number(pr.pphRate) : 2,
           by: String(pr.by || '').slice(0, 120),
+          sign1: String(pr.sign1 || '').slice(0, 120),
+          sign2: String(pr.sign2 || '').slice(0, 120),
+          sign3: String(pr.sign3 || '').slice(0, 120),
           printedOn: /^\d{4}-\d{2}-\d{2}$/.test(pr.printedOn) ? pr.printedOn : '',
           items: (Array.isArray(pr.items) ? pr.items : []).slice(0, 200).map(it => ({
             desc: String((it && it.desc) || '').slice(0, 1000),
