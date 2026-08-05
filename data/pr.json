@@ -1,1 +1,84 @@
-{ "payload": { "list": [], "depts": [], "counters": {} }, "updatedAt": null }
+{
+  "payload": {
+    "list": [
+      {
+        "id": "pr_1785921327653_371ik",
+        "number": "PR/ECM/0001/2026",
+        "createdAt": "2026-08-05T09:15:27.653Z",
+        "updatedAt": "2026-08-05T09:15:27.653Z",
+        "vendor": "PT REstorasi Inspirasi Kreasi",
+        "dept": "E-Commerce",
+        "code": "ECM",
+        "date": "2026-08-05",
+        "currency": "IDR",
+        "ppn": true,
+        "pph": true,
+        "ppnRate": 11,
+        "pphRate": 2,
+        "by": "Brandon Yudha Perkasa",
+        "printedOn": "",
+        "items": [
+          {
+            "desc": "SKP layanan Maintenance - PT BERCA SPORTINDO\nSKP No : RIK/AMPM/SKP-BERCA/2026/0226",
+            "qty": 1,
+            "price": 32000000
+          }
+        ]
+      }
+    ],
+    "depts": [
+      {
+        "name": "E-Commerce",
+        "code": "ECM"
+      },
+      {
+        "name": "Retail",
+        "code": "RTL"
+      },
+      {
+        "name": "B2B / Wholesales",
+        "code": "B2B"
+      },
+      {
+        "name": "Modern Market",
+        "code": "MM"
+      },
+      {
+        "name": "Information Technology",
+        "code": "IT"
+      },
+      {
+        "name": "Human Resource Department",
+        "code": "HRD"
+      },
+      {
+        "name": "General Affair",
+        "code": "GA"
+      },
+      {
+        "name": "Product",
+        "code": "PRD"
+      },
+      {
+        "name": "Logistic",
+        "code": "LOG"
+      },
+      {
+        "name": "Supply Chain",
+        "code": "SC"
+      },
+      {
+        "name": "Warehouse",
+        "code": "WH"
+      },
+      {
+        "name": "Finance & Accounting",
+        "code": "FA"
+      }
+    ],
+    "counters": {
+      "ECM-2026": 1
+    }
+  },
+  "updatedAt": "2026-08-05T09:15:27.653Z"
+}
