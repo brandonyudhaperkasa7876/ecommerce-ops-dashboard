@@ -864,7 +864,7 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       #prPrint{position:fixed;left:-99999px;top:0;width:182mm;background:#fff;color:#1a1a1a}
       #prPrint *{color:#1a1a1a}
       /* lebar & tinggi = area cetak A4 setelah margin 14mm (210-28=182, 297-28=269) */
-      .pr-page{width:100%;min-height:269mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
+      .pr-page{width:100%;min-height:263mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
       .pr-page .pr-fill{flex:1 1 auto}
       .pr-page .pr-foot{flex:0 0 auto;margin-top:12px}
       #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
@@ -884,7 +884,7 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
         body *{visibility:hidden !important}
         #prPrint,#prPrint *{visibility:visible !important}
         #prPrint{position:absolute !important;left:0 !important;top:0 !important;width:100% !important}
-        .pr-page{margin:0;min-height:269mm}
+        .pr-page{margin:0;min-height:263mm}
       }
     </style>
     <section data-view="pr" class="hidden">
@@ -2442,10 +2442,8 @@ const PR=(function(){
   function buildPrintHTML(r){
     const items=r.items||[];
     const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'').replace(/\n/g,'<br>'))+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
-    // baris kosong penambah agar tabel & halaman selalu terisi penuh A4
-    const MINROWS=12; const blanks=Math.max(0, MINROWS-items.length);
-    let fillerH='';for(let i=0;i<blanks;i++){const n=items.length+i+1;fillerH+='<tr><td class="no">'+n+'</td><td>&nbsp;</td><td></td><td></td><td></td></tr>';}
-    // baris peregang terakhir yang tinggi (mendorong total ke bawah bila item sangat sedikit)
+    // satu baris peregang fleksibel: mengisi sisa ruang agar tabel penuh 1 halaman
+    // (tanpa menambah tinggi tetap, sehingga tidak tumpah ke halaman ke-2)
     const stretch='<tr class="filler" style="height:100%"><td class="no">&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
     return '<div class="pr-page">'
       +'<div>'
@@ -2455,7 +2453,7 @@ const PR=(function(){
       +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
       +'</div>'
       +'<div class="pr-fill"><table class="doc"><thead><tr><th style="width:7%">NO</th><th>DESCRIPTION</th><th style="width:9%">QTY</th><th style="width:17%">EST. @PRICE</th><th style="width:19%">EST. AMOUNT</th></tr></thead>'
-      +'<tbody>'+rowsH+fillerH+stretch+prSummaryRows(r)+'</tbody></table></div>'
+      +'<tbody>'+rowsH+stretch+prSummaryRows(r)+'</tbody></table></div>'
       +'<div class="pr-foot"><table class="meta" style="border:0"><tr style="text-align:center"><td style="border:0;width:33%"><br><br><br>___________________<br>Prepared by<br><b>'+esc(r.by||'')+'</b></td><td style="border:0;width:33%"><br><br><br>___________________<br>Checked by</td><td style="border:0;width:33%"><br><br><br>___________________<br>Approved by</td></tr></table></div>'
       +'</div>';
   }
