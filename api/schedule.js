@@ -39,6 +39,18 @@ function isEditor(users, pin){
   if(p === ENV.ADMIN_PIN) return true;
   return users.some(u => (u.role==='owner'||u.role==='admin'||u.role==='regular') && verifySecret(p, u.pin));
 }
+// otorisasi tulis PR: verifikasi PIN (akun aktor / ADMIN_PIN / akun editor mana pun),
+// lalu cek peran (owner/admin/regular). Membedakan "PIN salah" vs "peran kurang".
+function prAuth(users, email, pin){
+  const p = String(pin || '');
+  const em = lc(email);
+  const actor = users.find(u => u.email === em);
+  const pinValid = (p && p === ENV.ADMIN_PIN) || (actor && verifySecret(p, actor.pin)) || users.some(u => verifySecret(p, u.pin));
+  if(!pinValid) return { ok: false, code: 401, msg: 'PIN salah.' };
+  const roleOK = (p === ENV.ADMIN_PIN) || (actor && ['owner','admin','regular'].includes(actor.role)) || isEditor(users, pin);
+  if(!roleOK) return { ok: false, code: 403, msg: 'Hanya Owner/Super Admin/Admin yang dapat menyimpan PR (Viewer hanya melihat).' };
+  return { ok: true };
+}
 // boleh edit target: admin/owner, atau (pin milik actor & actor === target)
 function canEdit(users, actorEmail, pin, target){
   if(isAdmin(users, pin)) return true;
@@ -124,7 +136,8 @@ export default async function handler(req, res){
       return ok(res, { payload: (data && data.payload) || { list: [], depts: [], counters: {} } });
     }
     if(action === 'savePR'){
-      if(!isEditor(users, pin)) return fail(res, 'Hanya Owner/Super Admin/Admin yang dapat menyimpan PR (Viewer hanya melihat).', 403);
+      const auth = prAuth(users, b.email, pin);
+      if(!auth.ok) return fail(res, auth.msg, auth.code);
       const pr = b.pr || {};
       const inDepts = Array.isArray(b.depts) ? b.depts : null;
       let saved = null;
@@ -172,7 +185,8 @@ export default async function handler(req, res){
       return ok(res, { pr: saved, updatedAt: r.updatedAt });
     }
     if(action === 'deletePR'){
-      if(!isEditor(users, pin)) return fail(res, 'Hanya Owner/Super Admin/Admin yang dapat menghapus PR.', 403);
+      const auth = prAuth(users, b.email, pin);
+      if(!auth.ok) return fail(res, auth.msg, auth.code);
       const id = String(b.id || '');
       const r = await prMutate(s => { s.list = s.list.filter(x => x.id !== id); return { msg: 'delete ' + id }; });
       return ok(res, { updatedAt: r.updatedAt });
