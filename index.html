@@ -866,13 +866,14 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       /* lebar & tinggi = area cetak A4 setelah margin 14mm (210-28=182, 297-28=269) */
       .pr-page{width:100%;min-height:263mm;box-sizing:border-box;background:#fff;display:flex;flex-direction:column}
       .pr-page .pr-fill{flex:1 1 auto}
-      .pr-page .pr-foot{flex:0 0 auto;margin-top:12px}
+      .pr-page .pr-foot{flex:0 0 auto;margin-top:16mm}
+      #prPrint .sign td{padding-top:4px;font-size:12px}
       #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
       #prPrint .kop img{height:52px;width:auto}
-      #prPrint h1{font-size:20px;margin:0;letter-spacing:.04em}
-      #prPrint table{width:100%;border-collapse:collapse;font-size:12px}
+      #prPrint h1{font-size:17px;margin:0;letter-spacing:.03em}
+      #prPrint table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
       #prPrint .doc{height:100%}
-      #prPrint .doc th,#prPrint .doc td{border:1px solid #333;padding:6px 8px;vertical-align:top}
+      #prPrint .doc th,#prPrint .doc td{border:1px solid #333;padding:6px 8px;vertical-align:top;word-wrap:break-word;overflow-wrap:anywhere}
       #prPrint .doc th{background:#0b1f3a;color:#fff !important;text-align:left}
       #prPrint .doc td.no{text-align:center}
       #prPrint .doc .filler td{border:1px solid #333;border-top:0}
@@ -969,6 +970,12 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
           <div class="pr-meta" style="margin-top:16px">
             <div class="pr-fg"><label>Printed On</label><input id="prPrinted" readonly placeholder="belum pernah dicetak"></div>
             <div class="pr-fg"><label>Dibuat Oleh</label><input id="prBy" readonly></div>
+          </div>
+          <div class="eyebrow" style="margin-top:16px">Tanda Tangan (opsional — boleh dikosongkan)</div>
+          <div class="pr-meta" style="margin-top:8px">
+            <div class="pr-fg"><label>Prepared by</label><input id="prSign1" placeholder="Nama penyiap (opsional)"></div>
+            <div class="pr-fg"><label>Checked by</label><input id="prSign2" placeholder="Nama pemeriksa (opsional)"></div>
+            <div class="pr-fg"><label>Approved by</label><input id="prSign3" placeholder="Nama penyetuju (opsional)"></div>
           </div>
         </div>
       </div>
@@ -2355,13 +2362,13 @@ const PR=(function(){
 
   P.newDoc=function(){
     if(!App.isAdmin()){toast('Hanya Admin/Super Admin/Owner yang dapat membuat PR.','err');return;}
-    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',ppn:false,pph:false,ppnRate:DEF_PPN,pphRate:DEF_PPH,items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
+    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',ppn:false,pph:false,ppnRate:DEF_PPN,pphRate:DEF_PPH,sign1:'',sign2:'',sign3:'',items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
     $('prFormTitle').textContent='PR Baru';bind();showEditor();
   };
   P.edit=function(id){const r=list.find(x=>x.id===id);if(!r)return;cur=JSON.parse(JSON.stringify(r));if(!cur.items||!cur.items.length)cur.items=[{desc:'',qty:1,price:0}];$('prFormTitle').textContent=cur.number||'PR';bind();showEditor();
     if(!App.isAdmin())setReadonly(true);else setReadonly(false);};
 
-  function setReadonly(ro){['prVendor','prDept','prCurrency','prPpn','prPph','prPpnRate','prPphRate'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
+  function setReadonly(ro){['prVendor','prDept','prCurrency','prPpn','prPph','prPpnRate','prPphRate','prSign1','prSign2','prSign3'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
     document.querySelectorAll('#prEditView .admin-only').forEach(e=>e.style.display=ro?'none':'');
     $('prItemsBody').querySelectorAll('input,textarea').forEach(e=>e.disabled=ro);}
 
@@ -2371,6 +2378,7 @@ const PR=(function(){
     $('prCurrency').value=cur.currency||'IDR';$('prPrinted').value=cur.printedOn?fmtDate(cur.printedOn):'';$('prBy').value=cur.by||'';
     $('prPpn').checked=!!cur.ppn;$('prPph').checked=!!cur.pph;
     $('prPpnRate').value=(cur.ppnRate!=null?cur.ppnRate:DEF_PPN);$('prPphRate').value=(cur.pphRate!=null?cur.pphRate:DEF_PPH);
+    $('prSign1').value=cur.sign1||'';$('prSign2').value=cur.sign2||'';$('prSign3').value=cur.sign3||'';
     renderItems();
   }
   P.onDeptChange=function(){$('prCode').value=deptCode($('prDept').value);};
@@ -2395,6 +2403,7 @@ const PR=(function(){
     cur.vendor=$('prVendor').value.trim();cur.dept=$('prDept').value;cur.code=deptCode(cur.dept);cur.currency=$('prCurrency').value;
     cur.ppn=$('prPpn').checked;cur.pph=$('prPph').checked;
     cur.ppnRate=parseFloat($('prPpnRate').value)||0;cur.pphRate=parseFloat($('prPphRate').value)||0;
+    cur.sign1=$('prSign1').value.trim();cur.sign2=$('prSign2').value.trim();cur.sign3=$('prSign3').value.trim();
     const rows=$('prItemsBody').querySelectorAll('tr');const items=[];
     rows.forEach(tr=>{const d=tr.querySelector('.pr-desc'),q=tr.querySelector('.pr-qty'),p=tr.querySelector('.pr-price');if(!d)return;items.push({desc:d.value,qty:parseFloat(q.value)||0,price:parseFloat(p.value)||0});});
     if(keepItems)cur.items=items; else cur.items=items.filter(it=>String(it.desc).trim()||it.qty||it.price);
@@ -2441,20 +2450,24 @@ const PR=(function(){
   }
   function buildPrintHTML(r){
     const items=r.items||[];
-    const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'').replace(/\n/g,'<br>'))+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
+    const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'')).replace(/\n/g,'<br>')+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
     // satu baris peregang fleksibel: mengisi sisa ruang agar tabel penuh 1 halaman
     // (tanpa menambah tinggi tetap, sehingga tidak tumpah ke halaman ke-2)
     const stretch='<tr class="filler" style="height:100%"><td class="no">&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
     return '<div class="pr-page">'
       +'<div>'
-      +'<div class="kop"><img src="League.png" alt="LEAGUE" onerror="this.style.display=\'none\'"><div><h1>PT. BERCA SPORTINDO</h1><div style="font-size:12px;letter-spacing:.12em">BRAND · LEAGUE</div></div><div style="margin-left:auto;text-align:right"><h1 style="font-size:22px">PURCHASE REQUISITION</h1></div></div>'
+      +'<div class="kop"><img src="League.png" alt="LEAGUE" onerror="this.style.display=\'none\'"><div style="flex:1 1 auto"><h1>PT. BERCA SPORTINDO</h1><div style="font-size:12px;letter-spacing:.12em">BRAND · LEAGUE</div></div><div style="text-align:right;flex:0 0 auto"><h1 style="font-size:16px">PURCHASE REQUISITION</h1></div></div>'
       +'<table class="meta" style="margin-bottom:10px"><tr><td style="width:16%"><b>PR NUMBER</b></td><td style="width:34%">'+esc(r.number||'-')+'</td><td style="width:16%"><b>PR DATE</b></td><td>'+fmtDate(r.date)+'</td></tr>'
       +'<tr><td><b>DEPARTMENT</b></td><td>'+esc(r.dept||'-')+' ('+esc(r.code||'')+')</td><td><b>REC VENDOR</b></td><td>'+esc(r.vendor||'-')+'</td></tr>'
       +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
       +'</div>'
       +'<div class="pr-fill"><table class="doc"><thead><tr><th style="width:7%">NO</th><th>DESCRIPTION</th><th style="width:9%">QTY</th><th style="width:17%">EST. @PRICE</th><th style="width:19%">EST. AMOUNT</th></tr></thead>'
       +'<tbody>'+rowsH+stretch+prSummaryRows(r)+'</tbody></table></div>'
-      +'<div class="pr-foot"><table class="meta" style="border:0"><tr style="text-align:center"><td style="border:0;width:33%"><br><br><br>___________________<br>Prepared by<br><b>'+esc(r.by||'')+'</b></td><td style="border:0;width:33%"><br><br><br>___________________<br>Checked by</td><td style="border:0;width:33%"><br><br><br>___________________<br>Approved by</td></tr></table></div>'
+      +'<div class="pr-foot"><table class="meta sign" style="border:0"><tr style="text-align:center">'
+      +'<td style="border:0;width:33%">Prepared by<br><br><br><br>___________________<br><b>'+esc(r.sign1||'')+'</b></td>'
+      +'<td style="border:0;width:33%">Checked by<br><br><br><br>___________________<br><b>'+esc(r.sign2||'')+'</b></td>'
+      +'<td style="border:0;width:33%">Approved by<br><br><br><br>___________________<br><b>'+esc(r.sign3||'')+'</b></td>'
+      +'</tr></table></div>'
       +'</div>';
   }
   async function markPrinted(){
