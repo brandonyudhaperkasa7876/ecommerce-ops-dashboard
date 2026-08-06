@@ -189,16 +189,6 @@
     ],
     "tasks": [
       {
-        "id": 1785660363396,
-        "memberId": 1785653044251,
-        "name": "host admin",
-        "day": 0,
-        "startHour": 19,
-        "endHour": 21,
-        "color": "cyan",
-        "status": "berlangsung"
-      },
-      {
         "id": 1785660437682,
         "memberId": 3,
         "name": "operator live",
@@ -210,5 +200,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-04T10:45:41.678Z"
+  "updatedAt": "2026-08-06T04:37:43.059Z"
 }
