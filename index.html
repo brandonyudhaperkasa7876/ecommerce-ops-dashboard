@@ -547,6 +547,8 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       <a data-nav="berita" onclick="App.go('berita')"><span class="ic">▦</span> Berita Acara</a>
       <a data-nav="schedule" onclick="App.go('schedule')"><span class="ic">🗂</span> Penjadwalan Tim</a>
       <a data-nav="pr" onclick="App.go('pr')"><span class="ic">🧾</span> PR (Purchase Requisition)</a>
+      <a data-nav="cuti" onclick="App.go('cuti')"><span class="ic">🏖</span> Pengajuan Cuti</a>
+      <a data-nav="telat" onclick="App.go('telat')"><span class="ic">⏱</span> Terlambat / Pulang Cepat</a>
     </nav>
     <div class="navsec">Sistem</div>
     <nav class="nav">
@@ -712,6 +714,15 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
         <input type="file" id="sinytd" accept=".xlsx" hidden>
         <input type="file" id="sintmpl" accept=".xlsx" hidden>
         <input type="file" id="sinmtd" accept=".xlsx" hidden>
+        <div style="margin-top:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.10);border-radius:10px;background:rgba(255,255,255,.03)">
+          <div class="eyebrow" style="margin:0 0 8px">Mode per file target</div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" id="supdytd"> YTD Sales — <b>Update saja</b></label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" id="supdtmpl"> Template — <b>Update saja</b></label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" id="supdmtd"> MTD — <b>Update saja</b></label>
+          </div>
+          <div class="sub" style="margin:8px 0 0">Bila <b>Update saja</b> dicentang: file itu hanya diperbarui pada baris yang cocok dengan Data Utama, <b>tanpa menambah</b> seluruh data. Cocok agar YTD tetap ber-scope sendiri (tidak menyamai Template). Bila tidak dicentang: perilaku merge penuh (update + tambah baris baru).</div>
+        </div>
         <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center">
           <button class="btn ghost" id="sbtnView">👁 Lihat Ringkasan</button>
           <button class="btn gold" id="sbtnProcess" disabled>⚙ Proses &amp; Publish ke Cloud</button>
@@ -860,25 +871,32 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
       .pr-summary .lbl{color:var(--muted)}
       .pr-listrow td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
       .pr-badge{display:inline-block;padding:2px 9px;border-radius:999px;background:rgba(217,181,106,.16);color:#f4d99a;font-size:11px;font-weight:700}
-      /* Area cetak formal (di-generate saat print / PDF) — selalu 1 halaman penuh A4 */
-      #prPrint{position:fixed;left:-99999px;top:0;width:210mm;background:#fff;color:#1a1a1a}
-      #prPrint *{color:#1a1a1a}
-      /* halaman A4 penuh; margin 14mm dibuat sebagai padding di dalam (anti-terpotong) */
-      .pr-page{width:100%;min-height:294mm;box-sizing:border-box;padding:14mm;background:#fff;display:flex;flex-direction:column}
-      .pr-page .pr-fill{flex:0 0 auto}
-      .pr-page .pr-foot{flex:0 0 auto;margin-top:10mm}
-      #prPrint .sign td{padding-top:4px;font-size:12px}
-      #prPrint .kop{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b1f3a;padding-bottom:12px;margin-bottom:14px}
-      #prPrint .kop img{height:52px;width:auto}
-      #prPrint h1{font-size:17px;margin:0;letter-spacing:.03em}
-      #prPrint table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-      #prPrint .doc{width:100%}
-      #prPrint .doc th,#prPrint .doc td{border:1px solid #333;padding:6px 8px;vertical-align:top;word-wrap:break-word;overflow-wrap:anywhere}
-      #prPrint .doc th{background:#0b1f3a;color:#fff !important;text-align:left}
+      /* Area cetak formal (print/PDF) — meniru template PR resmi BERCA RETAIL GROUP */
+      #prPrint{position:fixed;left:-99999px;top:0;width:210mm;background:#fff;color:#000}
+      #prPrint *{color:#000;box-sizing:border-box}
+      .pr-page{width:100%;min-height:294mm;box-sizing:border-box;padding:12mm 12mm;background:#fff;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif}
+      #prPrint .kop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px}
+      #prPrint .kop .co{display:flex;align-items:center;gap:8px}
+      #prPrint .kop .co b{font-size:15px;letter-spacing:.02em}
+      #prPrint .kop .printed{font-size:10px;padding-top:4px}
+      #prPrint .title{text-align:center;font-size:22px;font-weight:700;margin:2px 0 10px}
+      #prPrint .meta{display:grid;grid-template-columns:max-content 1fr max-content 1fr;gap:3px 10px;font-size:11px;margin-bottom:6px}
+      #prPrint .meta .l{font-weight:700}
+      #prPrint table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+      #prPrint .doc{border:1.5px solid #000}
+      #prPrint .doc th,#prPrint .doc td{border:1px solid #000;padding:3px 6px;vertical-align:top;word-wrap:break-word;overflow-wrap:anywhere}
+      #prPrint .doc thead th{text-align:center;font-weight:700;vertical-align:middle}
       #prPrint .doc td.no{text-align:center}
-      #prPrint .doc .filler td{border:1px solid #333;border-top:0}
-      #prPrint .meta td{border:1px solid #999;padding:6px 8px}
+      #prPrint .doc td.q{text-align:center}
       #prPrint .amt{text-align:right;white-space:nowrap}
+      #prPrint .doc td.amt{overflow:hidden}
+      #prPrint .doc td.amt .rp{float:left}
+      #prPrint .doc td.amt .vv{float:right}
+      #prPrint .doc .totrow td{font-weight:700}
+      #prPrint .sign{border:1.5px solid #000;margin-top:8px;table-layout:fixed}
+      #prPrint .sign td{border:1px solid #000;font-size:11px;vertical-align:top;padding:5px 7px;height:56px;word-wrap:break-word;overflow-wrap:anywhere}
+      #prPrint .sign .lab{font-weight:700}
+      #prPrint .sign .nm{padding-top:3px;word-wrap:break-word;overflow-wrap:anywhere}
       @page{size:A4;margin:0}
       @media print{
         html,body{background:#fff}
@@ -971,16 +989,129 @@ td.mine-cell{animation:glowpulse 1.9s ease-in-out infinite;position:relative;z-i
             <div class="pr-fg"><label>Printed On</label><input id="prPrinted" readonly placeholder="belum pernah dicetak"></div>
             <div class="pr-fg"><label>Dibuat Oleh</label><input id="prBy" readonly></div>
           </div>
-          <div class="eyebrow" style="margin-top:16px">Tanda Tangan (opsional — boleh dikosongkan)</div>
+          <div class="pr-meta" style="margin-top:16px">
+            <div class="pr-fg"><label>Reason Required <span style="color:var(--muted);font-weight:400">(maks 90)</span></label><input id="prReason" maxlength="90" placeholder="Alasan permintaan (mis. POP Home delivery)"></div>
+            <div class="pr-fg"><label>Capital / Budget <span style="color:var(--muted);font-weight:400">(maks 40)</span></label><input id="prCapbud" maxlength="40" placeholder="Capital / Budget (opsional)"></div>
+          </div>
+          <div class="eyebrow" style="margin-top:16px">Tanda Tangan (opsional — boleh dikosongkan, maks 32 karakter)</div>
           <div class="pr-meta" style="margin-top:8px">
-            <div class="pr-fg"><label>Prepared by</label><input id="prSign1" placeholder="Nama penyiap (opsional)"></div>
-            <div class="pr-fg"><label>Checked by</label><input id="prSign2" placeholder="Nama pemeriksa (opsional)"></div>
-            <div class="pr-fg"><label>Approved by</label><input id="prSign3" placeholder="Nama penyetuju (opsional)"></div>
+            <div class="pr-fg"><label>Prepared by</label><input id="prSign1" maxlength="32" placeholder="Nama penyiap (opsional)"></div>
+            <div class="pr-fg"><label>Acknowledged by</label><input id="prSign2" maxlength="32" placeholder="Nama yang mengetahui (opsional)"></div>
+            <div class="pr-fg"><label>Approved by</label><input id="prSign3" maxlength="32" placeholder="Nama penyetuju (opsional)"></div>
           </div>
         </div>
       </div>
     </section>
     <div id="prPrint"></div>
+
+    <!-- ============ PENGAJUAN CUTI ============ -->
+    <style>
+      .docf{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+      .docf .fg label{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+      .docf .fg input,.docf .fg select,.docf .fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--ink,#f4f6fb);padding:9px 11px;font:inherit;font-size:13px}
+      .docf .fg select{color-scheme:dark}.docf .fg select option{background:#141a2b;color:#f4f6fb}
+      .docf .fg.full{grid-column:1/-1}
+      .docf .fg textarea{min-height:64px;resize:vertical}
+      .docf .radios{display:flex;gap:18px;flex-wrap:wrap}
+      .docf .radios label{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink,#f4f6fb);text-transform:none;letter-spacing:0;cursor:pointer;margin:0}
+      .doc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+      /* ====== Area cetak form (print/PDF) ====== */
+      #docPrint{position:fixed;left:-99999px;top:0;width:210mm;background:#fff;color:#000}
+      #docPrint *{color:#000;box-sizing:border-box}
+      .docp{width:100%;min-height:294mm;box-sizing:border-box;padding:16mm 15mm;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:12px;display:flex;flex-direction:column}
+      #docPrint b{font-weight:700}
+      #docPrint .co{font-size:15px;font-weight:700}
+      #docPrint .ctitle{text-align:center;font-size:16px;font-weight:700;letter-spacing:.02em}
+      #docPrint .hr{border-top:2px solid #000;margin:10px 0}
+      #docPrint .fld{display:flex;gap:6px;align-items:flex-end}
+      #docPrint .fld .k{white-space:nowrap}
+      #docPrint .fld .v{flex:1;border-bottom:1px solid #000;min-height:16px;padding:0 4px 1px}
+      #docPrint .two{display:flex;gap:30px}
+      #docPrint .two>div{flex:1}
+      #docPrint .rowl{display:flex;align-items:flex-end;gap:6px;margin:5px 0}
+      #docPrint .rowl .k{min-width:180px}
+      #docPrint .rowl .v{flex:1;border-bottom:1px solid #000;min-height:16px;padding:0 4px 1px;text-align:center}
+      #docPrint .rowl .u{white-space:nowrap}
+      #docPrint .radio{display:inline-flex;align-items:center;gap:6px;margin-right:8px}
+      #docPrint .rc{display:inline-block;width:11px;height:11px;border:1.4px solid #000;border-radius:50%;position:relative;top:1px}
+      #docPrint .rc.on::after{content:"";position:absolute;left:2px;top:2px;width:5px;height:5px;background:#000;border-radius:50%}
+      #docPrint .sign3{display:flex;gap:0;margin-top:26px;text-align:center}
+      #docPrint .sign3>div{flex:1}
+      #docPrint .sline{border-top:1px solid #000;margin:34px 18px 3px}
+      /* Telat: kotak berbingkai */
+      #docPrint .box{border:1.5px solid #000}
+      #docPrint table.gt{width:100%;border-collapse:collapse;table-layout:fixed}
+      #docPrint table.gt td{border:1px solid #000;padding:5px 7px;vertical-align:top;font-size:11px;word-wrap:break-word;overflow-wrap:anywhere}
+      #docPrint .gt .k{font-weight:400}
+      #docPrint .sigcell{height:78px;text-align:center;vertical-align:bottom;font-weight:700}
+      @page{size:A4;margin:0}
+      @media print{
+        html,body{background:#fff}
+        body *{visibility:hidden !important}
+        #docPrint,#docPrint *{visibility:visible !important}
+        #docPrint{position:absolute !important;left:0 !important;top:0 !important;width:210mm !important}
+        .docp{min-height:297mm}
+      }
+    </style>
+    <section data-view="cuti" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="cutiDot"></span><b>Pengajuan Cuti</b><span class="pill" id="cutiPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="Cuti.load(true)">↻ Muat ulang</button>
+        <button class="btn primary small" onclick="Cuti.newDoc()">+ Pengajuan Baru</button>
+      </div>
+      <div id="cutiListView"><div class="panel glass">
+        <div class="eyebrow">Arsip</div><h3>Daftar Pengajuan Cuti</h3>
+        <p class="sub">Tersimpan di Cloud &amp; terlihat sama untuk semua pengguna.</p>
+        <div class="scroll" style="max-height:none"><table class="grid">
+          <thead><tr><th>Nama</th><th>Departemen</th><th>Jenis</th><th>Mulai</th><th>s/d</th><th>Dibuat</th><th></th></tr></thead>
+          <tbody id="cutiListBody"><tr><td colspan="7" style="padding:16px;color:var(--muted)">Memuat…</td></tr></tbody>
+        </table></div>
+      </div></div>
+      <div id="cutiEditView" style="display:none"><div class="panel glass">
+        <div class="doc-head">
+          <button class="btn ghost small" onclick="Cuti.back()">← Kembali</button>
+          <h3 id="cutiTitle" style="margin:0">Pengajuan Baru</h3>
+          <span class="spacer" style="flex:1"></span>
+          <button class="btn success small" onclick="Cuti.save()">💾 Simpan</button>
+          <button class="btn ghost small" onclick="Cuti.print()">🖨 Print</button>
+          <button class="btn ghost small" onclick="Cuti.exportPDF()">📄 PDF</button>
+          <button class="btn ghost small" onclick="Cuti.exportXLSX()">📊 Excel</button>
+        </div>
+        <div id="cutiFields" class="docf"></div>
+      </div></div>
+    </section>
+
+    <!-- ============ DATANG TERLAMBAT / PULANG CEPAT ============ -->
+    <section data-view="telat" class="hidden">
+      <div class="panel glass cloudbar" style="display:flex">
+        <span class="dot" id="telatDot"></span><b>Datang Terlambat / Pulang Cepat</b><span class="pill" id="telatPill">—</span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost small" onclick="Telat.load(true)">↻ Muat ulang</button>
+        <button class="btn primary small" onclick="Telat.newDoc()">+ Pengajuan Baru</button>
+      </div>
+      <div id="telatListView"><div class="panel glass">
+        <div class="eyebrow">Arsip</div><h3>Daftar Izin Terlambat / Pulang Cepat</h3>
+        <p class="sub">Tersimpan di Cloud &amp; terlihat sama untuk semua pengguna.</p>
+        <div class="scroll" style="max-height:none"><table class="grid">
+          <thead><tr><th>Nama</th><th>NIK</th><th>Bagian</th><th>Jenis</th><th>Tanggal</th><th>Dibuat</th><th></th></tr></thead>
+          <tbody id="telatListBody"><tr><td colspan="7" style="padding:16px;color:var(--muted)">Memuat…</td></tr></tbody>
+        </table></div>
+      </div></div>
+      <div id="telatEditView" style="display:none"><div class="panel glass">
+        <div class="doc-head">
+          <button class="btn ghost small" onclick="Telat.back()">← Kembali</button>
+          <h3 id="telatTitle" style="margin:0">Pengajuan Baru</h3>
+          <span class="spacer" style="flex:1"></span>
+          <button class="btn success small" onclick="Telat.save()">💾 Simpan</button>
+          <button class="btn ghost small" onclick="Telat.print()">🖨 Print</button>
+          <button class="btn ghost small" onclick="Telat.exportPDF()">📄 PDF</button>
+          <button class="btn ghost small" onclick="Telat.exportXLSX()">📊 Excel</button>
+        </div>
+        <div id="telatFields" class="docf"></div>
+      </div></div>
+    </section>
+    <div id="docPrint"></div>
 
     <!-- ============ UPDATE DATA STATUS ============ -->
     <section data-view="datastatus" class="hidden">
@@ -1322,8 +1453,18 @@ const Cloud = (function(){
     if(b.action==='deletePR'){pl.list=pl.list.filter(x=>x.id!==b.id);LS.putData('pr',pl);return {ok:true};}
     return {ok:true};
   }
+  function localDoc(b){
+    const key='doc_'+b.col;const raw=localStorage.getItem(key);let pl={list:[]};try{if(raw)pl=JSON.parse(raw)||{list:[]};}catch(e){}pl.list=pl.list||[];
+    if(b.action==='getDoc')return {ok:true,payload:pl};
+    if(b.action==='saveDoc'){const doc=b.doc||{};const fields=doc.fields||{};
+      if(doc.id){const i=pl.list.findIndex(x=>x.id===doc.id);const rec=Object.assign({},i>=0?pl.list[i]:{},{id:doc.id,fields,updatedAt:new Date().toISOString()});if(i>=0)pl.list[i]=rec;else pl.list.push(rec);localStorage.setItem(key,JSON.stringify(pl));return {ok:true,doc:rec};}
+      const rec={id:'doc_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),fields,by:(b.email||'').toLowerCase(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pl.list.push(rec);localStorage.setItem(key,JSON.stringify(pl));return {ok:true,doc:rec};}
+    if(b.action==='deleteDoc'){pl.list=pl.list.filter(x=>x.id!==b.id);localStorage.setItem(key,JSON.stringify(pl));return {ok:true};}
+    return {ok:true};
+  }
   function localSched(b){
     if(b.action==='getPR'||b.action==='savePR'||b.action==='deletePR')return localPR(b);
+    if(b.action==='getDoc'||b.action==='saveDoc'||b.action==='deleteDoc')return localDoc(b);
     const rec=LS.getData('schedule');const p=(rec&&rec.payload)||{};
     const s={members:p.members||{},assignments:p.assignments||{},tasks:p.tasks||{},locks:p.locks||{}};
     const lc2=x=>String(x||'').toLowerCase().trim();const target=lc2(b.target||b.email);
@@ -1434,14 +1575,14 @@ const Cloud = (function(){
   function genFormula(R){var A='A'+R;var G1='LEFT('+A+',LEN('+A+')-3)';var G2='CLEAN(TRIM('+A+'))';var G3='LEFT('+A+',LEN('+A+')-4)';function dc(G){return 'IF('+G+'="LGFWR1","F",IFERROR(MID(VLOOKUP('+G+',PDM!$A:$AE,5,FALSE),2,1),""))';}function ok(G){var d=dc(G);return 'OR('+d+'="A",'+d+'="F")';}return 'IF('+ok(G1)+','+G1+',IF('+ok(G2)+','+G2+','+G3+'))';}
   function buildNewRow(rowNum,vals,template,hidden){var s='<row r="'+rowNum+'" spans="1:'+template.maxCol+'"'+(hidden?' hidden="1"':'')+'>';for(var c=1;c<=N_RAW;c++)s+=buildRawCell(c,rowNum,vals[c-1],template.rawStyles[c]);for(var c2=N_RAW+1;c2<=template.maxCol;c2++){var t=template.formula[c2];if(!t||!t.ftext)continue;var ref=indexToCol(c2)+rowNum;var sAttr=t.style!=null?' s="'+t.style+'"':'';var ft;if(template.genericCol&&c2===template.genericCol&&template.usePDM){ft=genFormula(rowNum);}else{ft=t.fast!=null?t.fast.split('').join(rowNum):repointFormula(t.ftext,t.srcRow,rowNum);if(template.orderIdCol&&c2===template.orderIdCol)ft='IF(LEFT(C'+rowNum+',7)="SHF-LW-",MID(C'+rowNum+',8,4),('+ft+'))';}s+='<c r="'+ref+'"'+sAttr+'><f>'+ft+'</f></c>';}s+='</row>';return s;}
   async function patchWorkbookAndPivots(zip,report){const wbPath='xl/workbook.xml';let wb=await readText(zip,wbPath);if(wb){if(/<calcPr\b[^>]*\/>/.test(wb)){wb=wb.replace(/<calcPr\b[^>]*\/>/,function(tag){if(/fullCalcOnLoad=/.test(tag))return tag.replace(/fullCalcOnLoad="[^"]*"/,'fullCalcOnLoad="1"');return tag.replace(/\/>$/,' fullCalcOnLoad="1"/>');});}else if(/<\/workbook>/.test(wb)){wb=wb.replace(/<\/workbook>/,'<calcPr calcId="0" fullCalcOnLoad="1"/></workbook>');}zip.file(wbPath,wb);}if(zip.file('xl/calcChain.xml')){zip.remove('xl/calcChain.xml');let ct=await readText(zip,'[Content_Types].xml');if(ct){ct=ct.replace(/<Override PartName="\/xl\/calcChain\.xml"[^>]*\/>/,'');zip.file('[Content_Types].xml',ct);}let wr=await readText(zip,'xl/_rels/workbook.xml.rels');if(wr){wr=wr.replace(/<Relationship[^>]*Target="calcChain\.xml"[^>]*\/>/,'');zip.file('xl/_rels/workbook.xml.rels',wr);}report.calcChainRemoved=true;}const names=Object.keys(zip.files);for(let i=0;i<names.length;i++){const n=names[i];if(/^xl\/pivotCache\/pivotCacheDefinition\d+\.xml$/.test(n)){let d=await readText(zip,n);d=d.replace(/<pivotCacheDefinition\b([^>]*)>/,function(full,attrs){if(/refreshOnLoad=/.test(attrs))return '<pivotCacheDefinition'+attrs.replace(/refreshOnLoad="[^"]*"/,'refreshOnLoad="1"')+'>';return '<pivotCacheDefinition refreshOnLoad="1"'+attrs+'>';});d=d.replace(/<worksheetSource\b[^>]*\/>/g,function(tag){const sm=/\bsheet="([^"]+)"/.exec(tag);if(!sm||(sm[1]!=='Data'&&sm[1]!=='Data1'))return tag;return tag.replace(/\bref="([A-Z]+)(\d+):([A-Z]+)(\d+)"/,function(mm,c1,r1,c2,r2){return 'ref="'+c1+r1+':'+c2+'1048576"';});});zip.file(n,d);report.pivotCaches++;}}}
-  async function processTarget(zip,mainInfo){const report={updatedRows:0,addedRows:0,matchedPairs:0,targetRows:0,changedCells:0,pivotCaches:0,dataChanged:false,formulaCols:0,orderIdCol:null,sorted:true};const dataPath=await resolveDataSheetPath(zip);const shared=parseSharedStrings(await readText(zip,'xl/sharedStrings.xml'));let xml=await readText(zip,dataPath);const sd=splitSheetData(xml);const remaining=new Map();mainInfo.groups.forEach(function(arr,k){remaining.set(k,arr.slice());});
+  async function processTarget(zip,mainInfo,opts){opts=opts||{};const report={updatedRows:0,addedRows:0,matchedPairs:0,targetRows:0,changedCells:0,pivotCaches:0,dataChanged:false,formulaCols:0,orderIdCol:null,sorted:true};const dataPath=await resolveDataSheetPath(zip);const shared=parseSharedStrings(await readText(zip,'xl/sharedStrings.xml'));let xml=await readText(zip,dataPath);const sd=splitSheetData(xml);const remaining=new Map();mainInfo.groups.forEach(function(arr,k){remaining.set(k,arr.slice());});
     const rowSegments=[];let lastDataRow=1,maxRow=1,headerOuter='';forEachRow(sd.inner,function(outer,rowNum){rowSegments.push({rowNum:rowNum,outer:outer});if(rowNum!=null&&rowNum>maxRow)maxRow=rowNum;});
     let orderIdCol=null,genericCol=null,tanggalCol=null;for(let i=0;i<rowSegments.length;i++){const seg=rowSegments[i];if(seg.rowNum===1){headerOuter=seg.outer;const hc=parseRowCells(seg.outer);for(const ci in hc){var t=cellValue(hc[ci],shared).trim().toLowerCase();if(t==='order id')orderIdCol=parseInt(ci,10);if(t==='generic')genericCol=parseInt(ci,10);if(t==='tanggal'||t==='tgl'||t==='date'||t==='tanggal pesanan'||t==='order date')tanggalCol=parseInt(ci,10);}}}
     for(let i=0;i<rowSegments.length;i++){const seg=rowSegments[i];if(seg.rowNum==null||seg.rowNum===1)continue;const cells=parseRowCells(seg.outer);const nop=cellValue(cells[3],shared),sku=cellValue(cells[1],shared);if(nop===''&&sku==='')continue;if(nop!=='')lastDataRow=Math.max(lastDataRow,seg.rowNum);}
     const template=extractTemplate(xml,sd.inner,lastDataRow);template.orderIdCol=orderIdCol;template.genericCol=genericCol;report.genericCol=genericCol;report.formulaCols=Object.keys(template.formula).length;report.orderIdCol=orderIdCol;
     const _wbx=await readText(zip,'xl/workbook.xml');template.usePDM=/<sheet\b[^>]*\bname="PDM"/i.test(_wbx);report.usePDM=template.usePDM;
     const dataRows=[];for(let i=0;i<rowSegments.length;i++){const seg=rowSegments[i];if(seg.rowNum==null||seg.rowNum===1)continue;const cells=parseRowCells(seg.outer);const vals=[];let hasData=false;for(let c=1;c<=N_RAW;c++){const v=cellValue(cells[c],shared);if(v!=='')hasData=true;vals.push(v);}if(!hasData)continue;report.targetRows++;const rowTag=/^<row[^>]*>/.exec(seg.outer)[0];const hidden=/\bhidden="1"/.test(rowTag);const key=matchKey(vals[2],vals[0]);const q=remaining.get(key);if(q&&q.length>0){const mv=q.shift();report.matchedPairs++;if(!hidden){let changed=false;for(let c=0;c<N_RAW;c++){if(String(vals[c])!==String(mv[c])){vals[c]=mv[c];changed=true;}}if(changed)report.updatedRows++;}}dataRows.push({vals:vals,hidden:hidden});}
-    remaining.forEach(function(q){for(let p=0;p<q.length;p++){dataRows.push({vals:q[p],hidden:false});report.addedRows++;}});
+    if(opts.append!==false){remaining.forEach(function(q){for(let p=0;p<q.length;p++){dataRows.push({vals:q[p],hidden:false});report.addedRows++;}});}
     const sortIdx=(tanggalCol!=null&&tanggalCol>=1)?(tanggalCol-1):5;function dnum(v){if(v==null)return Infinity;var s=String(v).trim();if(s==='')return Infinity;if(/^-?\d+(\.\d+)?$/.test(s))return parseFloat(s);var m=/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/.exec(s);if(m)return Date.UTC(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0))/86400000+25569;m=/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/.exec(s);if(m){var yy=+m[3];if(yy<100)yy+=2000;return Date.UTC(yy,+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0),+(m[6]||0))/86400000+25569;}var d=Date.parse(s);if(!isNaN(d))return d/86400000+25569;return Infinity;}function ymdKey(v){var n=dnum(v);if(!isFinite(n))return Infinity;var d=new Date(Math.round((n-25569)*86400000));return d.getUTCFullYear()*10000+(d.getUTCMonth()+1)*100+d.getUTCDate();}dataRows.sort(function(a,b){return ymdKey(a.vals[sortIdx])-ymdKey(b.vals[sortIdx]);});
     const parts=[headerOuter];for(let i=0;i<dataRows.length;i++){parts.push(buildNewRow(i+2,dataRows[i].vals,template,dataRows[i].hidden));}
     const newMax=dataRows.length+1;let newXml=sd.before+parts.join('')+sd.after;newXml=newXml.replace(/<dimension ref="([A-Z]+1):([A-Z]+)\d+"\/>/,'<dimension ref="$1:$2'+newMax+'"/>');newXml=newXml.replace(/<autoFilter ref="([A-Z]+1):([A-Z]+)\d+"\/>/,'<autoFilter ref="$1:$2'+newMax+'"/>');zip.file(dataPath,newXml);report.dataChanged=true;
@@ -1463,6 +1604,8 @@ const VIEWS={
   berita:{title:'Berita Acara',crumb:'Dokumen resmi internal — arsip cloud'},
   schedule:{title:'Penjadwalan Tim Kerja',crumb:'Roster shift mingguan — tersinkron cloud'},
   pr:{title:'PR — Purchase Requisition',crumb:'Formulir permintaan pembelian — tersinkron cloud'},
+  cuti:{title:'Pengajuan Cuti',crumb:'Permohonan Cuti Karyawan — PT. Berca Sportindo'},
+  telat:{title:'Datang Terlambat / Pulang Cepat',crumb:'Surat Izin Meninggalkan Tugas — tersinkron cloud'},
   users:{title:'Kelola User',crumb:'Daftar user terdaftar & aktivasi peran'},
   howto:{title:'How To (Super Admin)',crumb:'Panduan update database & sinkronisasi'},
   settings:{title:'Pengaturan & Cloud',crumb:'Konektivitas GitHub + Vercel'}
@@ -1575,6 +1718,8 @@ const App={
     if(v==='users')UserAdmin.open();
     if(v==='schedule'){var _f=document.getElementById('schedFrame');if(_f&&!_f.getAttribute('src'))_f.setAttribute('src','jadwal.html?embed=1');}
     if(v==='pr')PR.open();
+    if(v==='cuti')Cuti.open();
+    if(v==='telat')Telat.open();
     if(v==='monitoring'&&!Monitoring.loaded)Monitoring.load();
     if(v==='sales'&&!Sales.loaded)Sales.load();
     if(v==='berita'&&!Berita.started)Berita.enter();
@@ -1932,9 +2077,9 @@ const Sales=(function(){
       log('  '+mainInfo.rowCount+' baris, '+mainInfo.groups.size+' kombinasi unik.','ok');
       mainRows=await parseMainRows(mainZip);
       var targets=SLOTS.filter(function(s){return s.target&&loaded[s.id];});
-      for(var i=0;i<targets.length;i++){var t=targets[i];var nm=loaded[t.id].name;el('ovText').textContent='('+(i+1)+'/'+targets.length+') '+nm;log('→ '+nm,'hd');await wait(20);
+      for(var i=0;i<targets.length;i++){var t=targets[i];var nm=loaded[t.id].name;var updOnly=(el('supd'+t.id)&&el('supd'+t.id).checked);el('ovText').textContent='('+(i+1)+'/'+targets.length+') '+nm;log('→ '+nm+(updOnly?'  ·  Update saja (tanpa tambah baris)':'  ·  Merge penuh (update + tambah)'),'hd');await wait(20);
         var zip=await JSZIP.loadAsync(await loaded[t.id].getBuf());await wait(10);
-        var rep=await Core.processTarget(zip,mainInfo);
+        var rep=await Core.processTarget(zip,mainInfo,{append:!updOnly});
         if(sumRows.length===0||t.id==='tmpl'){try{var _sr=await parseSummaryRows(zip);if(_sr.length){sumRows=_sr;sumSrc=nm+' (hasil merge)';}}catch(e){}}
         Object.keys(zip.files).forEach(function(n){if(zip.files[n].dir)delete zip.files[n];});
         log('  cocok '+rep.matchedPairs+' | diperbarui '+rep.updatedRows+' | ditambah '+rep.addedRows+' | urut tanggal ✓ | pivot refresh '+rep.pivotCaches,'ok');await wait(10);
@@ -2363,13 +2508,13 @@ const PR=(function(){
 
   P.newDoc=function(){
     if(!App.isAdmin()){toast('Hanya Admin/Super Admin/Owner yang dapat membuat PR.','err');return;}
-    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',ppn:false,pph:false,ppnRate:DEF_PPN,pphRate:DEF_PPH,sign1:'',sign2:'',sign3:'',items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
+    cur={id:null,number:'',code:'',date:todayIso(),vendor:'',dept:'',currency:'IDR',ppn:false,pph:false,ppnRate:DEF_PPN,pphRate:DEF_PPH,reason:'',capbud:'',sign1:'',sign2:'',sign3:'',items:[{desc:'',qty:1,price:0}],printedOn:'',by:(Auth.session&&Auth.session.name)||'',createdAt:''};
     $('prFormTitle').textContent='PR Baru';bind();showEditor();
   };
   P.edit=function(id){const r=list.find(x=>x.id===id);if(!r)return;cur=JSON.parse(JSON.stringify(r));if(!cur.items||!cur.items.length)cur.items=[{desc:'',qty:1,price:0}];$('prFormTitle').textContent=cur.number||'PR';bind();showEditor();
     if(!App.isAdmin())setReadonly(true);else setReadonly(false);};
 
-  function setReadonly(ro){['prVendor','prDept','prCurrency','prPpn','prPph','prPpnRate','prPphRate','prSign1','prSign2','prSign3'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
+  function setReadonly(ro){['prVendor','prDept','prCurrency','prPpn','prPph','prPpnRate','prPphRate','prSign1','prSign2','prSign3','prReason','prCapbud'].forEach(id=>{const e=$(id);if(e)e.disabled=ro;});
     document.querySelectorAll('#prEditView .admin-only').forEach(e=>e.style.display=ro?'none':'');
     $('prItemsBody').querySelectorAll('input,textarea').forEach(e=>e.disabled=ro);}
 
@@ -2380,6 +2525,7 @@ const PR=(function(){
     $('prPpn').checked=!!cur.ppn;$('prPph').checked=!!cur.pph;
     $('prPpnRate').value=(cur.ppnRate!=null?cur.ppnRate:DEF_PPN);$('prPphRate').value=(cur.pphRate!=null?cur.pphRate:DEF_PPH);
     $('prSign1').value=cur.sign1||'';$('prSign2').value=cur.sign2||'';$('prSign3').value=cur.sign3||'';
+    $('prReason').value=cur.reason||'';$('prCapbud').value=cur.capbud||'';
     renderItems();
   }
   P.onDeptChange=function(){$('prCode').value=deptCode($('prDept').value);};
@@ -2405,6 +2551,7 @@ const PR=(function(){
     cur.ppn=$('prPpn').checked;cur.pph=$('prPph').checked;
     cur.ppnRate=parseFloat($('prPpnRate').value)||0;cur.pphRate=parseFloat($('prPphRate').value)||0;
     cur.sign1=$('prSign1').value.trim();cur.sign2=$('prSign2').value.trim();cur.sign3=$('prSign3').value.trim();
+    cur.reason=$('prReason').value.trim();cur.capbud=$('prCapbud').value.trim();
     const rows=$('prItemsBody').querySelectorAll('tr');const items=[];
     rows.forEach(tr=>{const d=tr.querySelector('.pr-desc'),q=tr.querySelector('.pr-qty'),p=tr.querySelector('.pr-price');if(!d)return;items.push({desc:d.value,qty:parseFloat(q.value)||0,price:parseFloat(p.value)||0});});
     if(keepItems)cur.items=items; else cur.items=items.filter(it=>String(it.desc).trim()||it.qty||it.price);
@@ -2441,38 +2588,41 @@ const PR=(function(){
     try{await Cloud.sched({action:'deletePR',pin,email:(Auth.session&&Auth.session.email)||'',id});toast('PR dihapus','err');await P.load(true);}catch(e){toast(e.message,'err');cachedPin=null;}
   };
 
-  function prSummaryRows(r){
-    const t=taxCalc(r);
-    let s='<tr><td colspan="4" style="text-align:right">Sub Total</td><td class="amt">'+money(t.sub,r.currency)+'</td></tr>';
-    if(r.ppn)s+='<tr><td colspan="4" style="text-align:right">PPN ('+fmtRate(t.ppnRate)+'%)</td><td class="amt">'+money(t.ppn,r.currency)+'</td></tr>';
-    if(r.pph)s+='<tr><td colspan="4" style="text-align:right">PPh 23 Perusahaan ('+fmtRate(t.pphRate)+'%)</td><td class="amt">− '+money(t.pph,r.currency)+'</td></tr>';
-    s+='<tr><td colspan="4" style="text-align:right"><b>TOTAL</b></td><td class="amt"><b>'+money(t.grand,r.currency)+'</b></td></tr>';
-    return s;
-  }
   function buildPrintHTML(r){
     const items=r.items||[];
-    const rowsH=items.map((it,i)=>'<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'')).replace(/\n/g,'<br>')+'</td><td style="text-align:center">'+(Number(it.qty)||0)+'</td><td class="amt">'+money(it.price,r.currency)+'</td><td class="amt">'+money((Number(it.qty)||0)*(Number(it.price)||0),r.currency)+'</td></tr>').join('');
-    // baris kosong nyata (deterministik) memanjangkan tabel mengisi ruang —
-    // sehingga Sub Total/PPN/PPh/Total turun mendekati tanda tangan.
-    // Memakai baris fisik (bukan height:100%) agar hasil PDF = hasil cetak.
-    const MINROWS=18; const blanks=Math.max(0, MINROWS-items.length);
-    let stretch='';for(let i=0;i<blanks;i++)stretch+='<tr class="filler"><td class="no">&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
-    // template lebar kolom (dipakai tabel item & tabel ringkasan agar kolom lurus)
-    const CG='<colgroup><col style="width:7%"><col><col style="width:9%"><col style="width:17%"><col style="width:19%"></colgroup>';
+    const c=r.currency;
+    const sym=CUR[c]||'';
+    // sel jumlah gaya akuntansi: Rp di kiri, nilai di kanan; kosong benar-benar kosong (tanpa Rp/0)
+    const cell=(v,neg)=>{const n=Number(v)||0;if(!n)return '';return '<span class="rp">'+sym+'</span><span class="vv">'+(neg?'− ':'')+n.toLocaleString('id-ID',{minimumFractionDigits:0,maximumFractionDigits:2})+'</span>';};
+    const CG='<colgroup><col style="width:8%"><col><col style="width:9%"><col style="width:17%"><col style="width:19%"></colgroup>';
+    const rowsH=items.map((it,i)=>{const q=Number(it.qty)||0,p=Number(it.price)||0;return '<tr><td class="no">'+(i+1)+'</td><td>'+esc(String(it.desc||'')).replace(/\n/g,'<br>')+'</td><td class="q">'+(q||'')+'</td><td class="amt">'+cell(p)+'</td><td class="amt">'+cell(q*p)+'</td></tr>';}).join('');
+    // baris kosong nyata memanjangkan tabel (kolom bergaris sampai bawah) — hasil PDF = cetak
+    const MINROWS=25; const blanks=Math.max(0, MINROWS-items.length);
+    let fillerH='';for(let i=0;i<blanks;i++)fillerH+='<tr class="filler"><td class="no">&nbsp;</td><td></td><td class="q"></td><td class="amt"></td><td class="amt"></td></tr>';
+    const t=taxCalc(r);
+    const totQty=items.reduce((s,it)=>s+(Number(it.qty)||0),0);
+    // baris pajak (label di kolom DESCRIPTION) SEBELUM baris TOTAL — hanya bila dicentang
+    let sumRows='';
+    if(r.ppn||r.pph){sumRows+='<tr class="sumrow"><td class="no"></td><td>Sub Total</td><td class="q"></td><td class="amt"></td><td class="amt">'+cell(t.sub)+'</td></tr>';}
+    if(r.ppn)sumRows+='<tr class="sumrow"><td class="no"></td><td>PPN ('+fmtRate(t.ppnRate)+'%)</td><td class="q"></td><td class="amt"></td><td class="amt">'+cell(t.ppn)+'</td></tr>';
+    if(r.pph)sumRows+='<tr class="sumrow"><td class="no"></td><td>PPh 23 ('+fmtRate(t.pphRate)+'%)</td><td class="q"></td><td class="amt"></td><td class="amt">'+cell(t.pph,true)+'</td></tr>';
+    const totRow='<tr class="totrow"><td class="no"></td><td>TOTAL</td><td class="q">'+(totQty||'')+'</td><td class="amt"></td><td class="amt">'+cell(t.grand)+'</td></tr>';
     return '<div class="pr-page">'
-      +'<div>'
-      +'<div class="kop"><svg width="52" height="47" viewBox="0 0 100 92" xmlns="http://www.w3.org/2000/svg" style="display:block;flex:0 0 auto"><path d="M30 12 L70 12 L88 80 L12 80 Z" fill="#ffffff" stroke="#0a0a0a" stroke-width="8" stroke-linejoin="round"/><path d="M44 28 L56 28 L56 60 L70 60 L70 70 L44 70 Z" fill="#1f9d3a"/></svg><div style="flex:1 1 auto;margin-left:12px"><h1>PT. BERCA SPORTINDO</h1><div style="font-size:12px;letter-spacing:.12em">BRAND · LEAGUE</div></div><div style="text-align:right;flex:0 0 auto"><h1 style="font-size:16px">PURCHASE REQUISITION</h1></div></div>'
-      +'<table class="meta" style="margin-bottom:10px"><tr><td style="width:16%"><b>PR NUMBER</b></td><td style="width:34%">'+esc(r.number||'-')+'</td><td style="width:16%"><b>PR DATE</b></td><td>'+fmtDate(r.date)+'</td></tr>'
-      +'<tr><td><b>DEPARTMENT</b></td><td>'+esc(r.dept||'-')+' ('+esc(r.code||'')+')</td><td><b>REC VENDOR</b></td><td>'+esc(r.vendor||'-')+'</td></tr>'
-      +'<tr><td><b>CURRENCY</b></td><td>'+esc(r.currency||'IDR')+'</td><td><b>PRINTED ON</b></td><td>'+(r.printedOn?fmtDate(r.printedOn):'-')+'</td></tr></table>'
+      +'<div class="kop"><div class="co"><b>BERCA RETAIL GROUP</b></div><div class="printed">Printed On : '+(r.printedOn?fmtDate(r.printedOn):'')+'</div></div>'
+      +'<div class="title">PURCHASE REQUISITION</div>'
+      +'<div class="meta">'
+      +'<span class="l">PR DATE</span><span>: '+fmtDate(r.date)+'</span><span class="l">PR NUMBER</span><span>: '+esc(r.number||'')+'</span>'
+      +'<span class="l">DEPARTMENT</span><span>: '+esc(r.dept||'')+'</span><span class="l">REC VENDOR</span><span>: '+esc(r.vendor||'')+'</span>'
       +'</div>'
-      +'<div class="pr-fill"><table class="doc">'+CG+'<thead><tr><th>NO</th><th>DESCRIPTION</th><th>QTY</th><th style="text-align:right">EST. @PRICE</th><th style="text-align:right">EST. AMOUNT</th></tr></thead>'
-      +'<tbody>'+rowsH+stretch+prSummaryRows(r)+'</tbody></table></div>'
-      +'<div class="pr-foot"><table class="meta sign" style="border:0"><tr style="text-align:center">'
-      +'<td style="border:0;width:33%">Prepared by<br><br><br><br>___________________<br><b>'+esc(r.sign1||'')+'</b></td>'
-      +'<td style="border:0;width:33%">Checked by<br><br><br><br>___________________<br><b>'+esc(r.sign2||'')+'</b></td>'
-      +'<td style="border:0;width:33%">Approved by<br><br><br><br>___________________<br><b>'+esc(r.sign3||'')+'</b></td>'
-      +'</tr></table></div>'
+      +'<table class="doc">'+CG+'<thead><tr><th>NO</th><th>DESCRIPTION</th><th>QTY.</th><th>EST. @PRICE</th><th>EST. AMOUNT</th></tr></thead>'
+      +'<tbody>'+rowsH+fillerH+sumRows+totRow+'</tbody></table>'
+      +'<table class="sign">'
+      +'<tr><td style="width:50%"><div class="lab">PREPARED BY :</div><div class="nm">'+esc(r.sign1||'')+'</div></td>'
+      +'<td style="width:50%"><div class="lab">REASON REQUIRED :</div><div class="nm">'+esc(r.reason||'')+'</div></td></tr>'
+      +'<tr><td><div class="lab">ACKNOWLEDGED BY :</div><div class="nm">'+esc(r.sign2||'')+'</div></td>'
+      +'<td rowspan="2"><div class="lab">CAPITAL / BUDGET :</div><div class="nm">'+esc(r.capbud||'')+'</div></td></tr>'
+      +'<tr><td><div class="lab">APPROVED BY :</div><div class="nm">'+esc(r.sign3||'')+'</div></td></tr>'
+      +'</table>'
       +'</div>';
   }
   async function markPrinted(){
@@ -2499,6 +2649,165 @@ const PR=(function(){
     const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'PR');XLSX.writeFile(wb,'PR '+((r.number||'baru').replace(/[\/\\]/g,'-'))+'.xlsx');};
   return P;
 })();
+
+/* ============================================================
+ *  MODULE: DOKUMEN FORM (Pengajuan Cuti & Terlambat/Pulang Cepat)
+ * ============================================================ */
+function dfmt(iso){if(!iso)return '';const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso);return m?m[3]+'/'+m[2]+'/'+m[1]:iso;}
+function makeDoc(cfg){
+  let list=[],cur=null,cachedPin=null,loaded=false;const D={};const P=cfg.p;
+  function pill(){const d=$(P+'Dot'),p=$(P+'Pill');const cloud=Cloud.mode==='cloud';if(d)d.className='dot'+(cloud?' live':'');if(p){p.textContent=(cloud?'GitHub + Vercel':'Mode Lokal')+' · '+list.length+' dok';p.className='pill '+(cloud?'ok':'no');}}
+  async function ensurePin(){if(cachedPin)return cachedPin;const p=await Berita.askPin('Masukkan PIN untuk menyimpan '+cfg.title);if(p==null)return null;cachedPin=p;return p;}
+  const admin=()=>App.isAdmin();
+  function fieldHTML(fd){
+    if(fd.sec)return '<div class="fg full" style="margin-top:4px"><div class="eyebrow" style="margin:0">'+esc(fd.sec)+'</div></div>';
+    const id=P+'_'+fd.k,cls='fg'+(fd.full?' full':'');
+    if(fd.type==='radio'){const rs=fd.opts.map(o=>'<label><input type="radio" name="'+id+'" value="'+esc(o)+'"> '+esc(o)+'</label>').join('');return '<div class="'+cls+'"><label>'+esc(fd.label)+'</label><div class="radios">'+rs+'</div></div>';}
+    if(fd.type==='textarea')return '<div class="'+cls+'"><label>'+esc(fd.label)+'</label><textarea id="'+id+'"'+(fd.maxlength?' maxlength="'+fd.maxlength+'"':'')+' placeholder="'+esc(fd.ph||'')+'"></textarea></div>';
+    const t=fd.type==='date'?'date':(fd.type==='number'?'number':'text');
+    return '<div class="'+cls+'"><label>'+esc(fd.label)+'</label><input id="'+id+'" type="'+t+'"'+(fd.maxlength?' maxlength="'+fd.maxlength+'"':'')+' placeholder="'+esc(fd.ph||'')+'"></div>';
+  }
+  function renderFields(){$(P+'Fields').innerHTML=cfg.fields.map(fieldHTML).join('');$(P+'Fields').querySelectorAll('textarea').forEach(t=>{const rs=function(){t.style.height='auto';t.style.height=t.scrollHeight+'px';};t.oninput=rs;setTimeout(rs,0);});}
+  function fill(){cfg.fields.forEach(fd=>{if(!fd.k)return;const v=(cur.fields&&cur.fields[fd.k])||'';if(fd.type==='radio'){document.querySelectorAll('input[name="'+P+'_'+fd.k+'"]').forEach(r=>r.checked=(r.value===v));}else{const n=$(P+'_'+fd.k);if(n)n.value=v;}});$(P+'Fields').querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});}
+  function collect(){const f={};cfg.fields.forEach(fd=>{if(!fd.k)return;if(fd.type==='radio'){const s=document.querySelector('input[name="'+P+'_'+fd.k+'"]:checked');f[fd.k]=s?s.value:'';}else{const n=$(P+'_'+fd.k);f[fd.k]=n?n.value:'';}});cur.fields=f;}
+  function showEditor(){$(P+'ListView').style.display='none';$(P+'EditView').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+  D.back=function(){$(P+'EditView').style.display='none';$(P+'ListView').style.display='';};
+  D.open=async function(){pill();if(!loaded)await D.load();else{D.back();D.renderList();}};
+  D.load=async function(force){try{const r=await Cloud.sched({action:'getDoc',col:cfg.col});const pl=(r&&r.payload)||{};list=Array.isArray(pl.list)?pl.list:[];loaded=true;pill();D.renderList();}catch(e){if(force)toast('Gagal memuat: '+e.message,'err');$(P+'ListBody').innerHTML='<tr><td colspan="7" style="padding:16px;color:var(--err)">'+esc(e.message)+'</td></tr>';}};
+  D.renderList=function(){let arr=list.slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));if(!arr.length){$(P+'ListBody').innerHTML='<tr><td colspan="7" style="padding:16px;color:var(--muted)">Belum ada data. Klik <b>+ Pengajuan Baru</b>.</td></tr>';return;}
+    const myEmail=(Auth.session&&Auth.session.email||'').toLowerCase();
+    $(P+'ListBody').innerHTML=arr.map(rec=>{const f=rec.fields||{};const cells=cfg.listRow(f).map(c=>'<td>'+esc(c==null?'':String(c))+'</td>').join('')+'<td>'+esc(dfmt((rec.createdAt||'').slice(0,10)))+'</td>';const canDel=admin()||(myEmail&&String(rec.by||'').toLowerCase()===myEmail);const act='<button class="mini" onclick="'+cfg.g+'.edit(\''+esc(rec.id)+'\')">Buka</button> '+(canDel?'<button class="mini del" onclick="'+cfg.g+'.remove(\''+esc(rec.id)+'\')">Hapus</button>':'');return '<tr>'+cells+'<td style="text-align:right;white-space:nowrap">'+act+'</td></tr>';}).join('');};
+  D.newDoc=function(){cur={id:null,fields:{}, createdAt:''};$(P+'Title').textContent='Pengajuan Baru';renderFields();fill();showEditor();};
+  D.edit=function(id){const rec=list.find(x=>x.id===id);if(!rec)return;cur=JSON.parse(JSON.stringify(rec));cur.fields=cur.fields||{};$(P+'Title').textContent=(cfg.titleOf?cfg.titleOf(cur.fields):'Pengajuan');renderFields();fill();showEditor();};
+  D.save=async function(){collect();const pin=await ensurePin();if(pin==null)return;try{const r=await Cloud.sched({action:'saveDoc',col:cfg.col,email:(Auth.session&&Auth.session.email)||'',doc:{id:cur.id,fields:cur.fields}});if(r&&r.doc)cur=r.doc;toast('Tersimpan ✓','ok');await D.load(true);}catch(e){toast('Gagal menyimpan: '+e.message,'err');cachedPin=null;}};
+  D.remove=async function(id){if(!confirm('Hapus data ini?'))return;const pin=await ensurePin();if(pin==null)return;try{await Cloud.sched({action:'deleteDoc',col:cfg.col,email:(Auth.session&&Auth.session.email)||'',id});toast('Dihapus','err');await D.load(true);}catch(e){toast(e.message,'err');cachedPin=null;}};
+  D.print=function(){collect();$('docPrint').innerHTML=cfg.buildPrint(cur.fields);setTimeout(()=>window.print(),80);};
+  D.exportPDF=function(){collect();$('docPrint').innerHTML=cfg.buildPrint(cur.fields);const nm=((cur.fields&&cur.fields.nama)||'baru').replace(/[\/\\]/g,'-');const fn=cfg.title+' - '+nm+'.pdf';if(window.html2pdf){toast('Menyiapkan PDF…','ok');const node=$('docPrint');const prev=node.style.cssText;node.style.cssText='position:static;left:0;width:210mm;background:#fff';html2pdf().set({margin:0,filename:fn,image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(node).save().then(()=>{node.style.cssText=prev;});}else window.print();};
+  D.exportXLSX=function(){collect();const f=cur.fields||{};const aoa=[[cfg.title.toUpperCase()],[]];
+    cfg.fields.forEach(fd=>{if(fd.sec){aoa.push([]);aoa.push([fd.sec]);return;}if(!fd.k)return;let v=f[fd.k]||'';if(fd.type==='date')v=dfmt(v);aoa.push([fd.label,v]);});
+    const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:32},{wch:50}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Form');const nm=((f.nama)||'baru').replace(/[\/\\]/g,'-');XLSX.writeFile(wb,cfg.title+' - '+nm+'.xlsx');};
+  return D;
+}
+
+/* ---- Pengajuan Cuti ---- */
+const Cuti=makeDoc({p:'cuti',g:'Cuti',col:'cuti',title:'Pengajuan Cuti',
+  titleOf:f=>f.nama?('Cuti — '+f.nama):'Pengajuan Cuti',
+  listRow:f=>[f.nama,f.departemen,f.jenis,dfmt(f.mulai),dfmt(f.sampai)],
+  fields:[
+    {sec:'Identitas Karyawan'},
+    {k:'departemen',label:'Departemen',type:'text',maxlength:40},
+    {k:'nama',label:'Nama',type:'text',maxlength:40},
+    {k:'divisi',label:'Divisi',type:'text',maxlength:40},
+    {k:'tglmasuk',label:'Tgl. Masuk',type:'date'},
+    {k:'tahun',label:'Tahun',type:'number',ph:'2026'},
+    {sec:'Jenis Cuti'},
+    {k:'jenis',label:'Pilih jenis',type:'radio',full:true,opts:['Annual','Sick Leave','Compenssionate','Authorized Unpaid']},
+    {sec:'Perhitungan Cuti (Hari kerja)'},
+    {k:'hak',label:'Hak Cuti Tahun ini',type:'number'},
+    {k:'sisaLalu',label:'Sisa Cuti Tahun lalu',type:'number'},
+    {k:'extra',label:'Extra Cuti',type:'number'},
+    {k:'total',label:'Total',type:'number'},
+    {k:'diambil',label:'Cuti yang telah diambil',type:'number'},
+    {k:'sisa',label:'Sisa Cuti',type:'number'},
+    {k:'permohonan',label:'Permohonan Cuti',type:'number'},
+    {k:'mulai',label:'Mulai tgl',type:'date'},
+    {k:'sampai',label:'s/d tgl',type:'date'},
+    {k:'sisaAkhir',label:'Sisa s/d permohonan cuti ini',type:'number'},
+    {sec:'Lain-lain'},
+    {k:'keterangan',label:'Keterangan',type:'textarea',full:true,maxlength:300},
+    {k:'pengganti',label:'Pengganti selama cuti',type:'text',full:true,maxlength:60},
+    {sec:'Tanda Tangan'},
+    {k:'diminta',label:'Diminta oleh',type:'text',maxlength:32},
+    {k:'dimintaTgl',label:'Tgl (Diminta)',type:'date'},
+    {k:'disetujui',label:'Disetujui (Manager)',type:'text',maxlength:32},
+    {k:'disetujuiTgl',label:'Manager, tgl',type:'date'},
+    {k:'diperiksa',label:'Diperiksa (Personnel Adm.)',type:'text',maxlength:32},
+    {k:'diperiksaTgl',label:'Personnel Adm. Tgl',type:'date'}
+  ],
+  buildPrint:function(f){
+    const on=v=>f.jenis===v?' on':'';
+    const rows=[['Hak Cuti Tahun ini','hak'],['Sisa Cuti Tahun lalu','sisaLalu'],['Extra Cuti','extra'],['Total','total'],['Cuti yang telah diambil','diambil'],['Sisa Cuti','sisa'],['Permohonan Cuti','permohonan']];
+    const rowsH=rows.map(r=>'<div class="rowl"><span class="k">'+r[0]+'</span><span>:</span><span class="v">'+esc(f[r[1]]||'')+'</span><span class="u">Hari kerja</span></div>').join('');
+    return '<div class="docp">'
+      +'<div class="co">PT. BERCA SPORTINDO</div>'
+      +'<div class="two" style="margin-top:12px">'
+      +'<div><div class="fld"><span class="k" style="min-width:86px">Departemen</span><span>:</span><span class="v">'+esc(f.departemen||'')+'</span></div>'
+      +'<div class="fld" style="margin-top:9px"><span class="k" style="min-width:86px">Divisi</span><span>:</span><span class="v">'+esc(f.divisi||'')+'</span></div></div>'
+      +'<div><div class="fld"><span class="k" style="min-width:74px">Nama</span><span>:</span><span class="v">'+esc(f.nama||'')+'</span></div>'
+      +'<div class="fld" style="margin-top:9px"><span class="k" style="min-width:74px">Tgl. Masuk</span><span>:</span><span class="v">'+dfmt(f.tglmasuk)+'</span></div></div>'
+      +'</div>'
+      +'<div class="ctitle" style="margin-top:18px">PERMOHONAN CUTI KARYAWAN</div>'
+      +'<div style="text-align:center;margin-top:6px">TAHUN : <span style="display:inline-block;min-width:120px;border-bottom:1px solid #000;text-align:center">'+esc(f.tahun||'')+'</span></div>'
+      +'<div class="hr"></div>'
+      +'<div class="two">'
+      +'<div><div class="radio"><span class="rc'+on('Annual')+'"></span> Annual</div><div class="radio" style="margin-top:8px"><span class="rc'+on('Sick Leave')+'"></span> Sick Leave</div></div>'
+      +'<div><div class="radio"><span class="rc'+on('Compenssionate')+'"></span> Compenssionate</div><div class="radio" style="margin-top:8px"><span class="rc'+on('Authorized Unpaid')+'"></span> Authorized Unpaid</div></div>'
+      +'</div>'
+      +'<div class="hr"></div>'
+      +rowsH
+      +'<div class="rowl" style="margin-top:2px"><span class="k" style="min-width:auto">(mulai tgl</span><span class="v" style="max-width:150px">'+dfmt(f.mulai)+'</span><span>s/d</span><span class="v" style="max-width:150px">'+dfmt(f.sampai)+'</span><span>)</span></div>'
+      +'<div class="rowl"><span class="k">Sisa s/d permohonan cuti ini</span><span>:</span><span class="v">'+esc(f.sisaAkhir||'')+'</span><span class="u">Hari kerja</span></div>'
+      +'<div class="hr"></div>'
+      +'<div style="min-height:34px">Keterangan: '+esc(f.keterangan||'')+'</div>'
+      +'<div style="margin-top:8px">Pengganti selama cuti: '+esc(f.pengganti||'')+'</div>'
+      +'<div class="hr"></div>'
+      +'<div class="sign3">'
+      +'<div>Diminta oleh,<div class="sline"></div><b>'+esc(f.diminta||'')+'</b><div style="margin-top:2px">Tgl…… '+dfmt(f.dimintaTgl)+'</div></div>'
+      +'<div>Disetujui,<div class="sline"></div><b>'+esc(f.disetujui||'')+'</b><div style="margin-top:2px">Manager, tgl…… '+dfmt(f.disetujuiTgl)+'</div></div>'
+      +'<div>Diperiksa oleh,<div class="sline"></div><b>'+esc(f.diperiksa||'')+'</b><div style="margin-top:2px">Personnel Adm.<br>Tgl…… '+dfmt(f.diperiksaTgl)+'</div></div>'
+      +'</div>'
+      +'</div>';
+  }
+});
+
+/* ---- Datang Terlambat / Pulang Cepat ---- */
+const Telat=makeDoc({p:'telat',g:'Telat',col:'telat',title:'Terlambat-PulangCepat',
+  titleOf:f=>f.nama?('Izin — '+f.nama):'Pengajuan Izin',
+  listRow:f=>[f.nama,f.nik,f.bagian,f.jenis,dfmt(f.tanggal)],
+  fields:[
+    {sec:'Identitas'},
+    {k:'nama',label:'Nama',type:'text',maxlength:40},
+    {k:'nik',label:'NIK',type:'text',maxlength:24},
+    {k:'bagian',label:'Bagian',type:'text',maxlength:40},
+    {k:'dept',label:'Dept / Divisi',type:'text',maxlength:40},
+    {sec:'Jenis Izin'},
+    {k:'jenis',label:'Pilih',type:'radio',full:true,opts:['Datang Terlambat','Pulang Cepat','Terlambat & Pulang Cepat']},
+    {sec:'Waktu'},
+    {k:'hari',label:'Hari',type:'text',maxlength:12,ph:'mis. Rabu'},
+    {k:'tanggal',label:'Tanggal',type:'date'},
+    {k:'masuk',label:'Masuk Jam',type:'text',maxlength:12,ph:'09:00 wib'},
+    {k:'pulang',label:'Pulang Cepat (jam)',type:'text',maxlength:12,ph:'14:00 wib'},
+    {sec:'Alasan'},
+    {k:'alasan',label:'Alasan',type:'textarea',full:true,maxlength:400},
+    {sec:'Tanda Tangan (MENGETAHUI)'},
+    {k:'karyawan',label:'Karyawan ybs',type:'text',maxlength:32},
+    {k:'atasan',label:'Atasan Langsung',type:'text',maxlength:32},
+    {k:'personalia',label:'Dept. Personalia',type:'text',maxlength:32}
+  ],
+  buildPrint:function(f){
+    const BERCA='<svg width="30" height="30" viewBox="0 0 40 40" style="display:block"><circle cx="20" cy="20" r="19" fill="#e2211c"/><text x="20" y="24" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="700" font-family="Arial">BERCA</text></svg>';
+    const LEAGUE='<span style="display:inline-flex;align-items:center;gap:4px"><svg width="26" height="23" viewBox="0 0 100 92"><path d="M30 12 L70 12 L88 80 L12 80 Z" fill="#fff" stroke="#0a0a0a" stroke-width="8" stroke-linejoin="round"/><path d="M44 28 L56 28 L56 60 L70 60 L70 70 L44 70 Z" fill="#1f9d3a"/></svg><b style="color:#1f9d3a;font-style:italic;font-size:15px">League</b></span>';
+    const bd='border:1px solid #000;padding:5px 7px;vertical-align:top;';
+    return '<div class="docp" style="padding:14mm">'
+      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">'+BERCA+LEAGUE+'</div>'
+      +'<div class="box">'
+      +'<div style="text-align:center;font-weight:700;padding:10px;border-bottom:1px solid #000;line-height:1.5">SURAT IZIN MENINGGALKAN TUGAS<br>DATANG TERLAMBAT / PULANG CEPAT</div>'
+      +'<table class="gt"><colgroup><col style="width:14%"><col style="width:36%"><col style="width:16%"><col></colgroup>'
+      +'<tr><td class="k">NAMA</td><td>: <b>'+esc(f.nama||'')+'</b></td><td class="k">BAGIAN</td><td>: <b>'+esc(f.bagian||'')+'</b></td></tr>'
+      +'<tr><td class="k">NIK</td><td>: <b>'+esc(f.nik||'')+'</b></td><td class="k">DEPT/ DIVISI</td><td>: <b>'+esc(f.dept||'')+'</b></td></tr></table>'
+      +'<div style="padding:6px 8px;border-bottom:1px solid #000;border-top:0">Telah/akan <b>'+esc(f.jenis||'datang terlambat / pulang cepat')+'</b></div>'
+      +'<table class="gt"><colgroup><col style="width:14%"><col style="width:36%"><col style="width:16%"><col></colgroup>'
+      +'<tr><td class="k">HARI</td><td>: <b>'+esc(f.hari||'')+'</b></td><td class="k">MASUK JAM</td><td>: <b>'+esc(f.masuk||'')+'</b></td></tr>'
+      +'<tr><td class="k">TANGGAL</td><td>: <b>'+dfmt(f.tanggal)+'</b></td><td class="k">PULANG CEPAT</td><td>: <b>'+esc(f.pulang||'')+'</b></td></tr></table>'
+      +'<div style="padding:6px 8px;border-bottom:1px solid #000">ALASAN :</div>'
+      +'<div style="padding:8px 12px;min-height:60px;font-style:italic;font-weight:700;border-bottom:1px solid #000">'+esc(f.alasan||'').replace(/\n/g,"<br>")+'</div>'
+      +'<div style="padding:4px 8px;font-weight:700;border-bottom:1px solid #000">MENGETAHUI</div>'
+      +'<table class="gt" style="border:0"><colgroup><col style="width:22%"><col style="width:22%"><col style="width:22%"><col></colgroup>'
+      +'<tr><td class="sigcell"><b>'+esc(f.karyawan||'')+'</b><br>Karyawan ybs</td><td class="sigcell"><b>'+esc(f.atasan||'')+'</b><br>Atasan Langsung</td><td class="sigcell"><b>'+esc(f.personalia||'')+'</b><br>Dept. Personalia</td>'
+      +'<td style="'+bd+'border-right:0;border-bottom:0;font-size:11px">CATATAN:<br>- Lengkapi pengisian form termasuk tandatangan dan berikan ke bagian absens.<br>- Tetap absen jika datang ataupun pulang</td></tr></table>'
+      +'</div></div>';
+  }
+});
 </script>
 <script>
 /* ============================================================
