@@ -207,8 +207,18 @@
         "endHour": 21,
         "color": "cyan",
         "status": "berlangsung"
+      },
+      {
+        "id": 1785991174989,
+        "memberId": 2,
+        "name": "operator live",
+        "day": 5,
+        "startHour": 10,
+        "endHour": 18,
+        "color": "cyan",
+        "status": "belum"
       }
     ]
   },
-  "updatedAt": "2026-08-06T04:38:51.960Z"
+  "updatedAt": "2026-08-06T04:39:35.131Z"
 }
