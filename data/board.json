@@ -187,18 +187,7 @@
         ]
       }
     ],
-    "tasks": [
-      {
-        "id": 1785660437682,
-        "memberId": 3,
-        "name": "operator live",
-        "day": 0,
-        "startHour": 18,
-        "endHour": 21,
-        "color": "rose",
-        "status": "berlangsung"
-      }
-    ]
+    "tasks": []
   },
-  "updatedAt": "2026-08-06T04:37:43.059Z"
+  "updatedAt": "2026-08-06T04:37:48.358Z"
 }
