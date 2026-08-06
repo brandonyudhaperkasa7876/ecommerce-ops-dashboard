@@ -5,7 +5,7 @@
         "id": "pr_1785921327653_371ik",
         "number": "PR/ECM/0001/2026",
         "createdAt": "2026-08-05T09:15:27.653Z",
-        "updatedAt": "2026-08-05T10:39:34.124Z",
+        "updatedAt": "2026-08-06T20:05:53.853Z",
         "vendor": "PT Restorasi Inspirasi Kreasi",
         "dept": "E-Commerce",
         "code": "ECM",
@@ -24,9 +24,11 @@
             "price": 32000000
           }
         ],
-        "sign1": "",
-        "sign2": "",
-        "sign3": ""
+        "sign1": "Sapto Renggo Sumbogo",
+        "sign2": "Hartono",
+        "sign3": "Ibu SHM",
+        "reason": "",
+        "capbud": ""
       },
       {
         "id": "pr_1786000464397_eikev",
@@ -125,5 +127,5 @@
       "ECM-2026": 2
     }
   },
-  "updatedAt": "2026-08-06T07:15:15.528Z"
+  "updatedAt": "2026-08-06T20:05:53.853Z"
 }
