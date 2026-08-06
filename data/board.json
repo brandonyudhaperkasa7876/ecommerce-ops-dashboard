@@ -107,7 +107,7 @@
             "location": "-"
           },
           {
-            "type": "Shift 2",
+            "type": "Shift 1",
             "location": "GPN"
           }
         ]
@@ -230,5 +230,5 @@
       }
     ]
   },
-  "updatedAt": "2026-08-06T04:42:27.144Z"
+  "updatedAt": "2026-08-06T04:42:43.213Z"
 }
