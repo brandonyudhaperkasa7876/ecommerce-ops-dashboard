@@ -93,6 +93,23 @@ async function prMutate(apply){
   throw new Error('Gagal menyimpan PR (konflik berulang). Coba lagi.');
 }
 
+// read-modify-write generik untuk koleksi dokumen (cuti/telat) di file JSON tersendiri
+async function docMutate(file, apply){
+  let extra = {};
+  for(let i = 0; i < 4; i++){
+    const f = await ghGetFile(file);
+    let payload = { list: [] };
+    if(f){ try{ const p = (JSON.parse(Buffer.from(f.contentB64, 'base64').toString('utf8')) || {}).payload; if(p) payload = p; }catch(e){} }
+    const s = { list: Array.isArray(payload.list) ? payload.list : [] };
+    extra = apply(s) || {};
+    const rec = { payload: { list: s.list }, updatedAt: new Date().toISOString() };
+    const contentB64 = Buffer.from(JSON.stringify(rec, null, 2), 'utf8').toString('base64');
+    try{ await ghPutFile(file, contentB64, 'doc ' + (extra.msg || 'update'), f ? f.sha : undefined); return { updatedAt: rec.updatedAt, extra }; }
+    catch(e){ if(i < 3 && /409|422|sha|conflict|Not Found/i.test(e.message)) { await new Promise(r => setTimeout(r, 120 * (i + 1))); continue; } throw e; }
+  }
+  throw new Error('Gagal menyimpan dokumen (konflik berulang). Coba lagi.');
+}
+
 export default async function handler(req, res){
   if(req.method !== 'POST') return fail(res, 'Gunakan POST.', 405);
   try{
@@ -157,6 +174,8 @@ export default async function handler(req, res){
           sign1: String(pr.sign1 || '').slice(0, 120),
           sign2: String(pr.sign2 || '').slice(0, 120),
           sign3: String(pr.sign3 || '').slice(0, 120),
+          reason: String(pr.reason || '').slice(0, 300),
+          capbud: String(pr.capbud || '').slice(0, 120),
           printedOn: /^\d{4}-\d{2}-\d{2}$/.test(pr.printedOn) ? pr.printedOn : '',
           items: (Array.isArray(pr.items) ? pr.items : []).slice(0, 200).map(it => ({
             desc: String((it && it.desc) || '').slice(0, 1000),
@@ -197,6 +216,55 @@ export default async function handler(req, res){
       const id = String(b.id || '');
       const r = await prMutate(s => { s.list = s.list.filter(x => x.id !== id); return { msg: 'delete ' + id }; });
       return ok(res, { updatedAt: r.updatedAt });
+    }
+
+    // ---- Generic doc collections (cuti / telat) ----
+    if(action === 'getDoc' || action === 'saveDoc' || action === 'deleteDoc'){
+      const COLS = { cuti: 'data/cuti.json', telat: 'data/telat.json' };
+      const file = COLS[b.col];
+      if(!file) return fail(res, 'Koleksi tidak dikenal.');
+      if(action === 'getDoc'){
+        const { data } = await readJSON(file, { payload: null });
+        return ok(res, { payload: (data && data.payload) || { list: [] } });
+      }
+      // PIN valid = ADMIN_PIN, atau PIN akun pemohon (email), atau PIN akun terdaftar mana pun.
+      const p = String(pin || '');
+      const em = lc(b.email);
+      const acc = users.find(u => u.email === em);
+      const pinValid = (p && p === ENV.ADMIN_PIN) || (acc && verifySecret(p, acc.pin)) || users.some(u => verifySecret(p, u.pin));
+      if(!pinValid) return fail(res, 'PIN salah. Masukkan PIN akun Anda.', 401);
+      if(action === 'saveDoc'){
+        const doc = b.doc || {};
+        let saved = null;
+        const r = await docMutate(file, s => {
+          const fields = doc.fields && typeof doc.fields === 'object' ? doc.fields : {};
+          const clean = {};
+          Object.keys(fields).slice(0, 60).forEach(k => { clean[String(k).slice(0, 40)] = String(fields[k] == null ? '' : fields[k]).slice(0, 2000); });
+          if(doc.id){
+            const i = s.list.findIndex(x => x.id === doc.id);
+            if(i >= 0){ saved = Object.assign({}, s.list[i], { fields: clean, updatedAt: new Date().toISOString() }); s.list[i] = saved; }
+            else { saved = { id: doc.id, fields: clean, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; s.list.push(saved); }
+          } else {
+            saved = { id: 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), fields: clean, by: String(b.email || '').slice(0,120), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+            s.list.push(saved);
+          }
+          return { msg: 'save ' + b.col };
+        });
+        return ok(res, { doc: saved, updatedAt: r.updatedAt });
+      }
+      if(action === 'deleteDoc'){
+        const id = String(b.id || '');
+        const editor = isEditor(users, pin);
+        let denied = false;
+        const r = await docMutate(file, s => {
+          const rec = s.list.find(x => x.id === id);
+          if(rec && !editor && lc(rec.by || '') !== em){ denied = true; return { msg: 'noop' }; }
+          s.list = s.list.filter(x => x.id !== id);
+          return { msg: 'delete ' + id };
+        });
+        if(denied) return fail(res, 'Hanya pembuat dokumen atau Admin yang dapat menghapus.', 403);
+        return ok(res, { updatedAt: r.updatedAt });
+      }
     }
 
     if(action === 'saveProfile'){
