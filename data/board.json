@@ -213,12 +213,12 @@
         "memberId": 2,
         "name": "backup operator live",
         "day": 5,
-        "startHour": 10,
-        "endHour": 18,
+        "startHour": 9,
+        "endHour": 17,
         "color": "cyan",
         "status": "belum"
       }
     ]
   },
-  "updatedAt": "2026-08-06T04:39:50.805Z"
+  "updatedAt": "2026-08-06T04:40:15.316Z"
 }
