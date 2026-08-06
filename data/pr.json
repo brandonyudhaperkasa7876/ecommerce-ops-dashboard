@@ -27,6 +27,48 @@
         "sign1": "",
         "sign2": "",
         "sign3": ""
+      },
+      {
+        "id": "pr_1786000464397_eikev",
+        "number": "PR/ECM/0002/2026",
+        "createdAt": "2026-08-06T07:14:24.397Z",
+        "updatedAt": "2026-08-06T07:14:24.397Z",
+        "vendor": "",
+        "dept": "E-Commerce",
+        "code": "ECM",
+        "date": "2026-08-06",
+        "currency": "IDR",
+        "ppn": false,
+        "pph": false,
+        "ppnRate": 11,
+        "pphRate": 2,
+        "by": "dimaas geri saputra",
+        "sign1": "",
+        "sign2": "",
+        "sign3": "",
+        "printedOn": "",
+        "items": [
+          {
+            "desc": "IPHONE 15",
+            "qty": 2,
+            "price": 0
+          },
+          {
+            "desc": "PAKET DATA UNTUK SESI LIVE 4 JAM 60GB",
+            "qty": 1,
+            "price": 0
+          },
+          {
+            "desc": "KAMERA OSBOT ",
+            "qty": 2,
+            "price": 0
+          },
+          {
+            "desc": "LAPTOP YANG DAPAT MENJALANKAN SOFTWARE OBS",
+            "qty": 1,
+            "price": 0
+          }
+        ]
       }
     ],
     "depts": [
@@ -80,8 +122,8 @@
       }
     ],
     "counters": {
-      "ECM-2026": 1
+      "ECM-2026": 2
     }
   },
-  "updatedAt": "2026-08-05T10:39:34.124Z"
+  "updatedAt": "2026-08-06T07:14:24.397Z"
 }
