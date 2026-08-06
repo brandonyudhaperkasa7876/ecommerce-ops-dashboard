@@ -187,7 +187,18 @@
         ]
       }
     ],
-    "tasks": []
+    "tasks": [
+      {
+        "id": 1785991108701,
+        "memberId": 1785653044251,
+        "name": "host admin",
+        "day": 4,
+        "startHour": 17,
+        "endHour": 21,
+        "color": "cyan",
+        "status": "belum"
+      }
+    ]
   },
-  "updatedAt": "2026-08-06T04:37:48.358Z"
+  "updatedAt": "2026-08-06T04:38:28.604Z"
 }
